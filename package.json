@@ -54,5 +54,20 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "dotenv": "^8.2.0",
     "prettier": "^2.3.1"
+  },
+  "description": "This is Meant for creating a web portfolio for Mauricio The template taken for this specific portfolio\r you could find it in this [link](https://github.com/saadpasta/developerFolio)",
+  "main": "fetch.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mauricioobgo/portfolioDataEngineer.git"
+  },
+  "keywords": [
+    "portfolio",
+    "DE"
+  ],
+  "author": "Mauricio Obando",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mauricioobgo/portfolioDataEngineer/issues"
   }
 }
