@@ -38,7 +38,7 @@ jobs:
           npm install
           npm run build
       - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@v4
+        uses: JamesIves/github-pages-deploy-action@releases/v4-folder-perms
         with:
           GITHUB_TOKEN : ${{ secrets.TOKEN_GIT }} # This is provided by GitHub.
           BRANCH: gh-pages # The branch the action should deploy to.
