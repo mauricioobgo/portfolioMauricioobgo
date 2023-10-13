@@ -31,11 +31,11 @@ jobs:
           node-version: 18.x
 
       - name: Update npm 🚀
-        run: npm install -g npm@v10.16.0
+        run: npm install -g npm@6.9.0
 
       - name: Install and Build 🔧 # Build the Project
         run: |
-          npm audit fix --force
+          npm install
           npm run build
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
