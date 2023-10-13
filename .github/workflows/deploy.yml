@@ -35,6 +35,7 @@ jobs:
 
       - name: Install and Build 🔧 # Build the Project
         run: |
+          npx npm-force-resolutions
           npm install
           npm audit fix --force
           npm run build
