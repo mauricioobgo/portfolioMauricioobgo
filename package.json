@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "colorthief": "^2.2.0",
+    "colorthief": "^2.3.0",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.6",
     "gh-pages": "^2.1.1",
@@ -15,14 +15,14 @@
     "react-easy-emoji": "^1.8.1",
     "react-headroom": "^3.0.0",
     "react-reveal": "^1.2.2",
-    "react-scripts": "^3.0.1",
+    "react-scripts": "^5.0.1",
     "react-test-renderer": "^16.10.2",
     "react-twitter-embed": "3.0.3",
     "sass": "^1.32.8"
   },
   "scripts": {
     "predeploy": "npm run build",
-    "start": "node fetch.js && react-scripts --openssl-legacy-provider start",
+    "start": "node fetch.js && react-scripts start",
     "build": "node fetch.js && react-scripts build",
     "deploy": "gh-pages -b master -d build",
     "test": "react-scripts test",
@@ -54,20 +54,5 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "dotenv": "^8.2.0",
     "prettier": "^2.3.1"
-  },
-  "description": "This is Meant for creating a web portfolio for Mauricio The template taken for this specific portfolio\r you could find it in this [link](https://github.com/saadpasta/developerFolio)",
-  "main": "fetch.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mauricioobgo/portfolioDataEngineer.git"
-  },
-  "keywords": [
-    "portfolio",
-    "DE"
-  ],
-  "author": "Mauricio Obando",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/mauricioobgo/portfolioDataEngineer/issues"
   }
 }
