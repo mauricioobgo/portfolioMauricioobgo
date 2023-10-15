@@ -16,15 +16,22 @@ export default function Profile() {
   useEffect(() => {
     if (openSource.showGithubProfile === "true") {
       const getProfileData = () => {
-        fetch("/profile.json")
+        fetch("/portfolioDataEngineer/profile.json")
           .then(result => {
-            if (result.ok) {
-              console.log(result.json());
-              return result.json();
-            }
+              if (result.ok) {
+                return result.json();
+              }
+            throw new Error("Network response was not ok.");
           })
           .then(response => {
-            setProfileFunction(response.data.user);
+              // Verificar si la respuesta contiene datos JSON válidos
+              if (response && response.data && response.data.user) {
+                setProfileFunction(response.data.user);
+              } else {
+                console.error("Invalid Jason Data");
+                setProfileFunction("Error");
+                openSource.showGithubProfile = "false";
+              }
           })
           .catch(function (error) {
             console.error(
