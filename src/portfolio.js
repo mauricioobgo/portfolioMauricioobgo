@@ -26,7 +26,7 @@ const greeting = {
     "😄 My Passion for Data Engineering, Data Science, and the Cloud ☁️ I'm absolutely thrilled about working with data, whether it's in the realm of Data Engineering, Data Science, or leveraging the power of the cloud. The convergence of these fields adds immense excitement to my work! In this data-driven world, I'm enthusiastic about applying my skills to drive innovation and make meaningful contributions! 🌍📊"
   ),
   resumeLink:
-    "https://drive.google.com/file/d/1_dcU5oGHKlnsGzfjy95EorcKXSZzdVOl/view?usp=sharing", // Set to empty to hide the button
+    "https://drive.google.com/file/d/1TJf6qdDdcAxYZj8KGh2rJoiPidgzwRzi/view?usp=sharing", // Set to empty to hide the button
   displayGreeting: true // Set false to hide this section, defaults to true
 };
 
