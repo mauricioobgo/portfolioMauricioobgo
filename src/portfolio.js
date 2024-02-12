@@ -23,7 +23,7 @@ const greeting = {
   username: "Mauricio Obando",
   title: "Hi all, I am Mauricio",
   subTitle: emoji(
-    "😄 My Passion for Data Engineering and the Cloud ☁️ I'm absolutely thrilled about working with data, especially in the context of Data Engineering. The cloud providers make the whole process even more exciting! It's a data-driven world, and I'm excited to be a part of it! 🌍📈"
+    "😄 My Passion for Data Engineering, Data Science, and the Cloud ☁️ I'm absolutely thrilled about working with data, whether it's in the realm of Data Engineering, Data Science, or leveraging the power of the cloud. The convergence of these fields adds immense excitement to my work! In this data-driven world, I'm enthusiastic about applying my skills to drive innovation and make meaningful contributions! 🌍📊"
   ),
   resumeLink:
     "https://drive.google.com/file/d/1P3lCrfvF0V34HSASe8YdKTUgh-VDPZzt/view?usp=sharing", // Set to empty to hide the button
@@ -45,10 +45,10 @@ const socialMediaLinks = {
 
 const skillsSection = {
   title: "What I Love to do",
-  subTitle: "CRAZY Data Engineer who wants to explore the world through data 🌍",
+  subTitle: "CRAZY DataScientist and Data Engineer who wants to explore the world through data 🌍",
   skills: [
     emoji(
-      "⚡ 💡 Data Engineering allows me to shape raw data into valuable insights."
+      "⚡ 💡 Data Engineering and DataScience allows me to shape raw data into valuable insights."
     ),
     emoji("⚡ 🌐 Cloud providers like AWS, Azure, and GCP provide the scalable infrastructure I need."),
     emoji(
