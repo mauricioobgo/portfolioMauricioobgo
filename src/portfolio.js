@@ -169,6 +169,11 @@ const techStack = {
       Stack: "GCP",
       progressPercentage: "60%"
     }
+    ,
+    {
+      Stack: "Machine Learning",
+      progressPercentage: "70%"
+    }
   ],
   displayCodersrank: false // Set true to display codersrank badges section need to changes your username in src/containers/skillProgress/skillProgress.js:17:62, defaults to false
 };
@@ -186,7 +191,7 @@ const workExperiences = {
       desc: "Developed critical, efficient data pipelines for Stellantis as well as lead implementations of Referenced Architectures for data pipelines implementation using GCP and AWS",
       descBullets: [
         "Create Architecture solutions for Dashboards, using Tableau and looker and all the Data ingestion and transformation pipelines in order to create insights for the DataScience team.",
-        "Propose solutions for monitoring different pipelines in order to adjust billing and all the framework usage in each individual case so that it could standardize performance and homologate versions in terms of software."
+        "Propose Ml and Data pipelines solutions in order to adjust billing and all the framework usage in each individual case so that it could standardize performance and homologate versions in terms of software."
       ]
     },
     {
