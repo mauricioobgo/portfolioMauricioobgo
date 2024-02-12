@@ -16,7 +16,7 @@ export default function Profile() {
   useEffect(() => {
     if (openSource.showGithubProfile === "true") {
       const getProfileData = () => {
-        fetch("/portfolioDataEngineer/profile.json")
+        fetch("/portfolioMauricioobgo/profile.json")
           .then(result => {
               if (result.ok) {
                 return result.json();
