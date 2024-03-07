@@ -34,7 +34,7 @@ const greeting = {
 
 const socialMediaLinks = {
   github: "https://github.com/mauricioobgo",
-  linkedin: "https://www.linkedin.com/in/mauricio-obando-06456160/",
+  linkedin: "https://www.linkedin.com/in/mauricioobgo/",
   gmail: "mauricioobgo@gmail.com",
   // Instagram, Twitter and Kaggle are also supported in the links!
   // To customize icons and social links, tweak src/components/SocialMedia
