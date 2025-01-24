@@ -26,7 +26,7 @@ const greeting = {
     "😄 My Passion for Data Engineering, Data Science, and the Cloud ☁️ I'm absolutely thrilled about working with data, whether it's in the realm of Data Engineering, Data Science, or leveraging the power of the cloud. The convergence of these fields adds immense excitement to my work! In this data-driven world, I'm enthusiastic about applying my skills to drive innovation and make meaningful contributions! 🌍📊"
   ),
   resumeLink:
-    "https://drive.google.com/file/d/1TJf6qdDdcAxYZj8KGh2rJoiPidgzwRzi/view?usp=sharing", // Set to empty to hide the button
+    "https://drive.google.com/file/d/197iszNCfu2tIdIlV5CLF--6Lk3bMSBFH/view?usp=sharing", // Set to empty to hide the button
   displayGreeting: true // Set false to hide this section, defaults to true
 };
 
@@ -106,7 +106,7 @@ https://fontawesome.com/icons?d=gallery */
       skillName: "Spark",
       fontAwesomeClassname: "far fa-star"
     }
-    
+
   ],
   display: true // Set false to hide this section, defaults to true
 };
@@ -229,13 +229,13 @@ const bigProjects = {
       image: require("./assets/images/disney.png"),
       projectName: "COP (COMMERCIAL OPTIMIZATION PLATFORM)",
       projectDesc: " Centralizing, building and gather Data In Snowflake from Different Sources within The World Disney Company",
-/*       footerLink: [
-        {
-          name: "Visit Website",
-          url: "http://saayahealth.com/"
-        }
-        //  you can add extra buttons here.
-      ] */
+      /*       footerLink: [
+              {
+                name: "Visit Website",
+                url: "http://saayahealth.com/"
+              }
+              //  you can add extra buttons here.
+            ] */
     },
     {
       image: require("./assets/images/disney.png"),
@@ -262,15 +262,42 @@ const achievementSection = {
 
   achievementsCards: [
     {
-      title: "AWS Architect Associate",
+      title: "AWS Architect Professional",
       subtitle:
-        "Earners of this certification have a comprehensive understanding of AWS services and technologies. They demonstrated the ability to build secure and robust solutions using architectural design principles based on customer requirements. Badge owners are able to strategically design well-architected distributed systems that are scalable, resilient, efficient, and fault-tolerant.",
-      image: require("./assets/images/aws_architect_associate.png"),
+        "Earners of this certification have an extensive understanding of designing technical strategies to accomplish specific business goals",
+      image: require("./assets/images/aws__solutions_architect_professional.png"),
       imageAlt: "Google Code-In Logo",
       footerLink: [
         {
           name: "Certification",
-          url: "https://www.credly.com/badges/682ec0ed-813d-44d1-b4af-b1cc7f277135/linked_in_profile"
+          url: "https://www.credly.com/badges/e77975bf-b0d5-4315-8e11-500508a396f0/linked_in_profile"
+        }
+      ]
+    },
+    {
+      title: "AWS Devops Professional",
+      subtitle:
+        "Earners of this certification have an extensive understanding of implementing continuous delivery systems and methodologies on the AWS Cloud.",
+      image: require("./assets/images/aws_devops_professional.png"),
+      imageAlt: "Google Code-In Logo",
+      footerLink: [
+        {
+          name: "Certification",
+          url: "https://www.credly.com/badges/8caabf6b-0f38-4ec7-8537-c2f19d104537/linked_in_profile"
+        }
+      ]
+    },
+    
+    {
+      title: "AWS Data Engineer",
+      subtitle:
+        "arners of this certification have an in-depth understanding of how to use AWS services to implement data pipelines and to monitor, troubleshoot, and optimize cost and performance issues in accordance with best practices.",
+      image: require("./assets/images/aws_devops_professional.png"),
+      imageAlt: "Google Code-In Logo",
+      footerLink: [
+        {
+          name: "Certification",
+          url: "https://www.credly.com/badges/a4d9fe24-73eb-4280-bf8c-186c882eec23/linked_in_profile"
         }
       ]
     },
@@ -302,7 +329,7 @@ const achievementSection = {
       image: require("./assets/images/deep_learning_ai.png"),
       imageAlt: "PWA Logo",
       footerLink: [
-        {name: "Certification", url: "https://coursera.org/share/95cf7a3d427261ccf07952cf0fbfa800"}
+        { name: "Certification", url: "https://coursera.org/share/95cf7a3d427261ccf07952cf0fbfa800" }
       ]
     }
   ],
@@ -317,18 +344,18 @@ const blogSection = {
     "With Love for Developing cool stuff, I love to write and teach others what I have learnt.",
   displayMediumBlogs: "true", // Set true to display fetched medium blogs instead of hardcoded ones
   blogs: [
-/*     {
-      url: "https://blog.usejournal.com/create-a-google-assistant-action-and-win-a-google-t-shirt-and-cloud-credits-4a8d86d76eae",
-      title: "Win a Google Assistant Tshirt and $200 in Google Cloud Credits",
-      description:
-        "Do you want to win $200 and Google Assistant Tshirt by creating a Google Assistant Action in less then 30 min?"
-    },
-    {
-      url: "https://medium.com/@saadpasta/why-react-is-the-best-5a97563f423e",
-      title: "Why REACT is The Best?",
-      description:
-        "React is a JavaScript library for building User Interface. It is maintained by Facebook and a community of individual developers and companies."
-    } */
+    /*     {
+          url: "https://blog.usejournal.com/create-a-google-assistant-action-and-win-a-google-t-shirt-and-cloud-credits-4a8d86d76eae",
+          title: "Win a Google Assistant Tshirt and $200 in Google Cloud Credits",
+          description:
+            "Do you want to win $200 and Google Assistant Tshirt by creating a Google Assistant Action in less then 30 min?"
+        },
+        {
+          url: "https://medium.com/@saadpasta/why-react-is-the-best-5a97563f423e",
+          title: "Why REACT is The Best?",
+          description:
+            "React is a JavaScript library for building User Interface. It is maintained by Facebook and a community of individual developers and companies."
+        } */
   ],
   display: false // Set false to hide this section, defaults to true
 };
@@ -341,14 +368,14 @@ const talkSection = {
     "I LOVE TO SHARE MY LIMITED KNOWLEDGE AND GET A SPEAKER BADGE 😅"
   ),
 
-/*   talks: [
-    {
-      title: "Build Actions For Google Assistant",
-      subtitle: "Codelab at GDG DevFest Karachi 2019",
-      slides_url: "https://bit.ly/saadpasta-slides",
-      event_url: "https://www.facebook.com/events/2339906106275053/"
-    }
-  ], */
+  /*   talks: [
+      {
+        title: "Build Actions For Google Assistant",
+        subtitle: "Codelab at GDG DevFest Karachi 2019",
+        slides_url: "https://bit.ly/saadpasta-slides",
+        event_url: "https://www.facebook.com/events/2339906106275053/"
+      }
+    ], */
   display: false // Set false to hide this section, defaults to true
 };
 
@@ -359,9 +386,9 @@ const podcastSection = {
   subtitle: "I LOVE TO TALK ABOUT MYSELF AND TECHNOLOGY",
 
   // Please Provide with Your Podcast embeded Link
-/*   podcast: [
-    "https://anchor.fm/codevcast/embed/episodes/DevStory---Saad-Pasta-from-Karachi--Pakistan-e9givv/a-a15itvo"
-  ], */
+  /*   podcast: [
+      "https://anchor.fm/codevcast/embed/episodes/DevStory---Saad-Pasta-from-Karachi--Pakistan-e9givv/a-a15itvo"
+    ], */
   display: false // Set false to hide this section, defaults to true
 };
 
