@@ -184,10 +184,20 @@ const workExperiences = {
   display: true, //Set it to true to show workExperiences Section
   experience: [
     {
+      role: "Tehnical Account Manager",
+      company: "AWS",
+      companylogo: require("./assets/images/aws.png"),
+      date: "May 2024 – Present",
+      desc: "Developed critical, efficient data pipelines for Stellantis as well as lead implementations of Referenced Architectures for data pipelines implementation using GCP and AWS",
+      descBullets: [
+        "Assist client needs and give support in terms of aws architecture and best practices based on Well Architected Framework"
+      ]
+    },
+    {
       role: "Lead Data Engineer",
       company: "Publicis Groupe",
       companylogo: require("./assets/images/publicis_groupe.png"),
-      date: "Feb 2023 – Present",
+      date: "Feb 2023 – May 2024",
       desc: "Developed critical, efficient data pipelines for Stellantis as well as lead implementations of Referenced Architectures for data pipelines implementation using GCP and AWS",
       descBullets: [
         "Create Architecture solutions for Dashboards, using Tableau and looker and all the Data ingestion and transformation pipelines in order to create insights for the DataScience team.",
@@ -287,7 +297,7 @@ const achievementSection = {
         }
       ]
     },
-    
+
     {
       title: "AWS Data Engineer",
       subtitle:

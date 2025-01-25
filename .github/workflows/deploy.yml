@@ -19,6 +19,8 @@ jobs:
     steps:
       - name: Use Node.js 20.x 📦
         uses: actions/setup-node@v3
+        with:
+          node-version: '20.17.0' # Specify the required Node.js version
       
       - name: Checkout 🛎️
         uses: actions/checkout@v3
@@ -30,3 +32,4 @@ jobs:
 
       - name: Install and Build 🔧 # Build the Project
         run: npm install && npm run build
+        
