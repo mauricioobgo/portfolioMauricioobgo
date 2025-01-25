@@ -4,22 +4,28 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@jridgewell/sourcemap-codec": "^1.4.8",
+    "@rollup/plugin-terser": "^0.1.0",
     "colorthief": "^2.2.0",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.6",
-    "gh-pages": "^2.1.1",
+    "gh-pages": "^6.3.0",
+    "har-validator": "^5.1.5",
     "jest-canvas-mock": "^2.3.1",
     "lottie-react": "^2.4.0",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
     "react-easy-emoji": "^1.8.1",
+    "react-ga": "^3.0.0",
     "react-headroom": "^3.0.0",
     "react-reveal": "^1.2.2",
-    "react-scripts": "^5.0.1",
+    "react-scripts": "^3.0.1",
     "react-test-renderer": "^16.10.2",
     "react-twitter-embed": "3.0.3",
+    "request": "^2.88.2",
     "sass": "^1.32.8",
-    "react-ga": "^3.0.0" 
+    "svgo": "^2.0.0",
+    "workbox-cacheable-response": "^6.6.0"
   },
   "scripts": {
     "predeploy": "npm run build",
@@ -27,9 +33,7 @@
     "build": "node fetch.js && react-scripts build",
     "deploy": "gh-pages -b master -d build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "format": "prettier --write \"./**/*.{js,css,json,scss}\"",
-    "check-format": "prettier -c \"./**/*.{js,css,json,scss}\""
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"

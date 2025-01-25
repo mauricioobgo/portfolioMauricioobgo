@@ -30,6 +30,14 @@ jobs:
       - name: Update npm 🚀
         run: npm install -g npm@latest
 
-      - name: Install and Build 🔧 # Build the Project
-        run: npm install && npm run build
-        
+      - name: Install Dependencies 🔧
+        run: npm install
+
+      - name: Fix Audit Issues 🔧
+        run: npm audit fix --force
+
+      - name: Build the Project 🔧
+        run: npm run build
+
+      - name: Deploy to GitHub Pages 🚀
+        run: npm run deploy
