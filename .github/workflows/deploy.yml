@@ -32,3 +32,4 @@ jobs:
 
       - name: Install and Build 🔧 # Build the Project
         run: npm install && npm run build
+        
