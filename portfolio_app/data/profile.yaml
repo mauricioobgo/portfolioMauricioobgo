@@ -1,0 +1,12 @@
+name: Mauricio Obando
+title: Hi all, I am Mauricio
+subtitle: "My passion for Data Engineering, Data Science, and Cloud"
+resume_link: "https://drive.google.com/file/d/197iszNCfu2tIdIlV5CLF--6Lk3bMSBFH/view?usp=sharing"
+email: mauricioobgo@gmail.com
+social_links:
+  github: https://github.com/mauricioobgo
+  linkedin: https://www.linkedin.com/in/mauricioobgo/
+skills:
+  - Data Engineering and Data Science
+  - Cloud architecture across AWS, GCP and Azure
+  - Python and Spark data pipelines
