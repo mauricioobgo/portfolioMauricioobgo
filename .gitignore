@@ -25,3 +25,10 @@ yarn-error.log*
 #user generated content
 public/profile.json
 public/blogs.json
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/

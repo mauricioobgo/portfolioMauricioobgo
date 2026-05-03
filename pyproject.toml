@@ -1,0 +1,26 @@
+[project]
+name = "portfolio-mauricio"
+version = "0.2.0"
+description = "Reflex-based portfolio for Mauricio Obando"
+requires-python = ">=3.14"
+dependencies = [
+  "reflex>=0.8.12",
+  "httpx>=0.28.1",
+  "pydantic>=2.11.4",
+  "pyyaml>=6.0.2"
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.3.5",
+  "ruff>=0.11.8",
+  "mypy>=1.15.0"
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py314"
+
+[build-system]
+requires = ["setuptools>=80.0.0", "wheel>=0.45.0"]
+build-backend = "setuptools.build_meta"

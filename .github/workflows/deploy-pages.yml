@@ -1,0 +1,45 @@
+name: Deploy Reflex Portfolio
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+  schedule:
+    - cron: "0 7 * * 1" # Weekly (Monday)
+    - cron: "0 7 1 * *" # Monthly (1st day)
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+      - run: uv sync
+      - name: Run weekly sync
+        if: github.event_name == 'schedule' && github.event.schedule == '0 7 * * 1'
+        run: uv run python -m portfolio_app.scripts.sync_data --scope weekly
+      - name: Run monthly sync
+        if: github.event_name == 'schedule' && github.event.schedule == '0 7 1 * *'
+        run: uv run python -m portfolio_app.scripts.sync_data --scope monthly
+      - name: Run full sync (push/manual)
+        if: github.event_name != 'schedule'
+        run: uv run python -m portfolio_app.scripts.sync_data --scope all
+      - run: uv run reflex export --frontend-only
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .web/_static
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
