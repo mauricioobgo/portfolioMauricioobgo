@@ -29,10 +29,10 @@ jobs:
       - name: Run full sync (push/manual)
         if: github.event_name != 'schedule'
         run: uv run python -m portfolio_app.scripts.sync_data --scope all
-      - run: uv run reflex export --frontend-only
+      - run: uv run reflex export --frontend-only --no-zip
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .web/_static
+          path: .web/build/client
 
   deploy:
     needs: build
