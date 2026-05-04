@@ -1,0 +1,31 @@
+:root {
+  --portfolio-ink: #102033;
+  --portfolio-muted: #475569;
+  --portfolio-accent: #c06a15;
+  --portfolio-paper: rgba(255, 255, 255, 0.82);
+}
+
+html {
+  background:
+    radial-gradient(circle at top left, rgba(245, 158, 11, 0.18), transparent 30%),
+    radial-gradient(circle at top right, rgba(14, 116, 144, 0.16), transparent 26%),
+    linear-gradient(180deg, #f7f3ec 0%, #eef3f6 100%);
+}
+
+body {
+  color: var(--portfolio-ink);
+  background: transparent;
+  font-family:
+    "IBM Plex Sans",
+    "Segoe UI",
+    sans-serif;
+}
+
+a {
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.16em;
+}
+
+::selection {
+  background: rgba(245, 158, 11, 0.28);
+}
