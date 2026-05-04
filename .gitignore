@@ -1,12 +1,14 @@
-assets/external/
 .states
 *.db
-.web
 .DS_Store
 .env
 __pycache__/
 *.py[cod]
+*.egg-info/
 .venv/
 .pytest_cache/
 .ruff_cache/
+build/
+dist/
 portfolio_app/generated/
+src/assets/portfolio_content.json

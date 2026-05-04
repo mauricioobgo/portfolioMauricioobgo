@@ -1,21 +1,80 @@
 - title: DS4A / Colombia 6.0
   issuer: Correlation One
+  level: Program
+  category: Data Science
+  status: Completed
+  featured: false
   issued: Jul 2022
   credential_id: "54847879"
-  credential_url: https://www.linkedin.com/in/mauricioobgo/details/certifications/
+  linkedin_url: https://www.linkedin.com/in/mauricioobgo/details/certifications/
   credential_label: View on LinkedIn
+  skills:
+    - Applied data science
+    - Analytics
+    - Python
+- title: AWS Certified Solutions Architect - Professional
+  issuer: Amazon Web Services
+  level: Professional
+  category: Cloud Architecture
+  status: Active
+  featured: true
+  issued: Listed on LinkedIn
+  linkedin_url: https://www.linkedin.com/in/mauricioobgo/details/certifications/
+  credential_label: View on LinkedIn
+  skills:
+    - AWS
+    - Architecture
+    - Distributed Systems
+    - Security
+    - Cost Optimization
+- title: AWS Certified Machine Learning - Specialty
+  issuer: Amazon Web Services
+  level: Specialty
+  category: Machine Learning
+  status: Active
+  featured: true
+  issued: Listed on LinkedIn
+  linkedin_url: https://www.linkedin.com/in/mauricioobgo/details/certifications/
+  credential_label: View on LinkedIn
+  skills:
+    - Machine Learning
+    - MLOps
+    - Data Engineering
+    - AWS
+    - AI Systems
 - title: Google Analytics Beginners
   issuer: Google
+  level: Foundations
+  category: Analytics
+  status: Completed
+  featured: false
   issued: Jul 2020
-  credential_url: https://www.linkedin.com/in/mauricioobgo/details/certifications/
+  linkedin_url: https://www.linkedin.com/in/mauricioobgo/details/certifications/
   credential_label: View on LinkedIn
+  skills:
+    - Analytics
+    - Digital measurement
 - title: Introduction to TensorFlow for Artificial Intelligence, Machine Learning, and Deep Learning
   issuer: Coursera
+  level: Foundations
+  category: Machine Learning
+  status: Completed
+  featured: false
   issued: Jul 2020
-  credential_url: https://www.linkedin.com/in/mauricioobgo/details/certifications/
+  linkedin_url: https://www.linkedin.com/in/mauricioobgo/details/certifications/
   credential_label: View on LinkedIn
+  skills:
+    - TensorFlow
+    - Machine Learning
+    - Deep Learning
 - title: Best student award
   issuer: Universidad de la Sabana
+  level: Award
+  category: Academic
+  status: Completed
+  featured: false
   issued: Oct 2013
-  credential_url: https://www.linkedin.com/in/mauricioobgo/details/certifications/
+  linkedin_url: https://www.linkedin.com/in/mauricioobgo/details/certifications/
   credential_label: View on LinkedIn
+  skills:
+    - Academic excellence

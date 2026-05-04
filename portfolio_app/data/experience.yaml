@@ -1,22 +1,23 @@
 - role: Data Engineer
   company: Globant
-  date: Current role listed on LinkedIn
+  date: Current role listed on public LinkedIn
   location: Bogota, Colombia
-  description: Public LinkedIn profile currently lists Globant as the active company, with Mauricio positioned around modern data engineering and AI-oriented delivery.
+  description: Public LinkedIn profile currently lists Globant as the active company, with delivery centered on modern data engineering, AI-oriented workflows, and cloud execution.
   highlights:
     - Public LinkedIn profile shows Globant as the current employer.
-    - Focused on practical AI workflows, cloud-native delivery, and modern data engineering.
+    - Working close to practical AI workflows, platform delivery, and modern data engineering patterns.
+    - Current title and exact dates remain intentionally conservative until a public source confirms them more precisely.
   company_url: https://www.globant.com/
   reference_url: https://www.linkedin.com/in/mauricioobgo/
   reference_label: LinkedIn
 - role: Technical Account Manager
   company: Amazon Web Services
-  date: May 2024 - Recent
+  date: May 2024 - Previous role
   location: Colombia
-  description: Worked with AWS customers on architecture reliability, Well-Architected guidance, cost optimization, and cloud intelligence practices.
+  description: Worked with AWS customers on architecture reliability, Well-Architected guidance, cost optimization, Redshift performance, and cloud intelligence practices.
   highlights:
     - Delivered recommendations across resiliency, security, and operational excellence.
-    - Built cost and usage visibility workflows with Python, Athena, Glue, S3, and QuickSight.
+    - Built cost and usage visibility workflows with Python, Athena, Glue, S3, and analytics services.
     - Supported migrations and service adoption with architecture guidance tailored to client workloads.
   company_url: https://aws.amazon.com/
   reference_url: https://www.linkedin.com/in/mauricioobgo/
@@ -25,7 +26,7 @@
   company: Publicis Media
   date: Feb 2023 - May 2024
   location: Hybrid delivery
-  description: Designed and operated high-value data pipelines, dashboard architectures, and marketing analytics workflows for major client programs.
+  description: Designed and operated high-value data pipelines, dashboard architectures, and marketing analytics workflows for enterprise client programs.
   highlights:
     - Built data ingestion and transformation pipelines for Stellantis programs on AWS and GCP.
     - Created architecture patterns for Tableau and Looker-based insight delivery.

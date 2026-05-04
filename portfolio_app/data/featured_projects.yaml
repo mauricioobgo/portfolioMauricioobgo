@@ -1,0 +1,122 @@
+- name: AI DataOps Platform
+  category: LLM
+  summary: Production-style platform for ingesting, validating, querying, and understanding datasets with LLM support.
+  problem: Teams need one workflow for data ingestion, validation, warehouse curation, and AI-assisted dataset understanding.
+  solution: Designed a Python-first platform with async APIs, governed dataset flows, retrieval-enhanced assistance, and operational observability.
+  architecture: Event-driven ingestion, storage in S3, curated dbt models, vector-backed retrieval, and deployment checks wired through CI/CD.
+  tech_stack:
+    - FastAPI
+    - PostgreSQL
+    - S3
+    - dbt
+    - pgvector
+    - AWS
+    - LLMs
+  highlights:
+    - Async ingestion API
+    - RAG assistant
+    - Data quality checks
+    - Observability
+    - CI/CD
+  github_url: https://github.com/mauricioobgo/langfuseExploration
+  status: Portfolio case study
+  filters:
+    - Backend
+    - Data Engineering
+    - LLM
+    - AWS
+    - FastAPI
+- name: Redshift Performance & Cost Analyzer
+  category: AWS
+  summary: Tooling for analyzing Redshift workloads, WLM behavior, and cost optimization opportunities.
+  problem: Redshift teams often lack a single view that combines workload patterns, tuning signals, and cost guidance.
+  solution: Built a diagnostic layer that reviews query history, warehouse behavior, and cost signals to surface practical optimization paths.
+  architecture: Workload snapshots flow into warehouse diagnostics, operational metrics, and recommendation outputs for both provisioned and serverless setups.
+  tech_stack:
+    - Python
+    - Redshift
+    - AWS
+    - SQL
+    - FastAPI
+    - CloudWatch
+  highlights:
+    - Query history analysis
+    - WLM insights
+    - Cost optimization recommendations
+    - Serverless and provisioned comparison
+  github_url: https://github.com/mauricioobgo/RedshiftDataApIReferenceArchitecture
+  status: Portfolio case study
+  filters:
+    - Data Engineering
+    - AWS
+    - FastAPI
+- name: LLM Healthcare / HL7 Agent
+  category: LLM
+  summary: AI agent that classifies HL7 messages, extracts structured patient context, and evaluates relevance for healthcare workflows.
+  problem: HL7 payloads are noisy, domain-heavy, and difficult to triage quickly inside operational healthcare flows.
+  solution: Designed an agent workflow that parses messages, enriches context, and produces structured outputs for downstream review.
+  architecture: HL7 ingestion feeds prompt pipelines, retrieval context, tool-calling steps, and evaluation datasets for safer iteration.
+  tech_stack:
+    - Python
+    - OpenAI SDK
+    - FastAPI
+    - Vector DB
+    - Structured outputs
+  highlights:
+    - HL7 parsing
+    - LLM classification
+    - Tool calling
+    - Evaluation dataset
+    - JSON structured output
+  status: Private delivery pattern
+  filters:
+    - Backend
+    - LLM
+    - FastAPI
+- name: Cloud Cost Intelligence Dashboard
+  category: AWS
+  summary: AWS FinOps dashboard that analyzes service usage and recommends cost optimizations.
+  problem: Cloud teams need cost transparency that is technical enough for engineers and practical enough for platform planning.
+  solution: Combined billing, usage, and warehouse views into an engineering-friendly dashboard that supports cost-aware decisions.
+  architecture: Cost signals land in S3 and Athena, are modeled into decision views, and feed recommendation panels for engineering review.
+  tech_stack:
+    - AWS Cost Explorer
+    - Python
+    - FastAPI
+    - Athena
+    - Glue
+    - S3
+  highlights:
+    - Cost trend analysis
+    - S3 optimization
+    - Athena scan estimation
+    - Redshift cost insights
+  status: Portfolio case study
+  filters:
+    - AWS
+    - Data Engineering
+- name: FastAPI Production Template
+  category: Backend
+  summary: Backend template with production-ready architecture, delivery guardrails, and CI/CD foundations.
+  problem: Teams moving fast still need consistent architecture, migrations, testing, and deployment checks from day one.
+  solution: Created a reusable backend foundation that emphasizes clean structure, observability, and readiness for team scale.
+  architecture: Layered application boundaries, database migrations, test harnesses, container builds, and pipeline automation.
+  tech_stack:
+    - Python 3.14
+    - FastAPI
+    - SQLAlchemy
+    - Alembic
+    - PostgreSQL
+    - Docker
+    - GitHub Actions
+  highlights:
+    - Clean architecture
+    - Auth-ready structure
+    - Logging
+    - Tests
+    - CI/CD
+  status: Portfolio case study
+  filters:
+    - Backend
+    - FastAPI
+    - AWS

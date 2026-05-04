@@ -1,20 +1,21 @@
 [project]
 name = "portfolio-mauricio"
 version = "0.2.0"
-description = "Reflex-based portfolio for Mauricio Obando"
+description = "Python-only Flet portfolio for Mauricio Obando"
 requires-python = ">=3.14"
 dependencies = [
-  "reflex>=0.8.12",
+  "flet>=0.84.0",
+  "flet-lottie>=0.84.0",
   "httpx>=0.28.1",
-  "pydantic>=2.11.4",
-  "pyyaml>=6.0.2"
+  "pyyaml>=6.0.2",
 ]
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
+  "flet-cli>=0.84.0",
   "pytest>=8.3.5",
   "ruff>=0.11.8",
-  "mypy>=1.15.0"
+  "mypy>=1.15.0",
 ]
 
 [tool.ruff]
@@ -23,6 +24,22 @@ target-version = "py314"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.flet.app]
+path = "src"
+module = "main.py"
+
+[tool.flet]
+product = "Mauricio Obando Portfolio"
+company = "Mauricio Obando"
+
+[tool.flet.web]
+base_url = "/portfolioMauricioobgo/"
+route_url_strategy = "hash"
+renderer = "auto"
+pwa_background_color = "#071018"
+pwa_theme_color = "#12F7A0"
+wasm = true
 
 [tool.setuptools.packages.find]
 include = ["portfolio_app*"]
