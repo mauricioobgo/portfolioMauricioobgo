@@ -45,7 +45,7 @@ def HeroPanel(page: ft.Page, content: dict[str, Any]) -> ft.Control:
 
     ctas = [
         ft.FilledButton(
-            text="View Projects",
+            content="View Projects",
             style=ft.ButtonStyle(
                 bgcolor=PRIMARY,
                 color="#020617",
@@ -55,7 +55,7 @@ def HeroPanel(page: ft.Page, content: dict[str, Any]) -> ft.Control:
             on_click=lambda _: _scroll_to(page, "projects"),
         ),
         ft.OutlinedButton(
-            text="GitHub",
+            content="GitHub",
             style=ft.ButtonStyle(
                 color=TEXT,
                 padding=ft.Padding.symmetric(horizontal=20, vertical=18),
@@ -64,7 +64,7 @@ def HeroPanel(page: ft.Page, content: dict[str, Any]) -> ft.Control:
             on_click=lambda _: page.launch_url(profile.get("github_url")),
         ),
         ft.OutlinedButton(
-            text="LinkedIn",
+            content="LinkedIn",
             style=ft.ButtonStyle(
                 color=TEXT,
                 padding=ft.Padding.symmetric(horizontal=20, vertical=18),
@@ -73,7 +73,7 @@ def HeroPanel(page: ft.Page, content: dict[str, Any]) -> ft.Control:
             on_click=lambda _: page.launch_url(social_links.get("linkedin")),
         ),
         ft.OutlinedButton(
-            text="Download Resume",
+            content="Download Resume",
             style=ft.ButtonStyle(
                 color=TEXT,
                 padding=ft.Padding.symmetric(horizontal=20, vertical=18),
@@ -159,8 +159,8 @@ def HeroPanel(page: ft.Page, content: dict[str, Any]) -> ft.Control:
         padding=ft.Padding.all(28),
         bgcolor=alpha(CARD, 0.95),
         gradient=ft.LinearGradient(
-            begin=ft.alignment.top_left,
-            end=ft.alignment.bottom_right,
+            begin=ft.Alignment(-1, -1),
+            end=ft.Alignment(1, 1),
             colors=[alpha(PANEL, 0.98), alpha("#111827", 0.98), alpha("#091321", 0.98)],
         ),
     )

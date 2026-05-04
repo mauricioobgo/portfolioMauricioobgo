@@ -21,8 +21,9 @@ def _timeline_item(page: ft.Page, item: dict[str, Any], *, accent: str) -> ft.Co
                     ft.Container(width=2, height=180, bgcolor=alpha(accent, 0.35)),
                 ],
             ),
-            ft.Expanded(
-                panel(
+            ft.Container(
+                expand=True,
+                content=panel(
                     ft.Column(
                         spacing=14,
                         controls=[
@@ -57,7 +58,10 @@ def _timeline_item(page: ft.Page, item: dict[str, Any], *, accent: str) -> ft.Co
                                         vertical_alignment=ft.CrossAxisAlignment.START,
                                         controls=[
                                             ft.Text(">", color=accent, font_family="Mono"),
-                                            ft.Expanded(ft.Text(highlight, color=TEXT, size=14)),
+                                            ft.Container(
+                                                expand=True,
+                                                content=ft.Text(highlight, color=TEXT, size=14),
+                                            ),
                                         ],
                                     )
                                     for highlight in item.get("highlights", [])
@@ -82,7 +86,7 @@ def _timeline_item(page: ft.Page, item: dict[str, Any], *, accent: str) -> ft.Co
                             ),
                         ],
                     )
-                )
+                ),
             ),
         ],
     )

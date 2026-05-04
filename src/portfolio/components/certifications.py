@@ -43,7 +43,7 @@ def CertificationCard(page: ft.Page, certification: dict[str, Any]) -> ft.Contro
                     ],
                 ),
                 ft.FilledButton(
-                    text=certification.get("credential_label", "View on LinkedIn"),
+                    content=certification.get("credential_label", "View on LinkedIn"),
                     style=ft.ButtonStyle(
                         bgcolor=accent,
                         color="#020617",

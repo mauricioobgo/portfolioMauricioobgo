@@ -70,7 +70,10 @@ def ProjectCard(page: ft.Page, project: dict[str, Any]) -> ft.Control:
                                 vertical_alignment=ft.CrossAxisAlignment.START,
                                 controls=[
                                     ft.Text(">", color=PRIMARY, font_family="Mono"),
-                                    ft.Expanded(ft.Text(highlight, color=MUTED, size=14)),
+                                    ft.Container(
+                                        expand=True,
+                                        content=ft.Text(highlight, color=MUTED, size=14),
+                                    ),
                                 ],
                             )
                             for highlight in project.get("highlights", [])
