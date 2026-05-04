@@ -1,29 +1,18 @@
-# This file is the main docker file configurations
+FROM python:3.14-slim
 
-# Official Node JS runtime as a parent image
-FROM node:10.16.0-alpine
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV UV_LINK_MODE=copy
 
-# Set the working directory to ./app
 WORKDIR /app
 
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
-COPY package.json ./
+RUN pip install --no-cache-dir uv
 
-RUN apk add --no-cache git
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --no-dev
 
-# Install any needed packages
-RUN npm install
+COPY . .
 
-# Audit fix npm packages
-RUN npm audit fix
+EXPOSE 3000 8000
 
-# Bundle app source
-COPY . /app
-
-# Make port 3000 available to the world outside this container
-EXPOSE 3000
-
-# Run app.js when the container launches
-CMD ["npm", "start"]
+CMD ["uv", "run", "reflex", "run", "--env", "prod", "--frontend-port", "3000", "--backend-port", "8000", "--backend-host", "0.0.0.0"]
