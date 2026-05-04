@@ -4,6 +4,16 @@
   credential_id: "54847879"
   credential_url: https://www.linkedin.com/in/mauricioobgo/details/certifications/
   credential_label: View on LinkedIn
+- title: AWS Certified Solutions Architect - Professional
+  issuer: Amazon Web Services
+  issued: Listed on LinkedIn
+  credential_url: https://www.linkedin.com/in/mauricioobgo/details/certifications/
+  credential_label: View on LinkedIn
+- title: AWS Certified Machine Learning - Specialty
+  issuer: Amazon Web Services
+  issued: Listed on LinkedIn
+  credential_url: https://www.linkedin.com/in/mauricioobgo/details/certifications/
+  credential_label: View on LinkedIn
 - title: Google Analytics Beginners
   issuer: Google
   issued: Jul 2020

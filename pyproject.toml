@@ -1,12 +1,10 @@
 [project]
 name = "portfolio-mauricio"
 version = "0.2.0"
-description = "Reflex-based portfolio for Mauricio Obando"
+description = "Python content and sync tooling for Mauricio Obando's Flutter portfolio"
 requires-python = ">=3.14"
 dependencies = [
-  "reflex>=0.8.12",
   "httpx>=0.28.1",
-  "pydantic>=2.11.4",
   "pyyaml>=6.0.2"
 ]
 

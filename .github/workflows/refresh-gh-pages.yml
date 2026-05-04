@@ -28,14 +28,15 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      EXPORT_ROOT: .web/build/client
-      ROUTE_DIR: .web/build/client/portfolioMauricioobgo
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v6
         with:
           python-version: "3.14"
       - uses: astral-sh/setup-uv@v7
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
       - run: uv sync --frozen
       - id: scope
         run: |
@@ -50,31 +51,22 @@ jobs:
           fi
         shell: bash
       - run: uv run python -m portfolio_app.scripts.sync_data --scope ${{ steps.scope.outputs.sync_scope }}
-      - run: uv run reflex export --frontend-only --no-zip
-      - name: Prepare publish folder
-        id: publish
+      - run: uv run python -m portfolio_app.scripts.build_frontend_content
+      - run: flutter pub get
+        working-directory: frontend
+      - run: flutter build web --release --base-href /portfolioMauricioobgo/ --pwa-strategy=none
+        working-directory: frontend
+      - name: Verify publish folder
         run: |
-          publish_dir="$EXPORT_ROOT"
-
-          if [[ -f "$EXPORT_ROOT/index.html" ]]; then
-            publish_dir="$EXPORT_ROOT"
-          elif [[ -f "$ROUTE_DIR/index.html" && -f "$ROUTE_DIR/404.html" && -f "$ROUTE_DIR/manifest.json" && -d "$ROUTE_DIR/assets" ]]; then
-            publish_dir="$ROUTE_DIR"
-          elif [[ -f "$ROUTE_DIR/index.html" ]]; then
-            cp "$ROUTE_DIR/index.html" "$EXPORT_ROOT/index.html"
-          fi
-
-          test -f "$publish_dir/index.html"
-          test -f "$publish_dir/404.html"
-          test -f "$publish_dir/manifest.json"
-          test -d "$publish_dir/assets"
-
-          touch "$publish_dir/.nojekyll"
-          echo "publish_dir=$publish_dir" >> "$GITHUB_OUTPUT"
+          test -f frontend/build/web/index.html
+          test -f frontend/build/web/manifest.json
+          test -f frontend/build/web/favicon.png
+          test -d frontend/build/web/assets
+          touch frontend/build/web/.nojekyll
         shell: bash
       - uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
-          folder: ${{ steps.publish.outputs.publish_dir }}
+          folder: frontend/build/web
           clean: true
           single-commit: true

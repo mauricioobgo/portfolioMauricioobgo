@@ -1,4 +1,4 @@
-FROM python:3.14-slim
+FROM python:3.14-slim AS content
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
@@ -13,6 +13,21 @@ RUN uv sync --frozen --no-dev
 
 COPY . .
 
-EXPOSE 3000 8000
+RUN uv run python -m portfolio_app.scripts.build_frontend_content
 
-CMD ["uv", "run", "reflex", "run", "--env", "prod", "--frontend-port", "3000", "--backend-port", "8000", "--backend-host", "0.0.0.0"]
+FROM ghcr.io/cirruslabs/flutter:stable AS frontend-build
+
+WORKDIR /app/frontend
+
+COPY --from=content /app/frontend /app/frontend
+
+RUN flutter pub get
+RUN flutter build web --release --base-href /portfolioMauricioobgo/ --pwa-strategy=none
+
+FROM nginx:1.27-alpine
+
+COPY --from=frontend-build /app/frontend/build/web /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

@@ -1,0 +1,264 @@
+{
+  "metadata": {
+    "generated_at": "2026-05-04T02:34:38+00:00",
+    "frontend": "flutter",
+    "refresh_log": {
+      "scope": "weekly",
+      "executed_at": "2026-05-04T00:06:45+00:00",
+      "updates": [
+        "github_repositories_weekly"
+      ]
+    }
+  },
+  "profile": {
+    "name": "Mauricio Obando",
+    "title": "AI-Ready Data Engineer",
+    "subtitle": "Building cloud pipelines, analytics systems, and practical AI workflows.",
+    "about": "Senior data engineer with 7+ years across cloud architecture, production pipelines, analytics platforms, and AI-assisted delivery.",
+    "resume_link": "https://drive.google.com/file/d/197iszNCfu2tIdIlV5CLF--6Lk3bMSBFH/view?usp=sharing",
+    "email": "mauricioobgo@gmail.com",
+    "social_links": {
+      "github": "https://github.com/mauricioobgo",
+      "linkedin": "https://www.linkedin.com/in/mauricioobgo/"
+    },
+    "skills": [
+      "AI-assisted engineering workflows",
+      "Cloud data platforms on AWS and GCP",
+      "Python, SQL, Spark, and DBT pipelines",
+      "Analytics architecture and experimentation"
+    ],
+    "github_url": "https://github.com/mauricioobgo",
+    "linkedin_certifications_url": "https://www.linkedin.com/in/mauricioobgo/details/certifications/",
+    "avatar_url": "https://avatars.githubusercontent.com/u/14032180?v=4",
+    "location": "Bogot\u00e1 Colombia",
+    "company": "AWS",
+    "bio": "Passionate about leveraging the power of data and the cloud to drive meaningful insights and innovation. ",
+    "github_followers": 7,
+    "github_public_repos": 35,
+    "github_updated_at": "2026-03-26T16:13:11Z"
+  },
+  "experience": [
+    {
+      "role": "Data Engineer",
+      "company": "Globant",
+      "date": "Current role listed on LinkedIn",
+      "location": "Bogota, Colombia",
+      "description": "Public LinkedIn profile currently lists Globant as the active company, with Mauricio positioned around modern data engineering and AI-oriented delivery.",
+      "highlights": [
+        "Public LinkedIn profile shows Globant as the current employer.",
+        "Focused on practical AI workflows, cloud-native delivery, and modern data engineering."
+      ],
+      "company_url": "https://www.globant.com/",
+      "reference_url": "https://www.linkedin.com/in/mauricioobgo/",
+      "reference_label": "LinkedIn"
+    },
+    {
+      "role": "Technical Account Manager",
+      "company": "Amazon Web Services",
+      "date": "May 2024 - Recent",
+      "location": "Colombia",
+      "description": "Worked with AWS customers on architecture reliability, Well-Architected guidance, cost optimization, and cloud intelligence practices.",
+      "highlights": [
+        "Delivered recommendations across resiliency, security, and operational excellence.",
+        "Built cost and usage visibility workflows with Python, Athena, Glue, S3, and QuickSight.",
+        "Supported migrations and service adoption with architecture guidance tailored to client workloads."
+      ],
+      "company_url": "https://aws.amazon.com/",
+      "reference_url": "https://www.linkedin.com/in/mauricioobgo/",
+      "reference_label": "LinkedIn"
+    },
+    {
+      "role": "Data Engineer Specialist",
+      "company": "Publicis Media",
+      "date": "Feb 2023 - May 2024",
+      "location": "Hybrid delivery",
+      "description": "Designed and operated high-value data pipelines, dashboard architectures, and marketing analytics workflows for major client programs.",
+      "highlights": [
+        "Built data ingestion and transformation pipelines for Stellantis programs on AWS and GCP.",
+        "Created architecture patterns for Tableau and Looker-based insight delivery.",
+        "Developed a classification model for marketing moments to purchase from Google Ads interaction data."
+      ],
+      "company_url": "https://www.publicismedia.com/",
+      "reference_url": "https://www.linkedin.com/in/mauricioobgo/",
+      "reference_label": "LinkedIn"
+    }
+  ],
+  "projects": [
+    {
+      "name": "Commercial Optimization Platform",
+      "summary": "Platform for commercial performance optimization with cloud-native data pipelines.",
+      "tags": [
+        "AWS",
+        "Forecasting",
+        "Decision systems"
+      ],
+      "impact": "Designed to connect revenue planning with analytics-ready cloud pipelines."
+    },
+    {
+      "name": "Marketing Mix Modeling Pipelines",
+      "summary": "CI/CD-enabled data pipelines to train and evaluate MMM workloads.",
+      "tags": [
+        "Python",
+        "CI/CD",
+        "Experimentation"
+      ],
+      "impact": "Brought reproducible training and evaluation flow into marketing analytics delivery."
+    },
+    {
+      "name": "LLM Observability Lab",
+      "summary": "Evaluation-first sandbox for tracing, scoring, and debugging LLM application behavior.",
+      "link": "https://github.com/mauricioobgo/langfuseExploration",
+      "tags": [
+        "Langfuse",
+        "GenAI",
+        "FastAPI"
+      ],
+      "impact": "Turned current AI experimentation into a visible engineering narrative on the public portfolio."
+    }
+  ],
+  "certifications": [
+    {
+      "title": "DS4A / Colombia 6.0",
+      "issuer": "Correlation One",
+      "issued": "Jul 2022",
+      "credential_id": "54847879",
+      "credential_url": "https://www.linkedin.com/in/mauricioobgo/details/certifications/",
+      "credential_label": "View on LinkedIn"
+    },
+    {
+      "title": "AWS Certified Solutions Architect - Professional",
+      "issuer": "Amazon Web Services",
+      "issued": "Listed on LinkedIn",
+      "credential_url": "https://www.linkedin.com/in/mauricioobgo/details/certifications/",
+      "credential_label": "View on LinkedIn"
+    },
+    {
+      "title": "AWS Certified Machine Learning - Specialty",
+      "issuer": "Amazon Web Services",
+      "issued": "Listed on LinkedIn",
+      "credential_url": "https://www.linkedin.com/in/mauricioobgo/details/certifications/",
+      "credential_label": "View on LinkedIn"
+    },
+    {
+      "title": "Google Analytics Beginners",
+      "issuer": "Google",
+      "issued": "Jul 2020",
+      "credential_url": "https://www.linkedin.com/in/mauricioobgo/details/certifications/",
+      "credential_label": "View on LinkedIn"
+    },
+    {
+      "title": "Introduction to TensorFlow for Artificial Intelligence, Machine Learning, and Deep Learning",
+      "issuer": "Coursera",
+      "issued": "Jul 2020",
+      "credential_url": "https://www.linkedin.com/in/mauricioobgo/details/certifications/",
+      "credential_label": "View on LinkedIn"
+    },
+    {
+      "title": "Best student award",
+      "issuer": "Universidad de la Sabana",
+      "issued": "Oct 2013",
+      "credential_url": "https://www.linkedin.com/in/mauricioobgo/details/certifications/",
+      "credential_label": "View on LinkedIn"
+    }
+  ],
+  "github": {
+    "profile": {
+      "login": "mauricioobgo",
+      "name": "Mauricio Obando",
+      "company": "AWS",
+      "location": "Bogot\u00e1 Colombia",
+      "bio": "Passionate about leveraging the power of data and the cloud to drive meaningful insights and innovation. ",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14032180?v=4",
+      "html_url": "https://github.com/mauricioobgo",
+      "followers": 7,
+      "public_repos": 35,
+      "updated_at": "2026-03-26T16:13:11Z"
+    },
+    "repositories": [
+      {
+        "name": "portfolioMauricioobgo",
+        "html_url": "https://github.com/mauricioobgo/portfolioMauricioobgo",
+        "description": "This is a Humble DataScientist DataEngineer Portfolio, that is always eager to learn more and develop things that change the world",
+        "updated_at": "2026-05-03T23:28:03Z",
+        "stargazers_count": 0
+      },
+      {
+        "name": "langfuseExploration",
+        "html_url": "https://github.com/mauricioobgo/langfuseExploration",
+        "description": "This is repository for langfuse exploration",
+        "updated_at": "2026-04-29T15:27:17Z",
+        "stargazers_count": 0
+      },
+      {
+        "name": "alembic_demo",
+        "html_url": "https://github.com/mauricioobgo/alembic_demo",
+        "description": null,
+        "updated_at": "2026-04-17T00:37:23Z",
+        "stargazers_count": 0
+      },
+      {
+        "name": "CloudRunFunctionPostgreSQL",
+        "html_url": "https://github.com/mauricioobgo/CloudRunFunctionPostgreSQL",
+        "description": null,
+        "updated_at": "2026-02-18T15:47:58Z",
+        "stargazers_count": 0
+      },
+      {
+        "name": "kickstart.nvim",
+        "html_url": "https://github.com/mauricioobgo/kickstart.nvim",
+        "description": "A launch point for your personal nvim configuration",
+        "updated_at": "2026-02-13T16:20:52Z",
+        "stargazers_count": 0
+      },
+      {
+        "name": "portfolioOptimizator",
+        "html_url": "https://github.com/mauricioobgo/portfolioOptimizator",
+        "description": "This is a repo that allow portfolio optimization based on preselected tickers and assets to invest",
+        "updated_at": "2026-01-18T00:47:29Z",
+        "stargazers_count": 0
+      },
+      {
+        "name": "cryptocurrencyInvestigation",
+        "html_url": "https://github.com/mauricioobgo/cryptocurrencyInvestigation",
+        "description": "Study of Cryptocurrency Proof of Market Asimmetry and bubble proof",
+        "updated_at": "2025-10-17T16:50:41Z",
+        "stargazers_count": 1
+      },
+      {
+        "name": "RedshiftDataApIReferenceArchitecture",
+        "html_url": "https://github.com/mauricioobgo/RedshiftDataApIReferenceArchitecture",
+        "description": "This is a repo for state a reference architecture for AWS Redshift Data API Usahe",
+        "updated_at": "2025-09-16T19:08:01Z",
+        "stargazers_count": 0
+      },
+      {
+        "name": "cid-framework",
+        "html_url": "https://github.com/mauricioobgo/cid-framework",
+        "description": null,
+        "updated_at": "2025-09-12T13:58:36Z",
+        "stargazers_count": 0
+      },
+      {
+        "name": "iam-identity-center-team",
+        "html_url": "https://github.com/mauricioobgo/iam-identity-center-team",
+        "description": "Open-source temporary elevated access solution for AWS IAM Identity Center.",
+        "updated_at": "2025-07-28T22:00:41Z",
+        "stargazers_count": 0
+      },
+      {
+        "name": "data-engineer-handbook",
+        "html_url": "https://github.com/mauricioobgo/data-engineer-handbook",
+        "description": "This is a repo with links to everything you'd ever want to learn about data engineering",
+        "updated_at": "2024-05-23T19:43:18Z",
+        "stargazers_count": 0
+      },
+      {
+        "name": "heartbeatApp",
+        "html_url": "https://github.com/mauricioobgo/heartbeatApp",
+        "description": null,
+        "updated_at": "2024-04-19T22:48:21Z",
+        "stargazers_count": 0
+      }
+    ]
+  }
+}
