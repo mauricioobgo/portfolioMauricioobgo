@@ -89,7 +89,9 @@ def _hero(profile: dict, generated_profile: dict, refresh_log: dict) -> rx.Compo
                     wrap="wrap",
                 ),
                 rx.hstack(
-                    rx.link("GitHub", href=social_links["github"], is_external=True, color="#102033"),
+                    rx.link(
+                        "GitHub", href=social_links["github"], is_external=True, color="#102033"
+                    ),
                     rx.text("•", color="#94a3b8"),
                     rx.link(
                         "LinkedIn",
@@ -97,43 +99,55 @@ def _hero(profile: dict, generated_profile: dict, refresh_log: dict) -> rx.Compo
                         is_external=True,
                         color="#102033",
                     ),
-                    *((
-                        rx.text("•", color="#94a3b8"),
-                        rx.text(location, color="#475569"),
-                    ) if location else ()),
+                    *(
+                        (
+                            rx.text("•", color="#94a3b8"),
+                            rx.text(location, color="#475569"),
+                        )
+                        if location
+                        else ()
+                    ),
                     spacing="3",
                     wrap="wrap",
                 ),
-                *((
-                    rx.text(
-                        refresh_copy,
-                        color="#64748b",
-                        font_size="0.92rem",
-                    ),
-                ) if refresh_copy else ()),
+                *(
+                    (
+                        rx.text(
+                            refresh_copy,
+                            color="#64748b",
+                            font_size="0.92rem",
+                        ),
+                    )
+                    if refresh_copy
+                    else ()
+                ),
                 align="start",
                 spacing="5",
                 width="100%",
                 max_width="42rem",
             ),
-            *((
-                rx.box(
-                    rx.image(
-                        src=avatar_url,
-                        alt=f"{profile['name']} GitHub avatar",
-                        width="100%",
-                        height="100%",
-                        object_fit="cover",
+            *(
+                (
+                    rx.box(
+                        rx.image(
+                            src=avatar_url,
+                            alt=f"{profile['name']} GitHub avatar",
+                            width="100%",
+                            height="100%",
+                            object_fit="cover",
+                        ),
+                        width="220px",
+                        height="220px",
+                        border_radius="28px",
+                        overflow="hidden",
+                        box_shadow="0 28px 60px rgba(16, 32, 51, 0.16)",
+                        border="1px solid rgba(255, 255, 255, 0.5)",
+                        flex_shrink="0",
                     ),
-                    width="220px",
-                    height="220px",
-                    border_radius="28px",
-                    overflow="hidden",
-                    box_shadow="0 28px 60px rgba(16, 32, 51, 0.16)",
-                    border="1px solid rgba(255, 255, 255, 0.5)",
-                    flex_shrink="0",
-                ),
-            ) if avatar_url else ()),
+                )
+                if avatar_url
+                else ()
+            ),
             width="100%",
             justify="between",
             align="center",
@@ -143,9 +157,7 @@ def _hero(profile: dict, generated_profile: dict, refresh_log: dict) -> rx.Compo
         width="100%",
         padding="2rem",
         border_radius="32px",
-        background=(
-            "linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(255, 255, 255, 0.88))"
-        ),
+        background=("linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(255, 255, 255, 0.88))"),
         border="1px solid rgba(255, 255, 255, 0.54)",
         box_shadow="0 32px 80px rgba(16, 32, 51, 0.12)",
     )
@@ -192,15 +204,19 @@ def _project_grid(title: str, items: list[dict], empty_state: str) -> rx.Compone
                     rx.box(
                         rx.heading(item["name"], size="5", color="#102033"),
                         rx.text(item["summary"], color="#475569"),
-                        *([
-                            rx.link(
-                                "Open repository",
-                                href=item["html_url"],
-                                is_external=True,
-                                color="#c06a15",
-                                font_weight="700",
-                            )
-                        ] if item.get("html_url") else []),
+                        *(
+                            [
+                                rx.link(
+                                    "Open repository",
+                                    href=item["html_url"],
+                                    is_external=True,
+                                    color="#c06a15",
+                                    font_weight="700",
+                                )
+                            ]
+                            if item.get("html_url")
+                            else []
+                        ),
                         padding="1.25rem",
                         border_radius="20px",
                         background="rgba(255, 255, 255, 0.82)",

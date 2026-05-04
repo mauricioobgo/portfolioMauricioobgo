@@ -48,10 +48,7 @@ app.add_page(
     home_page,
     route="/",
     title="Mauricio Obando | Data Engineering Portfolio",
-    description=(
-        "Data engineering, analytics, and cloud delivery portfolio for "
-        "Mauricio Obando."
-    ),
+    description=("Data engineering, analytics, and cloud delivery portfolio for Mauricio Obando."),
     image="android-chrome-384x384.png",
     meta=[
         {"name": "twitter:card", "content": "summary_large_image"},
