@@ -1,9 +1,41 @@
 import reflex as rx
 
 
-def section(title: str, *children: rx.Component) -> rx.Component:
+def section(
+    title: str,
+    *children: rx.Component,
+    eyebrow: str | None = None,
+    subtitle: str | None = None,
+    action_label: str | None = None,
+    action_url: str | None = None,
+) -> rx.Component:
     return rx.box(
-        rx.heading(title, size="6", color="#102033"),
+        rx.flex(
+            rx.vstack(
+                *([rx.text(eyebrow, class_name="section-eyebrow")] if eyebrow else []),
+                rx.heading(title, size="6", class_name="section-title"),
+                *([rx.text(subtitle, class_name="section-subtitle")] if subtitle else []),
+                spacing="1",
+                align="start",
+            ),
+            *(
+                [
+                    rx.link(
+                        action_label,
+                        href=action_url,
+                        is_external=True,
+                        class_name="section-action",
+                    )
+                ]
+                if action_label and action_url
+                else []
+            ),
+            width="100%",
+            justify="between",
+            align="start",
+            gap="1rem",
+            wrap="wrap",
+        ),
         rx.vstack(
             *children,
             spacing="4",
@@ -12,9 +44,5 @@ def section(title: str, *children: rx.Component) -> rx.Component:
         ),
         width="100%",
         padding="1.5rem",
-        border="1px solid rgba(16, 32, 51, 0.08)",
-        border_radius="24px",
-        background="rgba(255, 255, 255, 0.76)",
-        box_shadow="0 24px 60px rgba(16, 32, 51, 0.08)",
-        backdrop_filter="blur(18px)",
+        class_name="section-shell",
     )
