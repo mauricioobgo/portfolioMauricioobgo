@@ -1,12 +1,14 @@
 name: Mauricio Obando
-title: Hi all, I am Mauricio
-subtitle: "My passion for Data Engineering, Data Science, and Cloud"
+title: AI-Ready Data Engineer
+subtitle: "Building cloud pipelines, analytics systems, and practical AI workflows."
+about: "Senior data engineer with 7+ years across cloud architecture, production pipelines, analytics platforms, and AI-assisted delivery."
 resume_link: "https://drive.google.com/file/d/197iszNCfu2tIdIlV5CLF--6Lk3bMSBFH/view?usp=sharing"
 email: mauricioobgo@gmail.com
 social_links:
   github: https://github.com/mauricioobgo
   linkedin: https://www.linkedin.com/in/mauricioobgo/
 skills:
-  - Data Engineering and Data Science
-  - Cloud architecture across AWS, GCP and Azure
-  - Python and Spark data pipelines
+  - AI-assisted engineering workflows
+  - Cloud data platforms on AWS and GCP
+  - Python, SQL, Spark, and DBT pipelines
+  - Analytics architecture and experimentation

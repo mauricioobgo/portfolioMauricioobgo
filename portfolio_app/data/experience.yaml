@@ -1,8 +1,35 @@
+- role: Data Engineer
+  company: Globant
+  date: Current role listed on LinkedIn
+  location: Bogota, Colombia
+  description: Public LinkedIn profile currently lists Globant as the active company, with Mauricio positioned around modern data engineering and AI-oriented delivery.
+  highlights:
+    - Public LinkedIn profile shows Globant as the current employer.
+    - Focused on practical AI workflows, cloud-native delivery, and modern data engineering.
+  company_url: https://www.globant.com/
+  reference_url: https://www.linkedin.com/in/mauricioobgo/
+  reference_label: LinkedIn
 - role: Technical Account Manager
-  company: AWS
-  date: May 2024 - Present
-  description: Assist clients with AWS architecture and Well-Architected best practices.
-- role: Lead Data Engineer
-  company: Publicis Groupe
+  company: Amazon Web Services
+  date: May 2024 - Recent
+  location: Colombia
+  description: Worked with AWS customers on architecture reliability, Well-Architected guidance, cost optimization, and cloud intelligence practices.
+  highlights:
+    - Delivered recommendations across resiliency, security, and operational excellence.
+    - Built cost and usage visibility workflows with Python, Athena, Glue, S3, and QuickSight.
+    - Supported migrations and service adoption with architecture guidance tailored to client workloads.
+  company_url: https://aws.amazon.com/
+  reference_url: https://www.linkedin.com/in/mauricioobgo/
+  reference_label: LinkedIn
+- role: Data Engineer Specialist
+  company: Publicis Media
   date: Feb 2023 - May 2024
-  description: Led ingestion and transformation pipelines for analytics and data science use cases.
+  location: Hybrid delivery
+  description: Designed and operated high-value data pipelines, dashboard architectures, and marketing analytics workflows for major client programs.
+  highlights:
+    - Built data ingestion and transformation pipelines for Stellantis programs on AWS and GCP.
+    - Created architecture patterns for Tableau and Looker-based insight delivery.
+    - Developed a classification model for marketing moments to purchase from Google Ads interaction data.
+  company_url: https://www.publicismedia.com/
+  reference_url: https://www.linkedin.com/in/mauricioobgo/
+  reference_label: LinkedIn
