@@ -45,7 +45,7 @@ def NavigationBar(page: ft.Page) -> ft.Control:
                 ),
                 ft.Container(
                     col={"xs": 12, "md": 8},
-                    alignment=ft.alignment.center_right,
+                    alignment=ft.Alignment(1, 0),
                     content=ft.Row(
                         alignment=ft.MainAxisAlignment.END,
                         wrap=True,

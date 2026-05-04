@@ -56,7 +56,7 @@ def app_shell(content: ft.Control) -> ft.Control:
             controls=[
                 background_glow(),
                 ft.Container(
-                    alignment=ft.alignment.top_center,
+                    alignment=ft.Alignment(0, -1),
                     padding=ft.Padding(left=18, right=18, top=18, bottom=32),
                     content=ft.Container(width=SECTION_WIDTH, content=content),
                 ),
@@ -90,8 +90,8 @@ def background_glow() -> ft.Control:
             ft.Container(
                 expand=True,
                 gradient=ft.LinearGradient(
-                    begin=ft.alignment.top_left,
-                    end=ft.alignment.bottom_right,
+                    begin=ft.Alignment(-1, -1),
+                    end=ft.Alignment(1, 1),
                     colors=[BACKGROUND, "#06111F", "#020617"],
                 ),
             ),

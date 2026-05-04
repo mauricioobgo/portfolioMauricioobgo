@@ -25,7 +25,7 @@ def ContactCard(
                 ),
                 ft.Text(caption, color=MUTED, size=14),
                 ft.FilledButton(
-                    text="Open",
+                    content="Open",
                     style=ft.ButtonStyle(
                         bgcolor=accent,
                         color="#020617",
