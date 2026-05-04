@@ -17,6 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      EXPORT_ROOT: .web/build/client
+      ROUTE_DIR: .web/build/client/portfolioMauricioobgo
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v6
@@ -26,11 +28,30 @@ jobs:
       - run: uv sync --frozen
       - run: uv run python -m portfolio_app.scripts.sync_data --scope all
       - run: uv run reflex export --frontend-only --no-zip
-      - run: New-Item -ItemType File -Path .web/build/client/.nojekyll -Force | Out-Null
-        shell: pwsh
+      - name: Prepare publish folder
+        id: publish
+        run: |
+          publish_dir="$EXPORT_ROOT"
+
+          if [[ -f "$EXPORT_ROOT/index.html" ]]; then
+            publish_dir="$EXPORT_ROOT"
+          elif [[ -f "$ROUTE_DIR/index.html" && -f "$ROUTE_DIR/404.html" && -f "$ROUTE_DIR/manifest.json" && -d "$ROUTE_DIR/assets" ]]; then
+            publish_dir="$ROUTE_DIR"
+          elif [[ -f "$ROUTE_DIR/index.html" ]]; then
+            cp "$ROUTE_DIR/index.html" "$EXPORT_ROOT/index.html"
+          fi
+
+          test -f "$publish_dir/index.html"
+          test -f "$publish_dir/404.html"
+          test -f "$publish_dir/manifest.json"
+          test -d "$publish_dir/assets"
+
+          touch "$publish_dir/.nojekyll"
+          echo "publish_dir=$publish_dir" >> "$GITHUB_OUTPUT"
+        shell: bash
       - uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
-          folder: .web/build/client
+          folder: ${{ steps.publish.outputs.publish_dir }}
           clean: true
           single-commit: true

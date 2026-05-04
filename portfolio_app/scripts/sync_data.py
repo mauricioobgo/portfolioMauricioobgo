@@ -43,11 +43,13 @@ def run_sync(
     if scope in {"monthly", "all"}:
         user = fetch_user_fn(login)
         (out_dir / "profile.json").write_text(json.dumps(user, indent=2), encoding="utf-8")
-        refresh_log["updates"].extend([
-            "profile_monthly_review",
-            "linkedin_monthly_review",
-            "certifications_monthly_review",
-        ])
+        refresh_log["updates"].extend(
+            [
+                "profile_monthly_review",
+                "linkedin_monthly_review",
+                "certifications_monthly_review",
+            ]
+        )
 
     (out_dir / "refresh_log.json").write_text(
         json.dumps(refresh_log, indent=2),
