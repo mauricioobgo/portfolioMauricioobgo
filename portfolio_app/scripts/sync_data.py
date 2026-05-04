@@ -22,8 +22,9 @@ def run_sync(
     *,
     scope: str,
     login: str,
+    limit: int = 12,
     out_dir: Path | None = None,
-    fetch_repositories_fn: Callable[[str], list[dict]] = fetch_repositories,
+    fetch_repositories_fn: Callable[[str, int], list[dict]] = fetch_repositories,
     fetch_user_fn: Callable[[str], dict] = fetch_user,
 ) -> dict:
     out_dir = out_dir or _get_output_dir()
@@ -36,13 +37,13 @@ def run_sync(
     }
 
     if scope in {"weekly", "all"}:
-        repos = fetch_repositories_fn(login)
-        (out_dir / "repos.json").write_text(json.dumps(repos, indent=2), encoding="utf-8")
+        repos = fetch_repositories_fn(login, limit)
+        (out_dir / "github_repos.json").write_text(json.dumps(repos, indent=2), encoding="utf-8")
         refresh_log["updates"].append("github_repositories_weekly")
 
     if scope in {"monthly", "all"}:
         user = fetch_user_fn(login)
-        (out_dir / "profile.json").write_text(json.dumps(user, indent=2), encoding="utf-8")
+        (out_dir / "github_profile.json").write_text(json.dumps(user, indent=2), encoding="utf-8")
         refresh_log["updates"].extend(
             [
                 "profile_monthly_review",
@@ -71,8 +72,14 @@ def main() -> None:
         default=os.getenv("GITHUB_USERNAME", "mauricioobgo"),
         help="GitHub login",
     )
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=12,
+        help="How many repositories to fetch for the weekly refresh.",
+    )
     args = parser.parse_args()
-    run_sync(scope=args.scope, login=args.login)
+    run_sync(scope=args.scope, login=args.login, limit=args.limit)
 
 
 if __name__ == "__main__":

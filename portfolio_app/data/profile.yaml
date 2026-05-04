@@ -1,14 +1,30 @@
 name: Mauricio Obando
-title: AI-Ready Data Engineer
-subtitle: "Building cloud pipelines, analytics systems, and practical AI workflows."
-about: "Senior data engineer with 7+ years across cloud architecture, production pipelines, analytics platforms, and AI-assisted delivery."
+title: Backend, Data, Cloud, and AI Engineer
+subtitle: "I build production-grade data platforms, FastAPI backends, AWS architectures, Redshift analytics systems, and LLM-powered workflows."
+about: "Python-first engineer focused on backend, data, cloud, and AI systems. I work across production APIs, warehouse architecture, FinOps visibility, analytics pipelines, and applied LLM workflows with a strong delivery mindset."
+bio: "Backend, data, and cloud engineer with hands-on delivery across AWS, Redshift, dbt, Spark, FastAPI, and AI-assisted engineering workflows."
 resume_link: "https://drive.google.com/file/d/197iszNCfu2tIdIlV5CLF--6Lk3bMSBFH/view?usp=sharing"
 email: mauricioobgo@gmail.com
+location: Bogota, Colombia
+company: Globant
 social_links:
   github: https://github.com/mauricioobgo
   linkedin: https://www.linkedin.com/in/mauricioobgo/
 skills:
-  - AI-assisted engineering workflows
-  - Cloud data platforms on AWS and GCP
-  - Python, SQL, Spark, and DBT pipelines
-  - Analytics architecture and experimentation
+  - Python 3.14
+  - FastAPI
+  - AWS
+  - Redshift
+  - dbt
+  - LLMs
+  - Data Engineering
+  - Cloud Architecture
+hero_commands:
+  - "$ whoami"
+  - "mauricio_obando"
+  - ""
+  - "$ current_focus"
+  - "backend_engineering | data_platforms | cloud_architecture | llm_systems"
+  - ""
+  - "$ stack --top"
+  - "python3.14 fastapi aws redshift dbt llms spark"

@@ -9,6 +9,6 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 build/
+dist/
 portfolio_app/generated/
-frontend/build/
-frontend/.dart_tool/
+src/assets/portfolio_content.json

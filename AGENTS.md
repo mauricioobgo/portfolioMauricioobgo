@@ -8,32 +8,32 @@ This file applies to the whole repository.
 - Use `uv` for environment and dependency management.
 
 ## Frontend runtime
-- Frontend implementation: **Flutter Web** in `frontend/`.
-- Use Flutter stable for local frontend work and CI builds.
+- Frontend implementation: **Flet static web** from `src/main.py`.
+- Use the official `flet build web` flow for production builds and GitHub Pages deploys.
 
 ## Setup
 ```bash
 uv python install 3.14
-uv venv --python 3.14
+uv python pin 3.14
 uv sync
 ```
 
 ## Content build
-Generate the Flutter content payload from the Python source of truth:
+Generate the Flet content payload from the Python source of truth:
 ```bash
-uv run python -m portfolio_app.scripts.build_frontend_content
+uv run python -m portfolio_app.scripts.build_content
 ```
 
 ## Run
 ```bash
-cd frontend
-flutter pub get
-flutter run -d chrome --web-port 3000
+uv run flet run --web src/main.py
+uv run flet serve build/web
 ```
 
 ## Data sync
 ```bash
 uv run python -m portfolio_app.scripts.sync_data
+uv run python -m portfolio_app.scripts.sync_github
 ```
 
 ## Agent/Skill utilities (uvx)
@@ -46,10 +46,10 @@ uvx --from pytest pytest -q
 ```
 
 ## Notes for contributors
-- Keep content in `portfolio_app/data/*.yaml` and avoid hardcoding profile text in the Flutter UI.
+- Keep content in `portfolio_app/data/*.yaml` and avoid hardcoding profile text in the Flet UI.
 - Keep Python service/API logic under `portfolio_app/services`.
-- Keep Flutter widgets thin and data-driven; load portfolio content through `frontend/lib/services/portfolio_repository.dart`.
-- Treat `frontend/assets/data/portfolio_content.json` as generated output from Python, not the authoring source.
+- Keep the Flet controls thin and data-driven; load portfolio content through `src/assets/portfolio_content.json`.
+- Treat `src/assets/portfolio_content.json` as generated output from Python, not the authoring source.
 
 ## Refresh cadence (required)
 - GitHub repositories/project showcase: **weekly** refresh.
