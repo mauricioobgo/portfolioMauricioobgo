@@ -3,6 +3,7 @@ from types import SimpleNamespace
 import flet as ft
 
 from portfolio.app import build_portfolio_view
+from portfolio.components.projects import FILTER_ORDER, project_matches
 from portfolio_app.services.content import build_portfolio_content
 
 
@@ -21,3 +22,64 @@ def test_build_portfolio_view_builds_from_generated_content() -> None:
     view = build_portfolio_view(page, content)
 
     assert isinstance(view, ft.Control)
+
+
+def _walk(control: ft.Control):
+    yield control
+    for attribute in ("content", "leading", "title", "subtitle", "trailing"):
+        child = getattr(control, attribute, None)
+        if isinstance(child, ft.Control):
+            yield from _walk(child)
+    controls = getattr(control, "controls", None)
+    if isinstance(controls, list):
+        for child in controls:
+            if isinstance(child, ft.Control):
+                yield from _walk(child)
+
+
+def test_view_exposes_bound_links_and_interactive_controls() -> None:
+    page = _FakePage(width=1440)
+    content = build_portfolio_content()
+
+    view = build_portfolio_view(page, content)
+    controls = list(_walk(view))
+
+    external_links = [
+        control.data
+        for control in controls
+        if isinstance(getattr(control, "data", None), dict)
+        and control.data.get("kind") == "external_link"
+    ]
+    section_links = [
+        control.data
+        for control in controls
+        if isinstance(getattr(control, "data", None), dict)
+        and control.data.get("kind") == "section_link"
+    ]
+    assistant_prompts = [
+        control.data
+        for control in controls
+        if isinstance(getattr(control, "data", None), dict)
+        and control.data.get("kind") == "assistant_prompt"
+    ]
+    project_filters = [
+        control.data
+        for control in controls
+        if isinstance(getattr(control, "data", None), dict)
+        and control.data.get("kind") == "project_filter"
+    ]
+
+    required_external_labels = {"GitHub", "LinkedIn", "Download Resume", "Email"}
+    found_labels = {item["label"] for item in external_links if item.get("valid")}
+    assert required_external_labels <= found_labels
+    assert any(item["target"] == "projects" for item in section_links)
+    assert assistant_prompts
+    assert {item["filter"] for item in project_filters} == set(FILTER_ORDER)
+
+
+def test_project_filter_logic_matches_declared_filters() -> None:
+    project = {"filters": ["Backend", "AWS", "FastAPI"]}
+
+    assert project_matches(project, "All")
+    assert project_matches(project, "Backend")
+    assert not project_matches(project, "LLM")

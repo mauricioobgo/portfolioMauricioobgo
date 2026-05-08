@@ -5,7 +5,14 @@ from typing import Any
 import flet as ft
 
 from portfolio.components.cards import LottiePanel, MetricCard, SkillPill
+from portfolio.components.mascots import RetroDroidRunway
 from portfolio.components.terminal import TerminalBlock
+from portfolio.interaction import (
+    attach_hover_lift,
+    external_link_data,
+    normalize_external_url,
+    scroll_to,
+)
 from portfolio.responsive import hero_title_size, is_mobile
 from portfolio.theme import (
     CARD,
@@ -19,10 +26,6 @@ from portfolio.theme import (
     alpha,
     panel,
 )
-
-
-def _scroll_to(page: ft.Page, section_key: str) -> None:
-    page.scroll_to(scroll_key=section_key, duration=700)
 
 
 def HeroPanel(page: ft.Page, content: dict[str, Any]) -> ft.Control:
@@ -44,42 +47,54 @@ def HeroPanel(page: ft.Page, content: dict[str, Any]) -> ft.Control:
     ]
 
     ctas = [
-        ft.FilledButton(
-            content="View Projects",
-            style=ft.ButtonStyle(
-                bgcolor=PRIMARY,
-                color="#020617",
-                padding=ft.Padding.symmetric(horizontal=20, vertical=18),
-                shape=ft.RoundedRectangleBorder(radius=18),
+        attach_hover_lift(
+            ft.FilledButton(
+                content="View Projects",
+                style=ft.ButtonStyle(
+                    bgcolor=PRIMARY,
+                    color="#020617",
+                    padding=ft.Padding.symmetric(horizontal=20, vertical=18),
+                    shape=ft.RoundedRectangleBorder(radius=18),
+                ),
+                data={"kind": "section_link", "label": "View Projects", "target": "projects"},
+                on_click=lambda _: scroll_to(page, "projects"),
             ),
-            on_click=lambda _: _scroll_to(page, "projects"),
         ),
-        ft.OutlinedButton(
-            content="GitHub",
-            style=ft.ButtonStyle(
-                color=TEXT,
-                padding=ft.Padding.symmetric(horizontal=20, vertical=18),
-                shape=ft.RoundedRectangleBorder(radius=18),
+        attach_hover_lift(
+            ft.OutlinedButton(
+                content="GitHub",
+                style=ft.ButtonStyle(
+                    color=TEXT,
+                    padding=ft.Padding.symmetric(horizontal=20, vertical=18),
+                    shape=ft.RoundedRectangleBorder(radius=18),
+                ),
+                url=normalize_external_url(profile.get("github_url")),
+                data=external_link_data("GitHub", profile.get("github_url")),
             ),
-            on_click=lambda _: page.launch_url(profile.get("github_url")),
         ),
-        ft.OutlinedButton(
-            content="LinkedIn",
-            style=ft.ButtonStyle(
-                color=TEXT,
-                padding=ft.Padding.symmetric(horizontal=20, vertical=18),
-                shape=ft.RoundedRectangleBorder(radius=18),
+        attach_hover_lift(
+            ft.OutlinedButton(
+                content="LinkedIn",
+                style=ft.ButtonStyle(
+                    color=TEXT,
+                    padding=ft.Padding.symmetric(horizontal=20, vertical=18),
+                    shape=ft.RoundedRectangleBorder(radius=18),
+                ),
+                url=normalize_external_url(social_links.get("linkedin")),
+                data=external_link_data("LinkedIn", social_links.get("linkedin")),
             ),
-            on_click=lambda _: page.launch_url(social_links.get("linkedin")),
         ),
-        ft.OutlinedButton(
-            content="Download Resume",
-            style=ft.ButtonStyle(
-                color=TEXT,
-                padding=ft.Padding.symmetric(horizontal=20, vertical=18),
-                shape=ft.RoundedRectangleBorder(radius=18),
+        attach_hover_lift(
+            ft.OutlinedButton(
+                content="Download Resume",
+                style=ft.ButtonStyle(
+                    color=TEXT,
+                    padding=ft.Padding.symmetric(horizontal=20, vertical=18),
+                    shape=ft.RoundedRectangleBorder(radius=18),
+                ),
+                url=normalize_external_url(profile.get("resume_link")),
+                data=external_link_data("Download Resume", profile.get("resume_link")),
             ),
-            on_click=lambda _: page.launch_url(profile.get("resume_link")),
         ),
     ]
 
@@ -125,12 +140,16 @@ def HeroPanel(page: ft.Page, content: dict[str, Any]) -> ft.Control:
     right = ft.Column(
         spacing=18,
         controls=[
-            LottiePanel(
-                "AI / Cloud command center",
-                "lottie/ai_network.json",
-                caption="Static-web-safe animation panel with graceful fallback when assets are missing or unsupported.",
-                accent=PRIMARY,
+            attach_hover_lift(
+                LottiePanel(
+                    "AI / Cloud command center",
+                    "lottie/ai_network.json",
+                    caption="Animated network signals, control-plane rhythm, and static-web-safe motion for the hero console.",
+                    accent=PRIMARY,
+                ),
+                scale=1.01,
             ),
+            RetroDroidRunway(),
             panel(
                 ft.ResponsiveRow(
                     columns=12,

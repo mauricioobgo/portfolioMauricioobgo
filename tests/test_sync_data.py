@@ -12,6 +12,7 @@ def test_run_sync_weekly_writes_repositories_only(tmp_path) -> None:
         out_dir=tmp_path,
         fetch_repositories_fn=lambda _login, _limit: repos,
         fetch_user_fn=lambda _login: {"login": _login},
+        sync_resume_fn=lambda **_kwargs: {},
     )
 
     assert refresh_log["scope"] == "weekly"
@@ -22,20 +23,30 @@ def test_run_sync_weekly_writes_repositories_only(tmp_path) -> None:
 
 def test_run_sync_monthly_writes_profile_only(tmp_path) -> None:
     profile = {"login": "mauricioobgo", "avatar_url": "https://example.com/avatar.png"}
+    repos = [
+        {
+            "name": "portfolioMauricioobgo",
+            "html_url": "https://github.com/mauricioobgo/portfolioMauricioobgo",
+        }
+    ]
 
     refresh_log = run_sync(
         scope="monthly",
         login="mauricioobgo",
         out_dir=tmp_path,
-        fetch_repositories_fn=lambda _login, _limit: [],
+        fetch_repositories_fn=lambda _login, _limit: repos,
         fetch_user_fn=lambda _login: profile,
+        sync_resume_fn=lambda **_kwargs: {},
     )
 
     assert refresh_log["scope"] == "monthly"
     assert refresh_log["updates"] == [
+        "github_repositories_supporting_build",
         "profile_monthly_review",
         "linkedin_monthly_review",
         "certifications_monthly_review",
+        "resume_snapshot_monthly",
+        "ai_context_monthly",
     ]
     assert json.loads((tmp_path / "github_profile.json").read_text(encoding="utf-8")) == profile
-    assert not (tmp_path / "github_repos.json").exists()
+    assert json.loads((tmp_path / "github_repos.json").read_text(encoding="utf-8")) == repos

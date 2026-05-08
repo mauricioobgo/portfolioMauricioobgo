@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Callable
 
 from portfolio_app.services.github import fetch_repositories, fetch_user
+from portfolio_app.scripts.sync_resume import run_sync as sync_resume_run_sync
 
 
 def _utc_now_iso() -> str:
@@ -26,6 +27,7 @@ def run_sync(
     out_dir: Path | None = None,
     fetch_repositories_fn: Callable[[str, int], list[dict]] = fetch_repositories,
     fetch_user_fn: Callable[[str], dict] = fetch_user,
+    sync_resume_fn: Callable[..., dict] = sync_resume_run_sync,
 ) -> dict:
     out_dir = out_dir or _get_output_dir()
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -36,19 +38,26 @@ def run_sync(
         "updates": [],
     }
 
-    if scope in {"weekly", "all"}:
+    if scope in {"weekly", "monthly", "all"}:
         repos = fetch_repositories_fn(login, limit)
         (out_dir / "github_repos.json").write_text(json.dumps(repos, indent=2), encoding="utf-8")
-        refresh_log["updates"].append("github_repositories_weekly")
+        refresh_log["updates"].append(
+            "github_repositories_weekly"
+            if scope == "weekly"
+            else "github_repositories_supporting_build"
+        )
 
     if scope in {"monthly", "all"}:
         user = fetch_user_fn(login)
         (out_dir / "github_profile.json").write_text(json.dumps(user, indent=2), encoding="utf-8")
+        sync_resume_fn(out_dir=out_dir)
         refresh_log["updates"].extend(
             [
                 "profile_monthly_review",
                 "linkedin_monthly_review",
                 "certifications_monthly_review",
+                "resume_snapshot_monthly",
+                "ai_context_monthly",
             ]
         )
 

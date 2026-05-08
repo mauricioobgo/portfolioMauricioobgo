@@ -95,6 +95,7 @@ def background_glow() -> ft.Control:
                     colors=[BACKGROUND, "#06111F", "#020617"],
                 ),
             ),
+            *_grid_overlay(),
             ft.Container(
                 left=-140,
                 top=-80,
@@ -121,3 +122,27 @@ def background_glow() -> ft.Control:
             ),
         ],
     )
+
+
+def _grid_overlay() -> list[ft.Control]:
+    verticals = [
+        ft.Container(
+            left=60 + column * 96,
+            top=0,
+            bottom=0,
+            width=1,
+            bgcolor=alpha(BORDER, 0.18),
+        )
+        for column in range(10)
+    ]
+    horizontals = [
+        ft.Container(
+            left=0,
+            right=0,
+            top=80 + row * 92,
+            height=1,
+            bgcolor=alpha(BORDER, 0.18),
+        )
+        for row in range(6)
+    ]
+    return [*verticals, *horizontals]
