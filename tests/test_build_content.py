@@ -131,6 +131,31 @@ def test_build_content_merges_curated_and_generated(tmp_path, monkeypatch) -> No
         ),
         encoding="utf-8",
     )
+    (generated_dir / "resume_snapshot.json").write_text(
+        json.dumps(
+            {
+                "source_url": "https://drive.google.com/uc?export=download&id=demo",
+                "fetched_at": "2026-05-08T00:00:00+00:00",
+                "excerpt": "Mauricio resume excerpt",
+                "keywords": ["Python 3.14", "AWS", "FastAPI"],
+                "line_count": 12,
+            }
+        ),
+        encoding="utf-8",
+    )
+    (generated_dir / "ai_context.json").write_text(
+        json.dumps(
+            {
+                "profile": {"about": "Context summary from resume and portfolio."},
+                "system_prompt": "Use generated context.",
+            }
+        ),
+        encoding="utf-8",
+    )
+    (generated_dir / "resume_drift.json").write_text(
+        json.dumps({"status": "aligned", "matches": ["profile_name"], "missing_signals": []}),
+        encoding="utf-8",
+    )
 
     monkeypatch.setattr(content_service, "DATA_DIR", data_dir)
     monkeypatch.setattr(content_service, "GENERATED_DIR", generated_dir)
@@ -146,6 +171,8 @@ def test_build_content_merges_curated_and_generated(tmp_path, monkeypatch) -> No
         "experience",
         "featured_projects",
         "certifications",
+        "resume",
+        "assistant",
         "github",
     }
     assert payload["metadata"]["frontend"] == "flet"
@@ -156,6 +183,8 @@ def test_build_content_merges_curated_and_generated(tmp_path, monkeypatch) -> No
     assert (
         payload["certifications"][0]["title"] == "AWS Certified Solutions Architect - Professional"
     )
+    assert payload["resume"]["line_count"] == 12
+    assert payload["assistant"]["status"] == "CLI mode"
     assert payload["featured_projects"][0]["name"] == "AI DataOps Platform"
     assert payload["github"]["repositories"][0]["name"] == "portfolioMauricioobgo"
 

@@ -5,36 +5,41 @@ from typing import Any
 import flet as ft
 
 from portfolio.components.cards import BentoGrid, ConsoleFooter, SkillPill
+from portfolio.interaction import attach_hover_lift, external_link_data, normalize_external_url
 from portfolio.theme import MUTED, PRIMARY, SECONDARY, TEXT, panel
 
 
 def ContactCard(
     page: ft.Page, title: str, value: str, caption: str, url: str, accent: str
 ) -> ft.Control:
-    return panel(
-        ft.Column(
-            spacing=14,
-            controls=[
-                SkillPill(title.upper(), accent),
-                ft.Text(
-                    value,
-                    color=TEXT,
-                    size=22,
-                    font_family="DisplayBold",
-                    weight=ft.FontWeight.W_700,
-                ),
-                ft.Text(caption, color=MUTED, size=14),
-                ft.FilledButton(
-                    content="Open",
-                    style=ft.ButtonStyle(
-                        bgcolor=accent,
-                        color="#020617",
-                        shape=ft.RoundedRectangleBorder(radius=16),
+    return attach_hover_lift(
+        panel(
+            ft.Column(
+                spacing=14,
+                controls=[
+                    SkillPill(title.upper(), accent),
+                    ft.Text(
+                        value,
+                        color=TEXT,
+                        size=22,
+                        font_family="DisplayBold",
+                        weight=ft.FontWeight.W_700,
                     ),
-                    on_click=lambda _: page.launch_url(url),
-                ),
-            ],
-        )
+                    ft.Text(caption, color=MUTED, size=14),
+                    ft.FilledButton(
+                        content="Open",
+                        style=ft.ButtonStyle(
+                            bgcolor=accent,
+                            color="#020617",
+                            shape=ft.RoundedRectangleBorder(radius=16),
+                        ),
+                        url=normalize_external_url(url),
+                        data=external_link_data(title, url),
+                    ),
+                ],
+            )
+        ),
+        scale=1.02,
     )
 
 

@@ -129,6 +129,12 @@ TECH_STACK = [
     },
 ]
 
+DEFAULT_ASSISTANT_PROMPTS = [
+    "Summarize Mauricio for a backend platform engineering role.",
+    "Which AWS and data engineering strengths stand out the most?",
+    "How does Mauricio apply AI and LLM systems in practical delivery work?",
+]
+
 
 def _resolve_app_dir() -> Path:
     if (APP_DIR / "data").exists():
@@ -207,6 +213,18 @@ def _load_generated_repositories() -> list[dict[str, Any]]:
     )
 
 
+def _load_resume_snapshot() -> dict[str, Any]:
+    return _load_json(GENERATED_DIR / "resume_snapshot.json") or {}
+
+
+def _load_ai_context() -> dict[str, Any]:
+    return _load_json(GENERATED_DIR / "ai_context.json") or {}
+
+
+def _load_resume_drift() -> dict[str, Any]:
+    return _load_json(GENERATED_DIR / "resume_drift.json") or {}
+
+
 def _normalize_certification(certification: dict[str, Any]) -> dict[str, Any]:
     title = certification.get("title") or certification.get("name")
     credential_url = certification.get("credential_url") or certification.get("linkedin_url")
@@ -272,6 +290,7 @@ def _normalize_profile(
         "github_followers": generated_profile.get("followers", 0),
         "github_public_repos": generated_profile.get("public_repos", 0),
         "github_updated_at": generated_profile.get("updated_at"),
+        "assistant_prompts": profile.get("assistant_prompts") or DEFAULT_ASSISTANT_PROMPTS,
     }
 
 
@@ -305,6 +324,9 @@ def load_portfolio_content() -> dict[str, Any]:
         "certifications": _load_yaml(DATA_DIR / "certifications.yaml"),
         "generated_profile": _load_generated_profile(),
         "generated_repos": _load_generated_repositories(),
+        "resume_snapshot": _load_resume_snapshot(),
+        "ai_context": _load_ai_context(),
+        "resume_drift": _load_resume_drift(),
         "refresh_log": _load_json(GENERATED_DIR / "refresh_log.json") or {},
     }
 
@@ -318,6 +340,9 @@ def build_portfolio_content() -> dict[str, Any]:
     featured_projects = [_normalize_project(project) for project in content["featured_projects"]]
     experience = [_normalize_experience(item) for item in content["experience"]]
     github_summary = _build_github_summary(repositories)
+    resume_snapshot = content["resume_snapshot"]
+    ai_context = content["ai_context"]
+    resume_drift = content["resume_drift"]
 
     return {
         "metadata": {
@@ -326,6 +351,8 @@ def build_portfolio_content() -> dict[str, Any]:
             "runtime": "static_web",
             "deployment_url": "https://mauricioobgo.github.io/portfolioMauricioobgo/",
             "refresh_log": content["refresh_log"],
+            "assistant_mode": "cli",
+            "resume_drift": resume_drift,
         },
         "profile": profile,
         "hero_commands": profile.get("hero_commands")
@@ -344,6 +371,33 @@ def build_portfolio_content() -> dict[str, Any]:
         "experience": experience,
         "featured_projects": featured_projects,
         "certifications": certifications,
+        "resume": {
+            "source_url": profile.get("resume_link"),
+            "source_pdf_url": profile.get("resume_pdf_url"),
+            "synced_at": resume_snapshot.get("fetched_at"),
+            "excerpt": resume_snapshot.get("excerpt", ""),
+            "keywords": resume_snapshot.get("keywords", []),
+            "line_count": resume_snapshot.get("line_count", 0),
+        },
+        "assistant": {
+            "status": "CLI mode",
+            "description": (
+                "This GitHub Pages site stays static. The Mauricio AI assistant is prepared as a local/admin CLI "
+                "using generated portfolio context plus the public resume snapshot."
+            ),
+            "prompts": profile.get("assistant_prompts") or DEFAULT_ASSISTANT_PROMPTS,
+            "cli_command": (
+                "uv run python -m portfolio_app.scripts.chat_cv --question "
+                '"What production-grade systems does Mauricio build?"'
+            ),
+            "context_files": [
+                "portfolio_app/generated/ai_context.json",
+                "portfolio_app/generated/resume_snapshot.json",
+                "src/assets/portfolio_content.json",
+            ],
+            "resume_synced_at": resume_snapshot.get("fetched_at"),
+            "summary": ai_context.get("profile", {}).get("about") or profile.get("about"),
+        },
         "github": {
             "profile": _trim_generated_profile(generated_profile),
             "repositories": repositories,

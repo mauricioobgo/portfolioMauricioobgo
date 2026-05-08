@@ -4,6 +4,7 @@ from pathlib import Path
 
 import flet as ft
 
+from portfolio.interaction import attach_hover_lift, external_link_data, normalize_external_url
 from portfolio.responsive import section_title_size
 from portfolio.theme import (
     CARD,
@@ -40,23 +41,26 @@ def SkillPill(label: str, accent: str = PRIMARY) -> ft.Control:
 
 
 def MetricCard(label: str, value: str, caption: str, accent: str = PRIMARY) -> ft.Control:
-    return panel(
-        ft.Column(
-            spacing=10,
-            controls=[
-                ft.Text(label.upper(), color=accent, size=11, font_family="Mono"),
-                ft.Text(
-                    value,
-                    color=TEXT,
-                    size=26,
-                    font_family="DisplayBold",
-                    weight=ft.FontWeight.W_700,
-                ),
-                ft.Text(caption, color=MUTED, size=13),
-            ],
+    return attach_hover_lift(
+        panel(
+            ft.Column(
+                spacing=10,
+                controls=[
+                    ft.Text(label.upper(), color=accent, size=11, font_family="Mono"),
+                    ft.Text(
+                        value,
+                        color=TEXT,
+                        size=26,
+                        font_family="DisplayBold",
+                        weight=ft.FontWeight.W_700,
+                    ),
+                    ft.Text(caption, color=MUTED, size=13),
+                ],
+            ),
+            bgcolor=alpha(CARD, 0.96),
+            padding=ft.Padding.all(18),
         ),
-        bgcolor=alpha(CARD, 0.96),
-        padding=ft.Padding.all(18),
+        scale=1.03,
     )
 
 
@@ -109,7 +113,7 @@ def LottiePanel(
     accent: str = PRIMARY,
     icon: ft.IconData = ft.Icons.AUTO_AWESOME,
 ) -> ft.Control:
-    if ftl is None:
+    if ftl is None or not asset_exists(asset_path):
         return _lottie_fallback(title, caption, accent, icon)
 
     error_content = _lottie_fallback(title, caption, accent, icon)
@@ -162,10 +166,13 @@ def ConsoleFooter(metadata: dict) -> ft.Control:
     )
 
 
-def link_button(label: str, url: str, page: ft.Page, *, accent: str = PRIMARY) -> ft.Control:
+def link_button(label: str, url: str, *, accent: str = PRIMARY) -> ft.Control:
+    valid_url = normalize_external_url(url)
     return ft.TextButton(
         content=ft.Text(label, color=accent, size=13, font_family="Mono"),
-        on_click=(lambda _: page.launch_url(url)) if url else None,
+        url=valid_url,
+        disabled=valid_url is None,
+        data=external_link_data(label, url),
     )
 
 

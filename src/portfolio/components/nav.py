@@ -2,11 +2,8 @@ from __future__ import annotations
 
 import flet as ft
 
+from portfolio.interaction import attach_hover_lift, scroll_to, section_link_data
 from portfolio.theme import MUTED, PRIMARY, TEXT, alpha, panel
-
-
-def _scroll_to(page: ft.Page, section_key: str) -> None:
-    page.scroll_to(scroll_key=section_key, duration=650)
 
 
 def NavigationBar(page: ft.Page) -> ft.Control:
@@ -16,6 +13,7 @@ def NavigationBar(page: ft.Page) -> ft.Control:
         ("Experience", "experience"),
         ("Certifications", "certifications"),
         ("GitHub", "github"),
+        ("AI", "assistant"),
         ("Stack", "stack"),
         ("Contact", "contact"),
     ]
@@ -52,14 +50,20 @@ def NavigationBar(page: ft.Page) -> ft.Control:
                         spacing=10,
                         run_spacing=10,
                         controls=[
-                            ft.TextButton(
-                                content=ft.Text(label, color=TEXT, size=12, font_family="Mono"),
-                                style=ft.ButtonStyle(
-                                    side=ft.Border.all(1, alpha(MUTED, 0.35)),
-                                    padding=ft.Padding.symmetric(horizontal=16, vertical=14),
-                                    shape=ft.RoundedRectangleBorder(radius=18),
+                            attach_hover_lift(
+                                ft.TextButton(
+                                    content=ft.Text(label, color=TEXT, size=12, font_family="Mono"),
+                                    style=ft.ButtonStyle(
+                                        side=ft.Border.all(1, alpha(MUTED, 0.35)),
+                                        padding=ft.Padding.symmetric(horizontal=16, vertical=14),
+                                        shape=ft.RoundedRectangleBorder(radius=18),
+                                    ),
+                                    data=section_link_data(label, section_key),
+                                    on_click=lambda _, key=section_key: scroll_to(
+                                        page, key, duration=650
+                                    ),
                                 ),
-                                on_click=lambda _, key=section_key: _scroll_to(page, key),
+                                scale=1.04,
                             )
                             for label, section_key in items
                         ],

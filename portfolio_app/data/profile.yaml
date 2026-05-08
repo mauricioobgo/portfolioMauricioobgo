@@ -4,6 +4,7 @@ subtitle: "I build production-grade data platforms, FastAPI backends, AWS archit
 about: "Python-first engineer focused on backend, data, cloud, and AI systems. I work across production APIs, warehouse architecture, FinOps visibility, analytics pipelines, and applied LLM workflows with a strong delivery mindset."
 bio: "Backend, data, and cloud engineer with hands-on delivery across AWS, Redshift, dbt, Spark, FastAPI, and AI-assisted engineering workflows."
 resume_link: "https://drive.google.com/file/d/197iszNCfu2tIdIlV5CLF--6Lk3bMSBFH/view?usp=sharing"
+resume_pdf_url: "https://drive.google.com/uc?export=download&id=197iszNCfu2tIdIlV5CLF--6Lk3bMSBFH"
 email: mauricioobgo@gmail.com
 location: Bogota, Colombia
 company: Globant
@@ -28,3 +29,8 @@ hero_commands:
   - ""
   - "$ stack --top"
   - "python3.14 fastapi aws redshift dbt llms spark"
+assistant_prompts:
+  - Summarize Mauricio for a backend platform engineering role.
+  - Which AWS, Redshift, and data engineering strengths stand out the most?
+  - How does Mauricio apply AI and LLM systems in practical delivery work?
+  - What production patterns appear across Mauricio's backend and cloud projects?
