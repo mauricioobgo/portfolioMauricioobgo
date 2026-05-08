@@ -1,1 +1,1 @@
-"""Portfolio Reflex app package."""
+"""Portfolio content, sync, and frontend build package."""

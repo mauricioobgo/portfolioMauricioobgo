@@ -10,14 +10,14 @@ def test_run_sync_weekly_writes_repositories_only(tmp_path) -> None:
         scope="weekly",
         login="mauricioobgo",
         out_dir=tmp_path,
-        fetch_repositories_fn=lambda _login: repos,
+        fetch_repositories_fn=lambda _login, _limit: repos,
         fetch_user_fn=lambda _login: {"login": _login},
     )
 
     assert refresh_log["scope"] == "weekly"
     assert refresh_log["updates"] == ["github_repositories_weekly"]
-    assert json.loads((tmp_path / "repos.json").read_text(encoding="utf-8")) == repos
-    assert not (tmp_path / "profile.json").exists()
+    assert json.loads((tmp_path / "github_repos.json").read_text(encoding="utf-8")) == repos
+    assert not (tmp_path / "github_profile.json").exists()
 
 
 def test_run_sync_monthly_writes_profile_only(tmp_path) -> None:
@@ -27,7 +27,7 @@ def test_run_sync_monthly_writes_profile_only(tmp_path) -> None:
         scope="monthly",
         login="mauricioobgo",
         out_dir=tmp_path,
-        fetch_repositories_fn=lambda _login: [],
+        fetch_repositories_fn=lambda _login, _limit: [],
         fetch_user_fn=lambda _login: profile,
     )
 
@@ -37,5 +37,5 @@ def test_run_sync_monthly_writes_profile_only(tmp_path) -> None:
         "linkedin_monthly_review",
         "certifications_monthly_review",
     ]
-    assert json.loads((tmp_path / "profile.json").read_text(encoding="utf-8")) == profile
-    assert not (tmp_path / "repos.json").exists()
+    assert json.loads((tmp_path / "github_profile.json").read_text(encoding="utf-8")) == profile
+    assert not (tmp_path / "github_repos.json").exists()
