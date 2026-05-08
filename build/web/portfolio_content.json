@@ -1,0 +1,680 @@
+{
+  "metadata": {
+    "generated_at": "2026-05-04T16:58:12+00:00",
+    "frontend": "flet",
+    "runtime": "static_web",
+    "deployment_url": "https://mauricioobgo.github.io/portfolioMauricioobgo/",
+    "refresh_log": {
+      "scope": "weekly",
+      "executed_at": "2026-05-04T00:06:45+00:00",
+      "updates": [
+        "github_repositories_weekly"
+      ]
+    }
+  },
+  "profile": {
+    "name": "Mauricio Obando",
+    "title": "Backend, Data, Cloud, and AI Engineer",
+    "subtitle": "I build production-grade data platforms, FastAPI backends, AWS architectures, Redshift analytics systems, and LLM-powered workflows.",
+    "about": "Python-first engineer focused on backend, data, cloud, and AI systems. I work across production APIs, warehouse architecture, FinOps visibility, analytics pipelines, and applied LLM workflows with a strong delivery mindset.",
+    "bio": "Passionate about leveraging the power of data and the cloud to drive meaningful insights and innovation. ",
+    "resume_link": "https://drive.google.com/file/d/197iszNCfu2tIdIlV5CLF--6Lk3bMSBFH/view?usp=sharing",
+    "email": "mauricioobgo@gmail.com",
+    "location": "Bogot\u00e1 Colombia",
+    "company": "AWS",
+    "social_links": {
+      "github": "https://github.com/mauricioobgo",
+      "linkedin": "https://www.linkedin.com/in/mauricioobgo/"
+    },
+    "skills": [
+      "Python 3.14",
+      "FastAPI",
+      "AWS",
+      "Redshift",
+      "dbt",
+      "LLMs",
+      "Data Engineering",
+      "Cloud Architecture"
+    ],
+    "hero_commands": [
+      "$ whoami",
+      "mauricio_obando",
+      "",
+      "$ current_focus",
+      "backend_engineering | data_platforms | cloud_architecture | llm_systems",
+      "",
+      "$ stack --top",
+      "python3.14 fastapi aws redshift dbt llms spark"
+    ],
+    "github_url": "https://github.com/mauricioobgo",
+    "linkedin_certifications_url": "https://www.linkedin.com/in/mauricioobgo/details/certifications/",
+    "avatar_url": "https://avatars.githubusercontent.com/u/14032180?v=4",
+    "github_followers": 7,
+    "github_public_repos": 35,
+    "github_updated_at": "2026-03-26T16:13:11Z"
+  },
+  "hero_commands": [
+    "$ whoami",
+    "mauricio_obando",
+    "",
+    "$ current_focus",
+    "backend_engineering | data_platforms | cloud_architecture | llm_systems",
+    "",
+    "$ stack --top",
+    "python3.14 fastapi aws redshift dbt llms spark"
+  ],
+  "engineering_focus": [
+    {
+      "name": "Backend Engineering",
+      "eyebrow": "API / SYSTEMS",
+      "description": "Production-minded Python services, FastAPI APIs, async workflows, testing, and architecture that stays maintainable under delivery pressure.",
+      "skills": [
+        "Python 3.14",
+        "FastAPI",
+        "APIs",
+        "PostgreSQL",
+        "Async systems",
+        "Testing",
+        "Clean architecture"
+      ]
+    },
+    {
+      "name": "Data Engineering",
+      "eyebrow": "DATA / ANALYTICS",
+      "description": "Cloud-scale ingestion, transformation, warehouse modeling, and delivery workflows built for analytics reliability and operational clarity.",
+      "skills": [
+        "Redshift",
+        "dbt",
+        "Spark",
+        "Glue",
+        "Athena",
+        "Airflow",
+        "Data quality"
+      ]
+    },
+    {
+      "name": "LLM Engineering",
+      "eyebrow": "AI / ORCHESTRATION",
+      "description": "Applied LLM systems that combine RAG, evaluation, tool calling, structured outputs, and production feedback loops.",
+      "skills": [
+        "RAG",
+        "Agents",
+        "Vector databases",
+        "Evaluation",
+        "Prompt pipelines",
+        "Tool calling",
+        "Structured outputs"
+      ]
+    },
+    {
+      "name": "Cloud & DevOps",
+      "eyebrow": "OPS / DELIVERY",
+      "description": "AWS-focused delivery with CI/CD, observability, container workflows, cost awareness, and cloud platform execution.",
+      "skills": [
+        "AWS",
+        "Docker",
+        "CI/CD",
+        "Observability",
+        "Infrastructure as Code",
+        "FinOps",
+        "GitHub Actions"
+      ]
+    }
+  ],
+  "technical_stack": [
+    {
+      "name": "Application",
+      "items": [
+        "Python 3.14",
+        "FastAPI",
+        "SQLAlchemy",
+        "Alembic",
+        "Pytest",
+        "AsyncIO"
+      ]
+    },
+    {
+      "name": "Data",
+      "items": [
+        "Redshift",
+        "dbt",
+        "Athena",
+        "Glue",
+        "Spark",
+        "PostgreSQL"
+      ]
+    },
+    {
+      "name": "AI",
+      "items": [
+        "LLMs",
+        "RAG",
+        "Prompt pipelines",
+        "Structured outputs",
+        "Evaluation",
+        "Vector search"
+      ]
+    },
+    {
+      "name": "Cloud",
+      "items": [
+        "AWS",
+        "Docker",
+        "GitHub Actions",
+        "CloudWatch",
+        "FinOps",
+        "Observability"
+      ]
+    }
+  ],
+  "experience": [
+    {
+      "role": "Data Engineer",
+      "company": "Globant",
+      "date": "Current role listed on public LinkedIn",
+      "location": "Bogota, Colombia",
+      "description": "Public LinkedIn profile currently lists Globant as the active company, with delivery centered on modern data engineering, AI-oriented workflows, and cloud execution.",
+      "highlights": [
+        "Public LinkedIn profile shows Globant as the current employer.",
+        "Working close to practical AI workflows, platform delivery, and modern data engineering patterns.",
+        "Current title and exact dates remain intentionally conservative until a public source confirms them more precisely."
+      ],
+      "company_url": "https://www.globant.com/",
+      "reference_url": "https://www.linkedin.com/in/mauricioobgo/",
+      "reference_label": "LinkedIn"
+    },
+    {
+      "role": "Technical Account Manager",
+      "company": "Amazon Web Services",
+      "date": "May 2024 - Previous role",
+      "location": "Colombia",
+      "description": "Worked with AWS customers on architecture reliability, Well-Architected guidance, cost optimization, Redshift performance, and cloud intelligence practices.",
+      "highlights": [
+        "Delivered recommendations across resiliency, security, and operational excellence.",
+        "Built cost and usage visibility workflows with Python, Athena, Glue, S3, and analytics services.",
+        "Supported migrations and service adoption with architecture guidance tailored to client workloads."
+      ],
+      "company_url": "https://aws.amazon.com/",
+      "reference_url": "https://www.linkedin.com/in/mauricioobgo/",
+      "reference_label": "LinkedIn"
+    },
+    {
+      "role": "Data Engineer Specialist",
+      "company": "Publicis Media",
+      "date": "Feb 2023 - May 2024",
+      "location": "Hybrid delivery",
+      "description": "Designed and operated high-value data pipelines, dashboard architectures, and marketing analytics workflows for enterprise client programs.",
+      "highlights": [
+        "Built data ingestion and transformation pipelines for Stellantis programs on AWS and GCP.",
+        "Created architecture patterns for Tableau and Looker-based insight delivery.",
+        "Developed a classification model for marketing moments to purchase from Google Ads interaction data."
+      ],
+      "company_url": "https://www.publicismedia.com/",
+      "reference_url": "https://www.linkedin.com/in/mauricioobgo/",
+      "reference_label": "LinkedIn"
+    }
+  ],
+  "featured_projects": [
+    {
+      "name": "AI DataOps Platform",
+      "category": "LLM",
+      "summary": "Production-style platform for ingesting, validating, querying, and understanding datasets with LLM support.",
+      "problem": "Teams need one workflow for data ingestion, validation, warehouse curation, and AI-assisted dataset understanding.",
+      "solution": "Designed a Python-first platform with async APIs, governed dataset flows, retrieval-enhanced assistance, and operational observability.",
+      "architecture": "Event-driven ingestion, storage in S3, curated dbt models, vector-backed retrieval, and deployment checks wired through CI/CD.",
+      "tech_stack": [
+        "FastAPI",
+        "PostgreSQL",
+        "S3",
+        "dbt",
+        "pgvector",
+        "AWS",
+        "LLMs"
+      ],
+      "highlights": [
+        "Async ingestion API",
+        "RAG assistant",
+        "Data quality checks",
+        "Observability",
+        "CI/CD"
+      ],
+      "github_url": "https://github.com/mauricioobgo/langfuseExploration",
+      "demo_url": null,
+      "status": "Portfolio case study",
+      "filters": [
+        "Backend",
+        "Data Engineering",
+        "LLM",
+        "AWS",
+        "FastAPI"
+      ]
+    },
+    {
+      "name": "Redshift Performance & Cost Analyzer",
+      "category": "AWS",
+      "summary": "Tooling for analyzing Redshift workloads, WLM behavior, and cost optimization opportunities.",
+      "problem": "Redshift teams often lack a single view that combines workload patterns, tuning signals, and cost guidance.",
+      "solution": "Built a diagnostic layer that reviews query history, warehouse behavior, and cost signals to surface practical optimization paths.",
+      "architecture": "Workload snapshots flow into warehouse diagnostics, operational metrics, and recommendation outputs for both provisioned and serverless setups.",
+      "tech_stack": [
+        "Python",
+        "Redshift",
+        "AWS",
+        "SQL",
+        "FastAPI",
+        "CloudWatch"
+      ],
+      "highlights": [
+        "Query history analysis",
+        "WLM insights",
+        "Cost optimization recommendations",
+        "Serverless and provisioned comparison"
+      ],
+      "github_url": "https://github.com/mauricioobgo/RedshiftDataApIReferenceArchitecture",
+      "demo_url": null,
+      "status": "Portfolio case study",
+      "filters": [
+        "Data Engineering",
+        "AWS",
+        "FastAPI"
+      ]
+    },
+    {
+      "name": "LLM Healthcare / HL7 Agent",
+      "category": "LLM",
+      "summary": "AI agent that classifies HL7 messages, extracts structured patient context, and evaluates relevance for healthcare workflows.",
+      "problem": "HL7 payloads are noisy, domain-heavy, and difficult to triage quickly inside operational healthcare flows.",
+      "solution": "Designed an agent workflow that parses messages, enriches context, and produces structured outputs for downstream review.",
+      "architecture": "HL7 ingestion feeds prompt pipelines, retrieval context, tool-calling steps, and evaluation datasets for safer iteration.",
+      "tech_stack": [
+        "Python",
+        "OpenAI SDK",
+        "FastAPI",
+        "Vector DB",
+        "Structured outputs"
+      ],
+      "highlights": [
+        "HL7 parsing",
+        "LLM classification",
+        "Tool calling",
+        "Evaluation dataset",
+        "JSON structured output"
+      ],
+      "github_url": null,
+      "demo_url": null,
+      "status": "Private delivery pattern",
+      "filters": [
+        "Backend",
+        "LLM",
+        "FastAPI"
+      ]
+    },
+    {
+      "name": "Cloud Cost Intelligence Dashboard",
+      "category": "AWS",
+      "summary": "AWS FinOps dashboard that analyzes service usage and recommends cost optimizations.",
+      "problem": "Cloud teams need cost transparency that is technical enough for engineers and practical enough for platform planning.",
+      "solution": "Combined billing, usage, and warehouse views into an engineering-friendly dashboard that supports cost-aware decisions.",
+      "architecture": "Cost signals land in S3 and Athena, are modeled into decision views, and feed recommendation panels for engineering review.",
+      "tech_stack": [
+        "AWS Cost Explorer",
+        "Python",
+        "FastAPI",
+        "Athena",
+        "Glue",
+        "S3"
+      ],
+      "highlights": [
+        "Cost trend analysis",
+        "S3 optimization",
+        "Athena scan estimation",
+        "Redshift cost insights"
+      ],
+      "github_url": null,
+      "demo_url": null,
+      "status": "Portfolio case study",
+      "filters": [
+        "AWS",
+        "Data Engineering"
+      ]
+    },
+    {
+      "name": "FastAPI Production Template",
+      "category": "Backend",
+      "summary": "Backend template with production-ready architecture, delivery guardrails, and CI/CD foundations.",
+      "problem": "Teams moving fast still need consistent architecture, migrations, testing, and deployment checks from day one.",
+      "solution": "Created a reusable backend foundation that emphasizes clean structure, observability, and readiness for team scale.",
+      "architecture": "Layered application boundaries, database migrations, test harnesses, container builds, and pipeline automation.",
+      "tech_stack": [
+        "Python 3.14",
+        "FastAPI",
+        "SQLAlchemy",
+        "Alembic",
+        "PostgreSQL",
+        "Docker",
+        "GitHub Actions"
+      ],
+      "highlights": [
+        "Clean architecture",
+        "Auth-ready structure",
+        "Logging",
+        "Tests",
+        "CI/CD"
+      ],
+      "github_url": null,
+      "demo_url": null,
+      "status": "Portfolio case study",
+      "filters": [
+        "Backend",
+        "FastAPI",
+        "AWS"
+      ]
+    }
+  ],
+  "certifications": [
+    {
+      "title": "DS4A / Colombia 6.0",
+      "issuer": "Correlation One",
+      "level": "Program",
+      "category": "Data Science",
+      "status": "Completed",
+      "featured": false,
+      "issued": "Jul 2022",
+      "credential_id": "54847879",
+      "credential_url": "https://www.linkedin.com/in/mauricioobgo/details/certifications/",
+      "credential_label": "View on LinkedIn",
+      "skills": [
+        "Applied data science",
+        "Analytics",
+        "Python"
+      ]
+    },
+    {
+      "title": "AWS Certified Solutions Architect - Professional",
+      "issuer": "Amazon Web Services",
+      "level": "Professional",
+      "category": "Cloud Architecture",
+      "status": "Active",
+      "featured": true,
+      "issued": "Listed on LinkedIn",
+      "credential_id": null,
+      "credential_url": "https://www.linkedin.com/in/mauricioobgo/details/certifications/",
+      "credential_label": "View on LinkedIn",
+      "skills": [
+        "AWS",
+        "Architecture",
+        "Distributed Systems",
+        "Security",
+        "Cost Optimization"
+      ]
+    },
+    {
+      "title": "AWS Certified Machine Learning - Specialty",
+      "issuer": "Amazon Web Services",
+      "level": "Specialty",
+      "category": "Machine Learning",
+      "status": "Active",
+      "featured": true,
+      "issued": "Listed on LinkedIn",
+      "credential_id": null,
+      "credential_url": "https://www.linkedin.com/in/mauricioobgo/details/certifications/",
+      "credential_label": "View on LinkedIn",
+      "skills": [
+        "Machine Learning",
+        "MLOps",
+        "Data Engineering",
+        "AWS",
+        "AI Systems"
+      ]
+    },
+    {
+      "title": "Google Analytics Beginners",
+      "issuer": "Google",
+      "level": "Foundations",
+      "category": "Analytics",
+      "status": "Completed",
+      "featured": false,
+      "issued": "Jul 2020",
+      "credential_id": null,
+      "credential_url": "https://www.linkedin.com/in/mauricioobgo/details/certifications/",
+      "credential_label": "View on LinkedIn",
+      "skills": [
+        "Analytics",
+        "Digital measurement"
+      ]
+    },
+    {
+      "title": "Introduction to TensorFlow for Artificial Intelligence, Machine Learning, and Deep Learning",
+      "issuer": "Coursera",
+      "level": "Foundations",
+      "category": "Machine Learning",
+      "status": "Completed",
+      "featured": false,
+      "issued": "Jul 2020",
+      "credential_id": null,
+      "credential_url": "https://www.linkedin.com/in/mauricioobgo/details/certifications/",
+      "credential_label": "View on LinkedIn",
+      "skills": [
+        "TensorFlow",
+        "Machine Learning",
+        "Deep Learning"
+      ]
+    },
+    {
+      "title": "Best student award",
+      "issuer": "Universidad de la Sabana",
+      "level": "Award",
+      "category": "Academic",
+      "status": "Completed",
+      "featured": false,
+      "issued": "Oct 2013",
+      "credential_id": null,
+      "credential_url": "https://www.linkedin.com/in/mauricioobgo/details/certifications/",
+      "credential_label": "View on LinkedIn",
+      "skills": [
+        "Academic excellence"
+      ]
+    }
+  ],
+  "github": {
+    "profile": {
+      "login": "mauricioobgo",
+      "name": "Mauricio Obando",
+      "company": "AWS",
+      "location": "Bogot\u00e1 Colombia",
+      "bio": "Passionate about leveraging the power of data and the cloud to drive meaningful insights and innovation. ",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14032180?v=4",
+      "html_url": "https://github.com/mauricioobgo",
+      "followers": 7,
+      "public_repos": 35,
+      "updated_at": "2026-03-26T16:13:11Z"
+    },
+    "repositories": [
+      {
+        "name": "portfolioMauricioobgo",
+        "full_name": null,
+        "html_url": "https://github.com/mauricioobgo/portfolioMauricioobgo",
+        "description": "This is a Humble DataScientist DataEngineer Portfolio, that is always eager to learn more and develop things that change the world",
+        "homepage": null,
+        "language": null,
+        "topics": [],
+        "updated_at": "2026-05-03T23:28:03Z",
+        "pushed_at": null,
+        "stargazers_count": 0,
+        "forks_count": 0,
+        "open_issues_count": 0,
+        "archived": false
+      },
+      {
+        "name": "langfuseExploration",
+        "full_name": null,
+        "html_url": "https://github.com/mauricioobgo/langfuseExploration",
+        "description": "This is repository for langfuse exploration",
+        "homepage": null,
+        "language": null,
+        "topics": [],
+        "updated_at": "2026-04-29T15:27:17Z",
+        "pushed_at": null,
+        "stargazers_count": 0,
+        "forks_count": 0,
+        "open_issues_count": 0,
+        "archived": false
+      },
+      {
+        "name": "alembic_demo",
+        "full_name": null,
+        "html_url": "https://github.com/mauricioobgo/alembic_demo",
+        "description": null,
+        "homepage": null,
+        "language": null,
+        "topics": [],
+        "updated_at": "2026-04-17T00:37:23Z",
+        "pushed_at": null,
+        "stargazers_count": 0,
+        "forks_count": 0,
+        "open_issues_count": 0,
+        "archived": false
+      },
+      {
+        "name": "CloudRunFunctionPostgreSQL",
+        "full_name": null,
+        "html_url": "https://github.com/mauricioobgo/CloudRunFunctionPostgreSQL",
+        "description": null,
+        "homepage": null,
+        "language": null,
+        "topics": [],
+        "updated_at": "2026-02-18T15:47:58Z",
+        "pushed_at": null,
+        "stargazers_count": 0,
+        "forks_count": 0,
+        "open_issues_count": 0,
+        "archived": false
+      },
+      {
+        "name": "kickstart.nvim",
+        "full_name": null,
+        "html_url": "https://github.com/mauricioobgo/kickstart.nvim",
+        "description": "A launch point for your personal nvim configuration",
+        "homepage": null,
+        "language": null,
+        "topics": [],
+        "updated_at": "2026-02-13T16:20:52Z",
+        "pushed_at": null,
+        "stargazers_count": 0,
+        "forks_count": 0,
+        "open_issues_count": 0,
+        "archived": false
+      },
+      {
+        "name": "portfolioOptimizator",
+        "full_name": null,
+        "html_url": "https://github.com/mauricioobgo/portfolioOptimizator",
+        "description": "This is a repo that allow portfolio optimization based on preselected tickers and assets to invest",
+        "homepage": null,
+        "language": null,
+        "topics": [],
+        "updated_at": "2026-01-18T00:47:29Z",
+        "pushed_at": null,
+        "stargazers_count": 0,
+        "forks_count": 0,
+        "open_issues_count": 0,
+        "archived": false
+      },
+      {
+        "name": "cryptocurrencyInvestigation",
+        "full_name": null,
+        "html_url": "https://github.com/mauricioobgo/cryptocurrencyInvestigation",
+        "description": "Study of Cryptocurrency Proof of Market Asimmetry and bubble proof",
+        "homepage": null,
+        "language": null,
+        "topics": [],
+        "updated_at": "2025-10-17T16:50:41Z",
+        "pushed_at": null,
+        "stargazers_count": 1,
+        "forks_count": 0,
+        "open_issues_count": 0,
+        "archived": false
+      },
+      {
+        "name": "RedshiftDataApIReferenceArchitecture",
+        "full_name": null,
+        "html_url": "https://github.com/mauricioobgo/RedshiftDataApIReferenceArchitecture",
+        "description": "This is a repo for state a reference architecture for AWS Redshift Data API Usahe",
+        "homepage": null,
+        "language": null,
+        "topics": [],
+        "updated_at": "2025-09-16T19:08:01Z",
+        "pushed_at": null,
+        "stargazers_count": 0,
+        "forks_count": 0,
+        "open_issues_count": 0,
+        "archived": false
+      },
+      {
+        "name": "cid-framework",
+        "full_name": null,
+        "html_url": "https://github.com/mauricioobgo/cid-framework",
+        "description": null,
+        "homepage": null,
+        "language": null,
+        "topics": [],
+        "updated_at": "2025-09-12T13:58:36Z",
+        "pushed_at": null,
+        "stargazers_count": 0,
+        "forks_count": 0,
+        "open_issues_count": 0,
+        "archived": false
+      },
+      {
+        "name": "iam-identity-center-team",
+        "full_name": null,
+        "html_url": "https://github.com/mauricioobgo/iam-identity-center-team",
+        "description": "Open-source temporary elevated access solution for AWS IAM Identity Center.",
+        "homepage": null,
+        "language": null,
+        "topics": [],
+        "updated_at": "2025-07-28T22:00:41Z",
+        "pushed_at": null,
+        "stargazers_count": 0,
+        "forks_count": 0,
+        "open_issues_count": 0,
+        "archived": false
+      },
+      {
+        "name": "data-engineer-handbook",
+        "full_name": null,
+        "html_url": "https://github.com/mauricioobgo/data-engineer-handbook",
+        "description": "This is a repo with links to everything you'd ever want to learn about data engineering",
+        "homepage": null,
+        "language": null,
+        "topics": [],
+        "updated_at": "2024-05-23T19:43:18Z",
+        "pushed_at": null,
+        "stargazers_count": 0,
+        "forks_count": 0,
+        "open_issues_count": 0,
+        "archived": false
+      },
+      {
+        "name": "heartbeatApp",
+        "full_name": null,
+        "html_url": "https://github.com/mauricioobgo/heartbeatApp",
+        "description": null,
+        "homepage": null,
+        "language": null,
+        "topics": [],
+        "updated_at": "2024-04-19T22:48:21Z",
+        "pushed_at": null,
+        "stargazers_count": 0,
+        "forks_count": 0,
+        "open_issues_count": 0,
+        "archived": false
+      }
+    ],
+    "summary": {
+      "language_breakdown": [],
+      "top_starred": 1,
+      "repo_count": 12
+    }
+  }
+}

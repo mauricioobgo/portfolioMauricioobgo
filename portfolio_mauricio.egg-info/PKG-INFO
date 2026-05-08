@@ -1,0 +1,11 @@
+Metadata-Version: 2.4
+Name: portfolio-mauricio
+Version: 0.2.0
+Summary: Python-only Flet portfolio for Mauricio Obando
+Requires-Python: >=3.14
+License-File: LICENSE
+Requires-Dist: flet>=0.84.0
+Requires-Dist: flet-lottie>=0.84.0
+Requires-Dist: httpx>=0.28.1
+Requires-Dist: pyyaml>=6.0.2
+Dynamic: license-file
