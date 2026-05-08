@@ -8,11 +8,14 @@ from portfolio.components.hero import HeroPanel
 from portfolio.components.nav import NavigationBar
 
 
-def HeroSection(page: ft.Page, content: dict[str, Any]) -> ft.Control:
+def HeroSection(
+    page: ft.Page, content: dict[str, Any], *, accent_control: ft.Control | None = None
+) -> ft.Control:
+    controls: list[ft.Control] = [NavigationBar(page)]
+    if accent_control is not None:
+        controls.append(accent_control)
+    controls.append(ft.Container(key="hero", content=HeroPanel(page, content)))
     return ft.Column(
         spacing=18,
-        controls=[
-            NavigationBar(page),
-            ft.Container(key="hero", content=HeroPanel(page, content)),
-        ],
+        controls=controls,
     )

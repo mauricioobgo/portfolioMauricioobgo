@@ -5,6 +5,7 @@ from typing import Any
 
 import flet as ft
 
+from portfolio.components.mascots import ArcadeCommandRail
 from portfolio.data_loader import load_portfolio_content
 from portfolio.sections.assistant_section import AssistantSection
 from portfolio.sections.certifications_section import CertificationsSection
@@ -68,14 +69,15 @@ class PortfolioView(ft.Container):
     def __init__(self, page: ft.Page, content: dict[str, Any]) -> None:
         self._section_refs: list[ft.Ref[ft.Container]] = []
         self._revealing = False
+        self._arcade_rail = ArcadeCommandRail()
         sections = [
-            HeroSection(page, content),
+            HeroSection(page, content, accent_control=self._arcade_rail),
             FocusSection(page, content),
             ProjectsSection(page, content),
             ExperienceSection(page, content),
             CertificationsSection(page, content),
             GitHubSection(page, content),
-            AssistantSection(page, content),
+            AssistantSection(page, content, on_enter_pacman=self._arcade_rail.boost),
             StackSection(page, content),
             ContactSection(page, content),
         ]
