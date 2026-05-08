@@ -3,6 +3,7 @@ from types import SimpleNamespace
 import flet as ft
 
 from portfolio.app import build_portfolio_view
+from portfolio.components.assistant import build_assistant_response
 from portfolio.components.projects import FILTER_ORDER, project_matches
 from portfolio_app.services.content import build_portfolio_content
 
@@ -56,11 +57,11 @@ def test_view_exposes_bound_links_and_interactive_controls() -> None:
         if isinstance(getattr(control, "data", None), dict)
         and control.data.get("kind") == "section_link"
     ]
-    assistant_prompts = [
+    assistant_terminal = [
         control.data
         for control in controls
         if isinstance(getattr(control, "data", None), dict)
-        and control.data.get("kind") == "assistant_prompt"
+        and control.data.get("kind") == "assistant_terminal"
     ]
     project_filters = [
         control.data
@@ -68,12 +69,19 @@ def test_view_exposes_bound_links_and_interactive_controls() -> None:
         if isinstance(getattr(control, "data", None), dict)
         and control.data.get("kind") == "project_filter"
     ]
+    arcade_rails = [
+        control.data
+        for control in controls
+        if isinstance(getattr(control, "data", None), dict)
+        and control.data.get("kind") == "arcade_rail"
+    ]
 
     required_external_labels = {"GitHub", "LinkedIn", "Download Resume", "Email"}
     found_labels = {item["label"] for item in external_links if item.get("valid")}
     assert required_external_labels <= found_labels
     assert any(item["target"] == "projects" for item in section_links)
-    assert assistant_prompts
+    assert assistant_terminal
+    assert arcade_rails
     assert {item["filter"] for item in project_filters} == set(FILTER_ORDER)
 
 
@@ -83,3 +91,12 @@ def test_project_filter_logic_matches_declared_filters() -> None:
     assert project_matches(project, "All")
     assert project_matches(project, "Backend")
     assert not project_matches(project, "LLM")
+
+
+def test_assistant_cli_uses_predefined_certification_response() -> None:
+    content = build_portfolio_content()
+
+    lines = build_assistant_response("Tell me about AWS certifications", content)
+
+    assert any("Solutions Architect - Professional" in line for line in lines)
+    assert any("Machine Learning - Specialty" in line for line in lines)
