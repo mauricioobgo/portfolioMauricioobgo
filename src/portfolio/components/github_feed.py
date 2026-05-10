@@ -4,7 +4,8 @@ from typing import Any
 
 import flet as ft
 
-from portfolio.components.cards import ConsolePanel, SkillPill
+from portfolio.components.cards import ConsolePanel, SkillPill, link_button
+from portfolio.interaction import attach_hover_lift, external_link_data, normalize_external_url
 from portfolio.theme import MUTED, PRIMARY, SECONDARY, TEXT, WARNING, alpha
 
 
@@ -39,53 +40,62 @@ def _activity_color(level: int) -> str:
     return alpha(SECONDARY, 0.9)
 
 
-def GitHubRepoCard(page: ft.Page, repo: dict[str, Any]) -> ft.Control:
+def GitHubRepoCard(_page: ft.Page, repo: dict[str, Any]) -> ft.Control:
     topics = repo.get("topics", [])[:3]
-    return ConsolePanel(
-        ft.Column(
-            spacing=12,
-            controls=[
-                ft.TextButton(
-                    content=ft.Text(
-                        repo.get("name", ""),
-                        color=TEXT,
-                        size=20,
-                        font_family="DisplayBold",
-                        weight=ft.FontWeight.W_700,
+    links = [link_button("Repository", repo.get("html_url", ""))]
+    if repo.get("homepage"):
+        links.append(link_button("Homepage", repo.get("homepage", ""), accent=SECONDARY))
+
+    return attach_hover_lift(
+        ConsolePanel(
+            ft.Column(
+                spacing=12,
+                controls=[
+                    ft.TextButton(
+                        content=ft.Text(
+                            repo.get("name", ""),
+                            color=TEXT,
+                            size=20,
+                            font_family="DisplayBold",
+                            weight=ft.FontWeight.W_700,
+                        ),
+                        url=normalize_external_url(repo.get("html_url")),
+                        data=external_link_data(
+                            repo.get("name", "Repository"), repo.get("html_url")
+                        ),
                     ),
-                    on_click=lambda _: page.launch_url(repo.get("html_url")),
-                ),
-                ft.Text(
-                    repo.get("description") or "Repository activity synced from GitHub.",
-                    color=MUTED,
-                    size=14,
-                ),
-                ft.Row(
-                    wrap=True,
-                    spacing=10,
-                    run_spacing=10,
-                    controls=[
-                        SkillPill(repo.get("language", "Code"), PRIMARY),
-                        SkillPill(f"Stars {repo.get('stargazers_count', 0)}", WARNING),
-                        SkillPill(f"Forks {repo.get('forks_count', 0)}", SECONDARY),
-                    ],
-                ),
-                ft.Row(
-                    wrap=True,
-                    spacing=10,
-                    run_spacing=10,
-                    controls=[SkillPill(topic, "#A855F7") for topic in topics],
-                ),
-            ],
+                    ft.Text(
+                        repo.get("description") or "Repository activity synced from GitHub.",
+                        color=MUTED,
+                        size=14,
+                    ),
+                    ft.Row(
+                        wrap=True,
+                        spacing=10,
+                        run_spacing=10,
+                        controls=[
+                            SkillPill(repo.get("language", "Code"), PRIMARY),
+                            SkillPill(f"Stars {repo.get('stargazers_count', 0)}", WARNING),
+                            SkillPill(f"Forks {repo.get('forks_count', 0)}", SECONDARY),
+                        ],
+                    ),
+                    ft.Row(
+                        wrap=True,
+                        spacing=10,
+                        run_spacing=10,
+                        controls=[SkillPill(topic, "#A855F7") for topic in topics],
+                    ),
+                    ft.Row(wrap=True, spacing=10, run_spacing=10, controls=links),
+                ],
+            ),
+            title=repo.get("full_name", repo.get("name", "github://repo")),
+            bgcolor="#111827",
         ),
-        title=repo.get("full_name", repo.get("name", "github://repo")),
-        bgcolor="#111827",
+        scale=1.02,
     )
 
 
-def GitHubSummaryCard(
-    page: ft.Page, summary: dict[str, Any], profile: dict[str, Any]
-) -> ft.Control:
+def GitHubSummaryCard(summary: dict[str, Any], profile: dict[str, Any]) -> ft.Control:
     language_breakdown = summary.get("language_breakdown", [])[:5]
     cells = _activity_cells(summary.get("repo_count", 0) + profile.get("followers", 0))
     heatmap = [
@@ -98,52 +108,47 @@ def GitHubSummaryCard(
         )
         for level in cells
     ]
-    return ConsolePanel(
-        ft.Column(
-            spacing=14,
-            controls=[
-                ft.Row(
-                    wrap=True,
-                    spacing=10,
-                    run_spacing=10,
-                    controls=[
-                        SkillPill(f"Repos {summary.get('repo_count', 0)}", PRIMARY),
-                        SkillPill(f"Followers {profile.get('followers', 0)}", SECONDARY),
-                        SkillPill(f"Top stars {summary.get('top_starred', 0)}", WARNING),
-                    ],
-                ),
-                ft.ResponsiveRow(
-                    columns=26,
-                    spacing=4,
-                    run_spacing=4,
-                    controls=[ft.Container(col=1, content=cell) for cell in heatmap],
-                ),
-                ft.Column(
-                    spacing=8,
-                    controls=[
-                        ft.Text(
-                            f"{item['name']}: {item['count']} repos",
-                            color=MUTED,
-                            size=13,
-                            font_family="Mono",
-                        )
-                        for item in language_breakdown
-                    ],
-                ),
-                ft.TextButton(
-                    content=ft.Text(
-                        "github.com/mauricioobgo",
-                        color=PRIMARY,
-                        size=12,
-                        font_family="Mono",
+    return attach_hover_lift(
+        ConsolePanel(
+            ft.Column(
+                spacing=14,
+                controls=[
+                    ft.Row(
+                        wrap=True,
+                        spacing=10,
+                        run_spacing=10,
+                        controls=[
+                            SkillPill(f"Repos {summary.get('repo_count', 0)}", PRIMARY),
+                            SkillPill(f"Followers {profile.get('followers', 0)}", SECONDARY),
+                            SkillPill(f"Top stars {summary.get('top_starred', 0)}", WARNING),
+                        ],
                     ),
-                    on_click=lambda _: page.launch_url(profile.get("html_url")),
-                ),
-            ],
+                    ft.ResponsiveRow(
+                        columns=26,
+                        spacing=4,
+                        run_spacing=4,
+                        controls=[ft.Container(col=1, content=cell) for cell in heatmap],
+                    ),
+                    ft.Column(
+                        spacing=8,
+                        controls=[
+                            ft.Text(
+                                f"{item['name']}: {item['count']} repos",
+                                color=MUTED,
+                                size=13,
+                                font_family="Mono",
+                            )
+                            for item in language_breakdown
+                        ],
+                    ),
+                    link_button("Open GitHub profile", profile.get("html_url", ""), accent=PRIMARY),
+                ],
+            ),
+            title="contributions @ mauricioobgo",
+            glow=True,
+            bgcolor="#0F172A",
         ),
-        title="contributions @ mauricioobgo",
-        glow=True,
-        bgcolor="#0F172A",
+        scale=1.02,
     )
 
 
@@ -158,7 +163,7 @@ def GitHubGrid(page: ft.Page, github: dict[str, Any]) -> ft.Control:
         controls=[
             ft.Container(
                 col={"xs": 12, "xl": 7},
-                content=GitHubSummaryCard(page, summary, profile),
+                content=GitHubSummaryCard(summary, profile),
             ),
             ft.Container(
                 col={"xs": 12, "xl": 5},

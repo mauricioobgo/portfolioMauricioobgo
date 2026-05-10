@@ -7,6 +7,7 @@ import flet as ft
 
 from portfolio.components.mascots import ArcadeCommandRail
 from portfolio.data_loader import load_portfolio_content
+from portfolio.sections.assistant_section import AssistantSection
 from portfolio.sections.certifications_section import CertificationsSection
 from portfolio.sections.contact_section import ContactSection
 from portfolio.sections.experience_section import ExperienceSection
@@ -76,6 +77,7 @@ class PortfolioView(ft.Container):
             ExperienceSection(page, content),
             CertificationsSection(page, content),
             GitHubSection(page, content),
+            AssistantSection(page, content, on_enter_pacman=self._arcade_rail.boost),
             StackSection(page, content),
             ContactSection(page, content),
         ]
@@ -83,7 +85,7 @@ class PortfolioView(ft.Container):
             expand=True,
             content=app_shell(
                 ft.Column(
-                    spacing=34,
+                    spacing=30,
                     controls=[
                         self._animated_section(section, index)
                         for index, section in enumerate(sections)

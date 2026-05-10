@@ -74,6 +74,18 @@ jobs:
       - name: Refresh generated GitHub/profile data
         run: uv run python -m portfolio_app.scripts.sync_data --scope ${{ steps.scope.outputs.sync_scope }}
 
+      - name: Publish resume drift summary
+        shell: bash
+        run: |
+          if [[ -f "portfolio_app/generated/resume_drift.json" ]]; then
+            {
+              echo "### Resume drift report"
+              echo '```json'
+              cat portfolio_app/generated/resume_drift.json
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Build portfolio content asset
         run: uv run python -m portfolio_app.scripts.build_content
 
@@ -91,6 +103,13 @@ jobs:
 
       - name: Build Flet static website
         run: uv run flet build web --yes --base-url /portfolioMauricioobgo/ --route-url-strategy hash
+
+      - name: Upload resume drift artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: resume-drift-report
+          path: portfolio_app/generated/resume_drift.json
+          if-no-files-found: ignore
 
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3

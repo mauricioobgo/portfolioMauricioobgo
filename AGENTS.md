@@ -34,6 +34,7 @@ uv run flet serve build/web
 ```bash
 uv run python -m portfolio_app.scripts.sync_data
 uv run python -m portfolio_app.scripts.sync_github
+uv run python -m portfolio_app.scripts.sync_resume
 ```
 
 ## Agent/Skill utilities (uvx)
@@ -50,6 +51,7 @@ uvx --from pytest pytest -q
 - Keep Python service/API logic under `portfolio_app/services`.
 - Keep the Flet controls thin and data-driven; load portfolio content through `src/assets/portfolio_content.json`.
 - Treat `src/assets/portfolio_content.json` as generated output from Python, not the authoring source.
+- The local/admin AI assistant runs through `portfolio_app.scripts.chat_cv`; do not expose an OpenAI API key in the static site.
 
 ## Refresh cadence (required)
 - GitHub repositories/project showcase: **weekly** refresh.
@@ -61,3 +63,4 @@ Use `docs-content-refresh.md` as the operating checklist.
 Cadence commands:
 - Weekly GitHub repo refresh: `uv run python -m portfolio_app.scripts.sync_data --scope weekly`
 - Monthly profile/linkedin/certification refresh: `uv run python -m portfolio_app.scripts.sync_data --scope monthly`
+- Resume artifact refresh: `uv run python -m portfolio_app.scripts.sync_resume`

@@ -4,6 +4,7 @@ from pathlib import Path
 
 import flet as ft
 
+from portfolio.interaction import attach_hover_lift, external_link_data, normalize_external_url
 from portfolio.responsive import section_title_size
 from portfolio.theme import (
     BORDER,
@@ -65,73 +66,59 @@ def ConsolePanel(
         )
         controls.append(ft.Container(height=1, bgcolor=alpha(BORDER, 0.92)))
     controls.append(content)
-    return (
-        panel(
-            ft.Column(
-                spacing=14 if title else 0,
-                controls=controls,
-            ),
-            padding=padding or ft.Padding.all(22),
-            bgcolor=bgcolor or alpha(PANEL, 0.86),
-            gradient=ft.LinearGradient(
-                begin=ft.Alignment(-1, -1),
-                end=ft.Alignment(1, 1),
-                colors=[
-                    alpha(PANEL, 0.97),
-                    alpha(CARD, 0.94),
-                    alpha("#101B2B", 0.94),
-                ],
-            ),
-        )
-        if not glow
-        else ft.Container(
-            shadow=[
-                ft.BoxShadow(
-                    spread_radius=1,
-                    blur_radius=28,
-                    color=alpha(PRIMARY, 0.20),
-                    offset=ft.Offset(0, 10),
-                )
+    base_panel = panel(
+        ft.Column(
+            spacing=14 if title else 0,
+            controls=controls,
+        ),
+        padding=padding or ft.Padding.all(22),
+        bgcolor=bgcolor or alpha(PANEL, 0.86),
+        gradient=ft.LinearGradient(
+            begin=ft.Alignment(-1, -1),
+            end=ft.Alignment(1, 1),
+            colors=[
+                alpha(PANEL, 0.97),
+                alpha(CARD, 0.94),
+                alpha("#101B2B", 0.94),
             ],
-            content=panel(
-                ft.Column(
-                    spacing=14 if title else 0,
-                    controls=controls,
-                ),
-                padding=padding or ft.Padding.all(22),
-                bgcolor=bgcolor or alpha(PANEL, 0.86),
-                gradient=ft.LinearGradient(
-                    begin=ft.Alignment(-1, -1),
-                    end=ft.Alignment(1, 1),
-                    colors=[
-                        alpha(PANEL, 0.97),
-                        alpha(CARD, 0.94),
-                        alpha("#101B2B", 0.94),
-                    ],
-                ),
-            ),
-        )
+        ),
+    )
+    if not glow:
+        return base_panel
+    return ft.Container(
+        shadow=[
+            ft.BoxShadow(
+                spread_radius=1,
+                blur_radius=28,
+                color=alpha(PRIMARY, 0.20),
+                offset=ft.Offset(0, 10),
+            )
+        ],
+        content=base_panel,
     )
 
 
 def MetricCard(label: str, value: str, caption: str, accent: str = PRIMARY) -> ft.Control:
-    return ConsolePanel(
-        ft.Column(
-            spacing=10,
-            controls=[
-                ft.Text(label.upper(), color=accent, size=11, font_family="Mono"),
-                ft.Text(
-                    value,
-                    color=TEXT,
-                    size=26,
-                    font_family="DisplayBold",
-                    weight=ft.FontWeight.W_700,
-                ),
-                ft.Text(caption, color=MUTED, size=13),
-            ],
+    return attach_hover_lift(
+        ConsolePanel(
+            ft.Column(
+                spacing=10,
+                controls=[
+                    ft.Text(label.upper(), color=accent, size=11, font_family="Mono"),
+                    ft.Text(
+                        value,
+                        color=TEXT,
+                        size=26,
+                        font_family="DisplayBold",
+                        weight=ft.FontWeight.W_700,
+                    ),
+                    ft.Text(caption, color=MUTED, size=13),
+                ],
+            ),
+            padding=ft.Padding.all(18),
+            bgcolor=alpha(CARD, 0.92),
         ),
-        padding=ft.Padding.all(18),
-        bgcolor=alpha(CARD, 0.92),
+        scale=1.03,
     )
 
 
@@ -191,7 +178,7 @@ def LottiePanel(
     accent: str = PRIMARY,
     icon: ft.IconData = ft.Icons.AUTO_AWESOME,
 ) -> ft.Control:
-    if ftl is None:
+    if ftl is None or not asset_exists(asset_path):
         return _lottie_fallback(title, caption, accent, icon)
 
     error_content = _lottie_fallback(title, caption, accent, icon)
@@ -246,7 +233,8 @@ def ConsoleFooter(metadata: dict) -> ft.Control:
     )
 
 
-def link_button(label: str, url: str, page: ft.Page, *, accent: str = PRIMARY) -> ft.Control:
+def link_button(label: str, url: str, *, accent: str = PRIMARY) -> ft.Control:
+    valid_url = normalize_external_url(url)
     return ft.TextButton(
         content=ft.Text(label, color=accent, size=13, font_family="Mono"),
         style=ft.ButtonStyle(
@@ -254,7 +242,9 @@ def link_button(label: str, url: str, page: ft.Page, *, accent: str = PRIMARY) -
             padding=ft.Padding.symmetric(horizontal=14, vertical=10),
             shape=ft.RoundedRectangleBorder(radius=16),
         ),
-        on_click=(lambda _: page.launch_url(url)) if url else None,
+        url=valid_url,
+        disabled=valid_url is None,
+        data=external_link_data(label, url),
     )
 
 

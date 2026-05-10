@@ -4,7 +4,7 @@ import flet as ft
 
 from portfolio.components.cards import ConsolePanel
 from portfolio.components.mascots import ConsoleSweep
-from portfolio.theme import MUTED, TEXT, alpha
+from portfolio.theme import MUTED, TEXT
 
 
 def TerminalBlock(lines: list[str], *, title: str = "console://mauricio") -> ft.Control:
@@ -21,8 +21,14 @@ def TerminalBlock(lines: list[str], *, title: str = "console://mauricio") -> ft.
             controls.append(ft.Text("", size=8))
 
     return ConsolePanel(
-        ft.Column(spacing=9, controls=[ConsoleSweep(), *controls]),
+        ft.Column(
+            spacing=10,
+            controls=[
+                ConsoleSweep(),
+                *controls,
+            ],
+        ),
         title=title,
         padding=ft.Padding.all(18),
-        bgcolor=alpha("#0B1120", 0.94),
+        bgcolor="#0B1120",
     )

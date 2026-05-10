@@ -5,10 +5,11 @@ from typing import Any
 import flet as ft
 
 from portfolio.components.cards import ConsolePanel, SkillPill, link_button
+from portfolio.interaction import attach_hover_lift
 from portfolio.theme import MUTED, PRIMARY, SECONDARY, TEXT, alpha
 
 
-def _timeline_item(page: ft.Page, item: dict[str, Any], *, accent: str) -> ft.Control:
+def _timeline_item(_page: ft.Page, item: dict[str, Any], *, accent: str) -> ft.Control:
     return ft.Row(
         spacing=16,
         vertical_alignment=ft.CrossAxisAlignment.START,
@@ -23,71 +24,72 @@ def _timeline_item(page: ft.Page, item: dict[str, Any], *, accent: str) -> ft.Co
             ),
             ft.Container(
                 expand=True,
-                content=ConsolePanel(
-                    ft.Column(
-                        spacing=14,
-                        controls=[
-                            ft.Row(
-                                wrap=True,
-                                spacing=10,
-                                run_spacing=10,
-                                controls=[
-                                    SkillPill(item.get("date", ""), accent),
-                                    SkillPill(item.get("location", ""), SECONDARY),
-                                ],
-                            ),
-                            ft.Text(
-                                item.get("role", ""),
-                                color=TEXT,
-                                size=24,
-                                font_family="DisplayBold",
-                                weight=ft.FontWeight.W_700,
-                            ),
-                            ft.Text(
-                                item.get("company", ""),
-                                color=PRIMARY,
-                                size=18,
-                                font_family="Display",
-                            ),
-                            ft.Text(item.get("description", ""), color=MUTED, size=15),
-                            ft.Column(
-                                spacing=8,
-                                controls=[
-                                    ft.Row(
-                                        spacing=10,
-                                        vertical_alignment=ft.CrossAxisAlignment.START,
-                                        controls=[
-                                            ft.Text(">", color=accent, font_family="Mono"),
-                                            ft.Container(
-                                                expand=True,
-                                                content=ft.Text(highlight, color=TEXT, size=14),
-                                            ),
-                                        ],
-                                    )
-                                    for highlight in item.get("highlights", [])
-                                ],
-                            ),
-                            ft.Row(
-                                wrap=True,
-                                spacing=10,
-                                controls=[
-                                    link_button(
-                                        item.get("reference_label", "Reference"),
-                                        item.get("reference_url", ""),
-                                        page,
-                                    ),
-                                    link_button(
-                                        "Company",
-                                        item.get("company_url", ""),
-                                        page,
-                                        accent=SECONDARY,
-                                    ),
-                                ],
-                            ),
-                        ],
+                content=attach_hover_lift(
+                    ConsolePanel(
+                        ft.Column(
+                            spacing=14,
+                            controls=[
+                                ft.Row(
+                                    wrap=True,
+                                    spacing=10,
+                                    run_spacing=10,
+                                    controls=[
+                                        SkillPill(item.get("date", ""), accent),
+                                        SkillPill(item.get("location", ""), SECONDARY),
+                                    ],
+                                ),
+                                ft.Text(
+                                    item.get("role", ""),
+                                    color=TEXT,
+                                    size=24,
+                                    font_family="DisplayBold",
+                                    weight=ft.FontWeight.W_700,
+                                ),
+                                ft.Text(
+                                    item.get("company", ""),
+                                    color=PRIMARY,
+                                    size=18,
+                                    font_family="Display",
+                                ),
+                                ft.Text(item.get("description", ""), color=MUTED, size=15),
+                                ft.Column(
+                                    spacing=8,
+                                    controls=[
+                                        ft.Row(
+                                            spacing=10,
+                                            vertical_alignment=ft.CrossAxisAlignment.START,
+                                            controls=[
+                                                ft.Text(">", color=accent, font_family="Mono"),
+                                                ft.Container(
+                                                    expand=True,
+                                                    content=ft.Text(highlight, color=TEXT, size=14),
+                                                ),
+                                            ],
+                                        )
+                                        for highlight in item.get("highlights", [])
+                                    ],
+                                ),
+                                ft.Row(
+                                    wrap=True,
+                                    spacing=10,
+                                    controls=[
+                                        link_button(
+                                            item.get("reference_label", "Reference"),
+                                            item.get("reference_url", ""),
+                                        ),
+                                        link_button(
+                                            "Company",
+                                            item.get("company_url", ""),
+                                            accent=SECONDARY,
+                                        ),
+                                    ],
+                                ),
+                            ],
+                        ),
+                        title="experience://entry",
+                        bgcolor="#111827",
                     ),
-                    title="experience://entry",
-                    bgcolor="#111827",
+                    scale=1.015,
                 ),
             ),
         ],

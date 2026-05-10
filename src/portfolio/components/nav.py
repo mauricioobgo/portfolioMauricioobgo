@@ -3,11 +3,8 @@ from __future__ import annotations
 import flet as ft
 
 from portfolio.components.cards import ConsolePanel
+from portfolio.interaction import scroll_to, section_link_data
 from portfolio.theme import MUTED, PRIMARY, TEXT, alpha
-
-
-def _scroll_to(page: ft.Page, section_key: str) -> None:
-    page.scroll_to(scroll_key=section_key, duration=650)
 
 
 class _ConsoleTopbar(ft.Container):
@@ -21,6 +18,7 @@ class _ConsoleTopbar(ft.Container):
             ("Experience", "experience"),
             ("Certifications", "certifications"),
             ("GitHub", "github"),
+            ("AI", "assistant"),
             ("Stack", "stack"),
             ("Contact", "contact"),
         ]
@@ -39,6 +37,7 @@ class _ConsoleTopbar(ft.Container):
                 font_family="Mono",
             ),
             style=self._button_style(active),
+            data=section_link_data(label, section_key),
             on_click=lambda _, key=section_key: self._activate(key),
         )
 
@@ -105,15 +104,16 @@ class _ConsoleTopbar(ft.Container):
             if not button:
                 continue
             active = key == section_key
+            label = next(item_label for item_label, item_key in self._items if item_key == key)
             button.style = self._button_style(active)
             button.content = ft.Text(
-                next(label for label, item_key in self._items if item_key == key),
+                label,
                 color=TEXT if active else MUTED,
                 size=12,
                 font_family="Mono",
             )
             button.update()
-        _scroll_to(self._page, section_key)
+        scroll_to(self._page, section_key, duration=650)
 
 
 def NavigationBar(page: ft.Page) -> ft.Control:
