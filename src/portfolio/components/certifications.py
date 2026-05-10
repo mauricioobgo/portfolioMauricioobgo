@@ -4,16 +4,16 @@ from typing import Any
 
 import flet as ft
 
-from portfolio.components.cards import BentoGrid, SkillPill
+from portfolio.components.cards import BentoGrid, ConsolePanel, SkillPill
 from portfolio.interaction import attach_hover_lift, external_link_data, normalize_external_url
-from portfolio.theme import MUTED, PRIMARY, PURPLE, TEXT, WARNING, panel
+from portfolio.theme import MUTED, PRIMARY, PURPLE, TEXT, WARNING
 
 
 def CertificationCard(page: ft.Page, certification: dict[str, Any]) -> ft.Control:
     accent = WARNING if certification.get("featured") else PRIMARY
     level = certification.get("level") or "Credential"
     return attach_hover_lift(
-        panel(
+        ConsolePanel(
             ft.Column(
                 spacing=14,
                 controls=[
@@ -60,7 +60,10 @@ def CertificationCard(page: ft.Page, certification: dict[str, Any]) -> ft.Contro
                         ),
                     ),
                 ],
-            )
+            ),
+            title=f"{certification.get('issuer', '').lower()} - {level.lower()}",
+            glow=bool(certification.get("featured")),
+            bgcolor="#111827",
         ),
         scale=1.02,
     )

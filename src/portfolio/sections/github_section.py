@@ -16,10 +16,9 @@ def GitHubSection(page: ft.Page, content: dict[str, Any]) -> ft.Control:
             controls=[
                 SectionHeader(
                     page,
-                    "GITHUB ACTIVITY",
-                    "Weekly-refreshed repository data from the GitHub API.",
-                    "Repository cards are generated from the Python sync pipeline so the portfolio can refresh "
-                    "automatically during Actions runs without hand-editing the site.",
+                    "GITHUB",
+                    "Open work",
+                    "Weekly-refreshed repository data from the GitHub API, styled closer to a contribution console than a generic repo list.",
                 ),
                 GitHubGrid(page, content.get("github", {})),
             ],

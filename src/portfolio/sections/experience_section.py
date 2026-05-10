@@ -16,10 +16,9 @@ def ExperienceSection(page: ft.Page, content: dict[str, Any]) -> ft.Control:
             controls=[
                 SectionHeader(
                     page,
-                    "EXPERIENCE TIMELINE",
-                    "Latest three roles with source-backed context.",
-                    "The timeline keeps the newest three experience entries prominent and structured like an "
-                    "engineering command log rather than a conventional CV block.",
+                    "EXPERIENCE",
+                    "Where I've shipped",
+                    "The latest three roles stay prominent and read like a command log instead of a conventional CV block.",
                 ),
                 ExperienceTimeline(page, content.get("experience", [])),
             ],

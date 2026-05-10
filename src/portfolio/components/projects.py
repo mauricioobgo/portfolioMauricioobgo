@@ -4,9 +4,17 @@ from typing import Any
 
 import flet as ft
 
-from portfolio.components.cards import BentoGrid, LottiePanel, SkillPill, link_button, panel
+from portfolio.components.cards import (
+    BentoGrid,
+    ConsolePanel,
+    LottiePanel,
+    SkillPill,
+    link_button,
+    panel,
+)
 from portfolio.interaction import attach_hover_lift
 from portfolio.theme import MUTED, PRIMARY, PURPLE, SECONDARY, TEXT, WARNING, alpha
+
 
 FILTER_ORDER = ["All", "Backend", "Data Engineering", "LLM", "AWS", "FastAPI"]
 
@@ -35,9 +43,9 @@ def ProjectCard(project: dict[str, Any]) -> ft.Control:
         ),
         subtitle=ft.Text(project.get("summary", ""), color=MUTED, size=14),
         controls_padding=ft.Padding(left=18, right=18, bottom=18),
-        tile_padding=ft.Padding.all(18),
-        bgcolor="#111827",
-        collapsed_bgcolor="#111827",
+        tile_padding=ft.Padding.all(0),
+        bgcolor=alpha("#111827", 0),
+        collapsed_bgcolor=alpha("#111827", 0),
         text_color=TEXT,
         collapsed_text_color=TEXT,
         icon_color=PRIMARY,
@@ -59,13 +67,13 @@ def ProjectCard(project: dict[str, Any]) -> ft.Control:
                     ),
                     ft.Text(f"Problem: {project.get('problem', '')}", color=MUTED, size=15),
                     ft.Text(f"Solution: {project.get('solution', '')}", color=MUTED, size=15),
-                    ft.Text("Architecture", color=PRIMARY, size=13, font_family="Mono"),
+                    ft.Text("architecture", color=PRIMARY, size=12, font_family="Mono"),
                     panel(
                         ft.Text(architecture, color=TEXT, size=14),
                         padding=ft.Padding.all(16),
                         bgcolor=alpha("#0F172A", 0.95),
                     ),
-                    ft.Text("Highlights", color=PRIMARY, size=13, font_family="Mono"),
+                    ft.Text("highlights", color=PRIMARY, size=12, font_family="Mono"),
                     ft.Column(
                         spacing=8,
                         controls=[
@@ -99,7 +107,14 @@ def ProjectCard(project: dict[str, Any]) -> ft.Control:
     return attach_hover_lift(
         ft.Container(
             data={"kind": "project_card", "filters": project.get("filters", [])},
-            content=tile,
+            content=ConsolePanel(
+                tile,
+                title=(
+                    f"{project.get('category', 'project').lower()} - "
+                    f"{project.get('status', 'case study').lower()}"
+                ),
+                bgcolor="#111827",
+            ),
         ),
         scale=1.01,
     )
@@ -139,7 +154,7 @@ class ProjectExplorer(ft.Column):
                                             self._filter_chip(label) for label in FILTER_ORDER
                                         ],
                                     ),
-                                    panel(
+                                    ConsolePanel(
                                         ft.Row(
                                             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                                             wrap=True,
@@ -159,6 +174,7 @@ class ProjectExplorer(ft.Column):
                                                 ),
                                             ],
                                         ),
+                                        title="filters://projects",
                                         bgcolor=alpha("#0F172A", 0.90),
                                         padding=ft.Padding.all(18),
                                     ),
@@ -215,7 +231,10 @@ class ProjectExplorer(ft.Column):
         visible_count = sum(
             1 for project, _ in self._project_refs if project_matches(project, self.active_filter)
         )
-        return f"{self.active_filter}: showing {visible_count} of {len(self._project_refs)} case studies"
+        return (
+            f"{self.active_filter}: showing {visible_count} of "
+            f"{len(self._project_refs)} case studies"
+        )
 
     def apply_filter(self, filter_name: str) -> None:
         self.active_filter = filter_name

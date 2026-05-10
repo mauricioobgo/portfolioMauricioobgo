@@ -85,7 +85,7 @@ class PortfolioView(ft.Container):
             expand=True,
             content=app_shell(
                 ft.Column(
-                    spacing=28,
+                    spacing=30,
                     controls=[
                         self._animated_section(section, index)
                         for index, section in enumerate(sections)
@@ -100,7 +100,7 @@ class PortfolioView(ft.Container):
         return ft.Container(
             ref=ref,
             opacity=0 if index else 1,
-            offset=ft.Offset(0, 0.06 if index else 0),
+            offset=ft.Offset(0, 0.05 if index else 0),
             animate_opacity=ft.Animation(420, ft.AnimationCurve.EASE_OUT),
             animate_offset=ft.Animation(420, ft.AnimationCurve.EASE_OUT),
             content=control,

@@ -4,16 +4,14 @@ from typing import Any
 
 import flet as ft
 
-from portfolio.components.cards import BentoGrid, ConsoleFooter, SkillPill
+from portfolio.components.cards import BentoGrid, ConsoleFooter, ConsolePanel, SkillPill
 from portfolio.interaction import attach_hover_lift, external_link_data, normalize_external_url
-from portfolio.theme import MUTED, PRIMARY, SECONDARY, TEXT, panel
+from portfolio.theme import MUTED, PRIMARY, SECONDARY, TEXT
 
 
-def ContactCard(
-    page: ft.Page, title: str, value: str, caption: str, url: str, accent: str
-) -> ft.Control:
+def ContactCard(title: str, value: str, caption: str, url: str, accent: str) -> ft.Control:
     return attach_hover_lift(
-        panel(
+        ConsolePanel(
             ft.Column(
                 spacing=14,
                 controls=[
@@ -37,7 +35,9 @@ def ContactCard(
                         data=external_link_data(title, url),
                     ),
                 ],
-            )
+            ),
+            title=f"contact://{title.lower()}",
+            bgcolor="#111827",
         ),
         scale=1.02,
     )
@@ -56,14 +56,14 @@ def ContactGrid(page: ft.Page, content: dict[str, Any]) -> ft.Control:
         ),
         (
             "LinkedIn",
-            social_links.get("linkedin", ""),
+            "linkedin.com/in/mauricioobgo",
             "Public work history, certifications, and profile context.",
             social_links.get("linkedin", ""),
             SECONDARY,
         ),
         (
             "GitHub",
-            profile.get("github_url", ""),
+            "github.com/mauricioobgo",
             "Repository activity, engineering experiments, and current code.",
             profile.get("github_url", ""),
             "#A855F7",
@@ -76,11 +76,52 @@ def ContactGrid(page: ft.Page, content: dict[str, Any]) -> ft.Control:
                 [
                     ft.Container(
                         col={"xs": 12, "md": 6, "xl": 4},
-                        content=ContactCard(page, title, value, caption, url, accent),
+                        content=ContactCard(title, value, caption, url, accent),
                     )
                     for title, value, caption, url, accent in cards
                 ]
+                + [
+                    ft.Container(
+                        col={"xs": 12, "md": 6, "xl": 4},
+                        content=attach_hover_lift(
+                            ConsolePanel(
+                                ft.Column(
+                                    spacing=14,
+                                    controls=[
+                                        SkillPill("LOCATION", SECONDARY),
+                                        ft.Text(
+                                            profile.get("location", ""),
+                                            color=TEXT,
+                                            size=22,
+                                            font_family="DisplayBold",
+                                            weight=ft.FontWeight.W_700,
+                                        ),
+                                        ft.Text(
+                                            "Open to backend, data, cloud, and AI platform work with a Python-first delivery focus.",
+                                            color=MUTED,
+                                            size=14,
+                                        ),
+                                    ],
+                                ),
+                                title="signal://availability",
+                                glow=True,
+                                bgcolor="#111827",
+                            ),
+                            scale=1.02,
+                        ),
+                    )
+                ]
             ),
             ConsoleFooter(content["metadata"]),
+            ft.Text(
+                (
+                    f"(c) {content['metadata']['generated_at'][:4]} Mauricio Obando - "
+                    "built with Flet - reference-aligned console edition"
+                ),
+                color=MUTED,
+                size=12,
+                font_family="Mono",
+                text_align=ft.TextAlign.CENTER,
+            ),
         ],
     )

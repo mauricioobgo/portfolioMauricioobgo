@@ -11,19 +11,20 @@ PRIMARY = "#38BDF8"
 SECONDARY = "#22C55E"
 PURPLE = "#A855F7"
 WARNING = "#F59E0B"
+ROSE = "#FB7185"
 TEXT = "#F8FAFC"
 MUTED = "#94A3B8"
 TERMINAL = "#22C55E"
-ERROR = "#FB7185"
+ERROR = ROSE
 
 SECTION_WIDTH = 1240
-CARD_RADIUS = 24
+CARD_RADIUS = 22
 CARD_SHADOW = [
     ft.BoxShadow(
         spread_radius=1,
-        blur_radius=18,
+        blur_radius=20,
         color="#000000",
-        offset=ft.Offset(0, 8),
+        offset=ft.Offset(0, 10),
     )
 ]
 
@@ -77,7 +78,7 @@ def panel(
         padding=padding or ft.Padding.all(24),
         bgcolor=bgcolor,
         gradient=gradient,
-        border=ft.Border.all(1, BORDER),
+        border=ft.Border.all(1, alpha(BORDER, 0.96)),
         border_radius=CARD_RADIUS,
         shadow=CARD_SHADOW,
     )
@@ -92,10 +93,11 @@ def background_glow() -> ft.Control:
                 gradient=ft.LinearGradient(
                     begin=ft.Alignment(-1, -1),
                     end=ft.Alignment(1, 1),
-                    colors=[BACKGROUND, "#06111F", "#020617"],
+                    colors=[BACKGROUND, "#06101B", "#091321"],
                 ),
             ),
             *_grid_overlay(),
+            *_scanline_overlay(),
             ft.Container(
                 left=-140,
                 top=-80,
@@ -127,22 +129,35 @@ def background_glow() -> ft.Control:
 def _grid_overlay() -> list[ft.Control]:
     verticals = [
         ft.Container(
-            left=60 + column * 96,
+            left=48 + column * 96,
             top=0,
             bottom=0,
             width=1,
-            bgcolor=alpha(BORDER, 0.18),
+            bgcolor=alpha(PRIMARY, 0.08 if column % 2 == 0 else 0.04),
         )
-        for column in range(10)
+        for column in range(13)
     ]
     horizontals = [
         ft.Container(
             left=0,
             right=0,
-            top=80 + row * 92,
+            top=64 + row * 92,
             height=1,
-            bgcolor=alpha(BORDER, 0.18),
+            bgcolor=alpha(PRIMARY, 0.05 if row % 2 == 0 else 0.03),
         )
-        for row in range(6)
+        for row in range(10)
     ]
     return [*verticals, *horizontals]
+
+
+def _scanline_overlay() -> list[ft.Control]:
+    return [
+        ft.Container(
+            left=0,
+            right=0,
+            top=4 + stripe * 8,
+            height=1,
+            bgcolor=alpha(PRIMARY, 0.02),
+        )
+        for stripe in range(120)
+    ]

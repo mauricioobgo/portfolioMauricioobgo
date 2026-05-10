@@ -4,7 +4,7 @@ from typing import Any
 
 import flet as ft
 
-from portfolio.components.cards import LottiePanel, MetricCard, SkillPill
+from portfolio.components.cards import ConsolePanel, LottiePanel, MetricCard, SkillPill
 from portfolio.components.mascots import RetroDroidRunway
 from portfolio.components.terminal import TerminalBlock
 from portfolio.interaction import (
@@ -12,20 +12,10 @@ from portfolio.interaction import (
     external_link_data,
     normalize_external_url,
     scroll_to,
+    section_link_data,
 )
 from portfolio.responsive import hero_title_size, is_mobile
-from portfolio.theme import (
-    CARD,
-    MUTED,
-    PANEL,
-    PRIMARY,
-    PURPLE,
-    SECONDARY,
-    TEXT,
-    WARNING,
-    alpha,
-    panel,
-)
+from portfolio.theme import MUTED, PRIMARY, PURPLE, SECONDARY, TEXT, WARNING
 
 
 def HeroPanel(page: ft.Page, content: dict[str, Any]) -> ft.Control:
@@ -49,58 +39,59 @@ def HeroPanel(page: ft.Page, content: dict[str, Any]) -> ft.Control:
     ctas = [
         attach_hover_lift(
             ft.FilledButton(
-                content="View Projects",
+                content=ft.Text("$ open_projects", font_family="Mono"),
                 style=ft.ButtonStyle(
                     bgcolor=PRIMARY,
                     color="#020617",
-                    padding=ft.Padding.symmetric(horizontal=20, vertical=18),
+                    padding=ft.Padding.symmetric(horizontal=18, vertical=16),
                     shape=ft.RoundedRectangleBorder(radius=18),
                 ),
-                data={"kind": "section_link", "label": "View Projects", "target": "projects"},
+                data=section_link_data("View Projects", "projects"),
                 on_click=lambda _: scroll_to(page, "projects"),
-            ),
+            )
         ),
         attach_hover_lift(
             ft.OutlinedButton(
-                content="GitHub",
+                content=ft.Text("$ github", font_family="Mono"),
                 style=ft.ButtonStyle(
                     color=TEXT,
-                    padding=ft.Padding.symmetric(horizontal=20, vertical=18),
+                    padding=ft.Padding.symmetric(horizontal=18, vertical=16),
                     shape=ft.RoundedRectangleBorder(radius=18),
                 ),
                 url=normalize_external_url(profile.get("github_url")),
                 data=external_link_data("GitHub", profile.get("github_url")),
-            ),
+            )
         ),
         attach_hover_lift(
             ft.OutlinedButton(
-                content="LinkedIn",
+                content=ft.Text("$ linkedin", font_family="Mono"),
                 style=ft.ButtonStyle(
                     color=TEXT,
-                    padding=ft.Padding.symmetric(horizontal=20, vertical=18),
+                    padding=ft.Padding.symmetric(horizontal=18, vertical=16),
                     shape=ft.RoundedRectangleBorder(radius=18),
                 ),
                 url=normalize_external_url(social_links.get("linkedin")),
                 data=external_link_data("LinkedIn", social_links.get("linkedin")),
-            ),
+            )
         ),
         attach_hover_lift(
             ft.OutlinedButton(
-                content="Download Resume",
+                content=ft.Text("$ download_resume", font_family="Mono"),
                 style=ft.ButtonStyle(
                     color=TEXT,
-                    padding=ft.Padding.symmetric(horizontal=20, vertical=18),
+                    padding=ft.Padding.symmetric(horizontal=18, vertical=16),
                     shape=ft.RoundedRectangleBorder(radius=18),
                 ),
                 url=normalize_external_url(profile.get("resume_link")),
                 data=external_link_data("Download Resume", profile.get("resume_link")),
-            ),
+            )
         ),
     ]
 
     left = ft.Column(
         spacing=18,
         controls=[
+            TerminalBlock(content.get("hero_commands", []), title="console://mauricio"),
             ft.Row(
                 wrap=True,
                 spacing=10,
@@ -111,16 +102,30 @@ def HeroPanel(page: ft.Page, content: dict[str, Any]) -> ft.Control:
                     SkillPill("GITHUB ACTIONS PAGES", PURPLE),
                 ],
             ),
-            ft.Text(
-                profile.get("name", "Mauricio Obando"),
-                size=hero_title_size(page),
-                color=TEXT,
-                font_family="DisplayBold",
-                weight=ft.FontWeight.W_700,
+            ft.Row(
+                wrap=True,
+                spacing=12,
+                run_spacing=0,
+                controls=[
+                    ft.Text(
+                        "Mauricio",
+                        size=hero_title_size(page),
+                        color=TEXT,
+                        font_family="DisplayBold",
+                        weight=ft.FontWeight.W_700,
+                    ),
+                    ft.Text(
+                        "Obando",
+                        size=hero_title_size(page),
+                        color=PRIMARY,
+                        font_family="DisplayBold",
+                        weight=ft.FontWeight.W_700,
+                    ),
+                ],
             ),
             ft.Text(
                 profile.get("title", ""),
-                size=20 if is_mobile(page) else 24,
+                size=22 if is_mobile(page) else 28,
                 color=PRIMARY,
                 font_family="Display",
                 weight=ft.FontWeight.W_600,
@@ -133,7 +138,6 @@ def HeroPanel(page: ft.Page, content: dict[str, Any]) -> ft.Control:
                 controls=[SkillPill(skill) for skill in profile.get("skills", [])],
             ),
             ft.Row(wrap=True, spacing=12, run_spacing=12, controls=ctas),
-            TerminalBlock(content.get("hero_commands", []), title="mauricio.cloud.status"),
         ],
     )
 
@@ -144,28 +148,71 @@ def HeroPanel(page: ft.Page, content: dict[str, Any]) -> ft.Control:
                 LottiePanel(
                     "AI / Cloud command center",
                     "lottie/ai_network.json",
-                    caption="Animated network signals, control-plane rhythm, and static-web-safe motion for the hero console.",
+                    caption=(
+                        "Animated network pulses, terminal energy, and command-center motion inspired by the reference Pac-Man console portfolio."
+                    ),
                     accent=PRIMARY,
                 ),
                 scale=1.01,
             ),
             RetroDroidRunway(),
-            panel(
-                ft.ResponsiveRow(
-                    columns=12,
-                    spacing=14,
-                    run_spacing=14,
+            ConsolePanel(
+                ft.Column(
+                    spacing=16,
                     controls=[
-                        ft.Container(col={"xs": 6, "md": 6}, content=metric) for metric in metrics
+                        ft.Row(
+                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                            controls=[
+                                ft.Text("location", color=MUTED, size=12, font_family="Mono"),
+                                ft.Text(
+                                    profile.get("location", ""),
+                                    color=TEXT,
+                                    size=12,
+                                    font_family="Mono",
+                                ),
+                            ],
+                        ),
+                        ft.Row(
+                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                            controls=[
+                                ft.Text("status", color=MUTED, size=12, font_family="Mono"),
+                                ft.Row(
+                                    spacing=8,
+                                    controls=[
+                                        ft.Container(
+                                            width=8,
+                                            height=8,
+                                            bgcolor=SECONDARY,
+                                            border_radius=999,
+                                        ),
+                                        ft.Text(
+                                            f"available - {profile.get('company', '')}",
+                                            color=SECONDARY,
+                                            size=12,
+                                            font_family="Mono",
+                                        ),
+                                    ],
+                                ),
+                            ],
+                        ),
+                        ft.ResponsiveRow(
+                            columns=12,
+                            spacing=14,
+                            run_spacing=14,
+                            controls=[
+                                ft.Container(col={"xs": 6, "md": 6}, content=metric)
+                                for metric in metrics
+                            ],
+                        ),
                     ],
                 ),
-                bgcolor=alpha(PANEL, 0.95),
+                title="console://status",
                 padding=ft.Padding.all(18),
             ),
         ],
     )
 
-    return panel(
+    return ConsolePanel(
         ft.ResponsiveRow(
             columns=12,
             spacing=20,
@@ -176,10 +223,5 @@ def HeroPanel(page: ft.Page, content: dict[str, Any]) -> ft.Control:
             ],
         ),
         padding=ft.Padding.all(28),
-        bgcolor=alpha(CARD, 0.95),
-        gradient=ft.LinearGradient(
-            begin=ft.Alignment(-1, -1),
-            end=ft.Alignment(1, 1),
-            colors=[alpha(PANEL, 0.98), alpha("#111827", 0.98), alpha("#091321", 0.98)],
-        ),
+        glow=True,
     )

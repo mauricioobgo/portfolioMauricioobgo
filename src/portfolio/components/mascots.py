@@ -305,7 +305,6 @@ class ConsoleSweep(ft.Container):
         self._auto_start = auto_start
         self._animating = False
         self._queued = False
-        self._accent = accent
         super().__init__(
             height=46,
             padding=ft.Padding.only(bottom=4),
@@ -454,7 +453,7 @@ class ArcadeCommandRail(ft.Container):
                                 spacing=10,
                                 controls=[
                                     ft.Text(
-                                        "console arcade rail",
+                                        "pacman border rail",
                                         color=PRIMARY,
                                         size=12,
                                         font_family="Mono",
@@ -593,7 +592,6 @@ class ArcadeCommandRail(ft.Container):
     def did_mount(self) -> None:
         if not self.page:
             return
-
         self._previous_keyboard_handler = getattr(self.page, "on_keyboard_event", None)
         self._previous_resize_handler = getattr(self.page, "on_resize", None)
         self.page.on_keyboard_event = self._handle_keyboard_event
@@ -658,7 +656,6 @@ class ArcadeCommandRail(ft.Container):
             or not self._trail_ref.current
         ):
             return
-
         self._animating = True
         width = self._rail_width()
         end_left = max(width - 80, 18)

@@ -16,10 +16,9 @@ def FocusSection(page: ft.Page, content: dict[str, Any]) -> ft.Control:
             controls=[
                 SectionHeader(
                     page,
-                    "ENGINEERING FOCUS",
-                    "Backend, data, AI, and cloud capability areas.",
-                    "These focus cards are shaped like a technical console instead of a static resume, "
-                    "so the page reads like an engineering operating surface.",
+                    "FOCUS",
+                    "What I build",
+                    "Three delivery pillars translated into console cards so the page feels like an engineering operating surface rather than a static resume.",
                 ),
                 FocusGrid(content.get("engineering_focus", [])),
             ],

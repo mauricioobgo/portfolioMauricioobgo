@@ -17,9 +17,8 @@ def ContactSection(page: ft.Page, content: dict[str, Any]) -> ft.Control:
                 SectionHeader(
                     page,
                     "CONTACT",
-                    "Open to backend, data, cloud, and AI platform work.",
-                    "The portfolio closes with direct paths to email, GitHub, and LinkedIn plus a small terminal-style "
-                    "status footer for the runtime and content pipeline.",
+                    "Open a connection",
+                    "Direct contact paths, terminal-style footer, and a closer match to the reference portfolio's closing console surface.",
                 ),
                 ContactGrid(page, content),
             ],

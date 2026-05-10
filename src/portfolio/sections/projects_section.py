@@ -16,10 +16,9 @@ def ProjectsSection(page: ft.Page, content: dict[str, Any]) -> ft.Control:
             controls=[
                 SectionHeader(
                     page,
-                    "FEATURED PROJECTS",
-                    "Technical case studies with architecture notes.",
-                    "Project cards expand in place so the portfolio can show problem framing, solution details, "
-                    "and architecture context without turning into a wall of text.",
+                    "PROJECTS",
+                    "Selected work",
+                    "Production patterns from backend, data, cloud, and AI delivery with expandable architecture notes.",
                 ),
                 ProjectGrid(page, content.get("featured_projects", [])),
             ],
