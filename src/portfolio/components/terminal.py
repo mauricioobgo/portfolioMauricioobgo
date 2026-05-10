@@ -2,21 +2,13 @@ from __future__ import annotations
 
 import flet as ft
 
-from portfolio.theme import CARD, MUTED, PRIMARY, TERMINAL, TEXT, alpha, panel
+from portfolio.components.cards import ConsolePanel
+from portfolio.components.mascots import ConsoleSweep
+from portfolio.theme import MUTED, TEXT, alpha
 
 
 def TerminalBlock(lines: list[str], *, title: str = "console://mauricio") -> ft.Control:
-    controls: list[ft.Control] = [
-        ft.Row(
-            spacing=8,
-            controls=[
-                ft.Container(width=10, height=10, bgcolor="#FB7185", border_radius=999),
-                ft.Container(width=10, height=10, bgcolor="#F59E0B", border_radius=999),
-                ft.Container(width=10, height=10, bgcolor=TERMINAL, border_radius=999),
-                ft.Text(title, color=PRIMARY, size=12, font_family="Mono"),
-            ],
-        )
-    ]
+    controls: list[ft.Control] = []
 
     for line in lines:
         if line:
@@ -28,8 +20,9 @@ def TerminalBlock(lines: list[str], *, title: str = "console://mauricio") -> ft.
         else:
             controls.append(ft.Text("", size=8))
 
-    return panel(
-        ft.Column(spacing=10, controls=controls),
-        bgcolor=alpha(CARD, 0.98),
+    return ConsolePanel(
+        ft.Column(spacing=9, controls=[ConsoleSweep(), *controls]),
+        title=title,
         padding=ft.Padding.all(18),
+        bgcolor=alpha("#0B1120", 0.94),
     )

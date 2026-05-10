@@ -4,8 +4,8 @@ from typing import Any
 
 import flet as ft
 
-from portfolio.components.cards import SkillPill, link_button
-from portfolio.theme import MUTED, PRIMARY, SECONDARY, TEXT, alpha, panel
+from portfolio.components.cards import ConsolePanel, SkillPill, link_button
+from portfolio.theme import MUTED, PRIMARY, SECONDARY, TEXT, alpha
 
 
 def _timeline_item(page: ft.Page, item: dict[str, Any], *, accent: str) -> ft.Control:
@@ -23,7 +23,7 @@ def _timeline_item(page: ft.Page, item: dict[str, Any], *, accent: str) -> ft.Co
             ),
             ft.Container(
                 expand=True,
-                content=panel(
+                content=ConsolePanel(
                     ft.Column(
                         spacing=14,
                         controls=[
@@ -85,7 +85,9 @@ def _timeline_item(page: ft.Page, item: dict[str, Any], *, accent: str) -> ft.Co
                                 ],
                             ),
                         ],
-                    )
+                    ),
+                    title="experience://entry",
+                    bgcolor="#111827",
                 ),
             ),
         ],

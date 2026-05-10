@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import asyncio
 from typing import Any
 
 import flet as ft
 
+from portfolio.components.mascots import ArcadeCommandRail
 from portfolio.data_loader import load_portfolio_content
 from portfolio.sections.certifications_section import CertificationsSection
 from portfolio.sections.contact_section import ContactSection
@@ -62,22 +64,63 @@ def _error_view(message: str) -> ft.Control:
     )
 
 
-def build_portfolio_view(page: ft.Page, content: dict[str, Any]) -> ft.Control:
-    return app_shell(
-        ft.Column(
-            spacing=28,
-            controls=[
-                HeroSection(page, content),
-                FocusSection(page, content),
-                ProjectsSection(page, content),
-                ExperienceSection(page, content),
-                CertificationsSection(page, content),
-                GitHubSection(page, content),
-                StackSection(page, content),
-                ContactSection(page, content),
-            ],
+class PortfolioView(ft.Container):
+    def __init__(self, page: ft.Page, content: dict[str, Any]) -> None:
+        self._section_refs: list[ft.Ref[ft.Container]] = []
+        self._revealing = False
+        self._arcade_rail = ArcadeCommandRail()
+        sections = [
+            HeroSection(page, content, accent_control=self._arcade_rail),
+            FocusSection(page, content),
+            ProjectsSection(page, content),
+            ExperienceSection(page, content),
+            CertificationsSection(page, content),
+            GitHubSection(page, content),
+            StackSection(page, content),
+            ContactSection(page, content),
+        ]
+        super().__init__(
+            expand=True,
+            content=app_shell(
+                ft.Column(
+                    spacing=34,
+                    controls=[
+                        self._animated_section(section, index)
+                        for index, section in enumerate(sections)
+                    ],
+                )
+            ),
         )
-    )
+
+    def _animated_section(self, control: ft.Control, index: int) -> ft.Control:
+        ref = ft.Ref[ft.Container]()
+        self._section_refs.append(ref)
+        return ft.Container(
+            ref=ref,
+            opacity=0 if index else 1,
+            offset=ft.Offset(0, 0.05 if index else 0),
+            animate_opacity=ft.Animation(420, ft.AnimationCurve.EASE_OUT),
+            animate_offset=ft.Animation(420, ft.AnimationCurve.EASE_OUT),
+            content=control,
+        )
+
+    def did_mount(self) -> None:
+        if self.page and not self._revealing:
+            self._revealing = True
+            self.page.run_task(self._reveal_sections)
+
+    async def _reveal_sections(self) -> None:
+        for index, ref in enumerate(self._section_refs):
+            if not ref.current or index == 0:
+                continue
+            ref.current.opacity = 1
+            ref.current.offset = ft.Offset(0, 0)
+            ref.current.update()
+            await asyncio.sleep(0.08)
+
+
+def build_portfolio_view(page: ft.Page, content: dict[str, Any]) -> ft.Control:
+    return PortfolioView(page, content)
 
 
 async def main(page: ft.Page) -> None:

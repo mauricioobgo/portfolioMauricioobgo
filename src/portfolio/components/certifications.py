@@ -4,14 +4,14 @@ from typing import Any
 
 import flet as ft
 
-from portfolio.components.cards import BentoGrid, SkillPill
-from portfolio.theme import MUTED, PRIMARY, PURPLE, TEXT, WARNING, panel
+from portfolio.components.cards import BentoGrid, ConsolePanel, SkillPill
+from portfolio.theme import MUTED, PRIMARY, PURPLE, TEXT, WARNING
 
 
 def CertificationCard(page: ft.Page, certification: dict[str, Any]) -> ft.Control:
     accent = WARNING if certification.get("featured") else PRIMARY
     level = certification.get("level") or "Credential"
-    return panel(
+    return ConsolePanel(
         ft.Column(
             spacing=14,
             controls=[
@@ -52,7 +52,10 @@ def CertificationCard(page: ft.Page, certification: dict[str, Any]) -> ft.Contro
                     on_click=lambda _: page.launch_url(certification.get("credential_url")),
                 ),
             ],
-        )
+        ),
+        title=f"{certification.get('issuer', '').lower()} - {level.lower()}",
+        glow=bool(certification.get("featured")),
+        bgcolor="#111827",
     )
 
 

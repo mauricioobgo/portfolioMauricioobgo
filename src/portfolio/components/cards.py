@@ -6,13 +6,16 @@ import flet as ft
 
 from portfolio.responsive import section_title_size
 from portfolio.theme import (
+    BORDER,
     CARD,
     MUTED,
     PANEL,
     PRIMARY,
     PURPLE,
+    ROSE,
     SECONDARY,
     TEXT,
+    WARNING,
     alpha,
     panel,
 )
@@ -25,22 +28,94 @@ except ImportError:  # pragma: no cover - exercised through fallback behavior.
 
 def SkillPill(label: str, accent: str = PRIMARY) -> ft.Control:
     return ft.Container(
-        padding=ft.Padding.symmetric(horizontal=14, vertical=9),
+        padding=ft.Padding.symmetric(horizontal=12, vertical=7),
         bgcolor=alpha(accent, 0.12),
-        border=ft.Border.all(1, alpha(accent, 0.30)),
+        border=ft.Border.all(1, alpha(accent, 0.26)),
         border_radius=999,
         content=ft.Text(
             label,
             color=accent,
-            size=12,
+            size=11,
             font_family="Mono",
             weight=ft.FontWeight.W_600,
         ),
     )
 
 
+def ConsolePanel(
+    content: ft.Control,
+    *,
+    title: str | None = None,
+    glow: bool = False,
+    padding: ft.PaddingValue | None = None,
+    bgcolor: str | None = None,
+) -> ft.Control:
+    controls: list[ft.Control] = []
+    if title:
+        controls.append(
+            ft.Row(
+                spacing=8,
+                controls=[
+                    ft.Container(width=10, height=10, bgcolor=ROSE, border_radius=999),
+                    ft.Container(width=10, height=10, bgcolor=WARNING, border_radius=999),
+                    ft.Container(width=10, height=10, bgcolor=SECONDARY, border_radius=999),
+                    ft.Text(title, color=PRIMARY, size=12, font_family="Mono"),
+                ],
+            )
+        )
+        controls.append(ft.Container(height=1, bgcolor=alpha(BORDER, 0.92)))
+    controls.append(content)
+    return (
+        panel(
+            ft.Column(
+                spacing=14 if title else 0,
+                controls=controls,
+            ),
+            padding=padding or ft.Padding.all(22),
+            bgcolor=bgcolor or alpha(PANEL, 0.86),
+            gradient=ft.LinearGradient(
+                begin=ft.Alignment(-1, -1),
+                end=ft.Alignment(1, 1),
+                colors=[
+                    alpha(PANEL, 0.97),
+                    alpha(CARD, 0.94),
+                    alpha("#101B2B", 0.94),
+                ],
+            ),
+        )
+        if not glow
+        else ft.Container(
+            shadow=[
+                ft.BoxShadow(
+                    spread_radius=1,
+                    blur_radius=28,
+                    color=alpha(PRIMARY, 0.20),
+                    offset=ft.Offset(0, 10),
+                )
+            ],
+            content=panel(
+                ft.Column(
+                    spacing=14 if title else 0,
+                    controls=controls,
+                ),
+                padding=padding or ft.Padding.all(22),
+                bgcolor=bgcolor or alpha(PANEL, 0.86),
+                gradient=ft.LinearGradient(
+                    begin=ft.Alignment(-1, -1),
+                    end=ft.Alignment(1, 1),
+                    colors=[
+                        alpha(PANEL, 0.97),
+                        alpha(CARD, 0.94),
+                        alpha("#101B2B", 0.94),
+                    ],
+                ),
+            ),
+        )
+    )
+
+
 def MetricCard(label: str, value: str, caption: str, accent: str = PRIMARY) -> ft.Control:
-    return panel(
+    return ConsolePanel(
         ft.Column(
             spacing=10,
             controls=[
@@ -55,8 +130,8 @@ def MetricCard(label: str, value: str, caption: str, accent: str = PRIMARY) -> f
                 ft.Text(caption, color=MUTED, size=13),
             ],
         ),
-        bgcolor=alpha(CARD, 0.96),
         padding=ft.Padding.all(18),
+        bgcolor=alpha(CARD, 0.92),
     )
 
 
@@ -64,7 +139,13 @@ def SectionHeader(page: ft.Page, eyebrow: str, title: str, description: str) -> 
     return ft.Column(
         spacing=12,
         controls=[
-            SkillPill(eyebrow, SECONDARY),
+            ft.Text(
+                f"// {eyebrow.lower()}",
+                color=PRIMARY,
+                size=12,
+                font_family="Mono",
+                weight=ft.FontWeight.W_600,
+            ),
             ft.Text(
                 title,
                 size=section_title_size(page),
@@ -73,7 +154,7 @@ def SectionHeader(page: ft.Page, eyebrow: str, title: str, description: str) -> 
                 weight=ft.FontWeight.W_700,
             ),
             ft.Container(
-                width=820,
+                width=880,
                 content=ft.Text(description, color=MUTED, size=16),
             ),
         ],
@@ -85,7 +166,7 @@ def BentoGrid(controls: list[ft.Control]) -> ft.Control:
 
 
 def _lottie_fallback(title: str, caption: str, accent: str, icon: ft.IconData) -> ft.Control:
-    return panel(
+    return ConsolePanel(
         ft.Column(
             alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -97,6 +178,7 @@ def _lottie_fallback(title: str, caption: str, accent: str, icon: ft.IconData) -
             ],
         ),
         padding=ft.Padding.all(24),
+        title=title,
         bgcolor=alpha(PANEL, 0.90),
     )
 
@@ -113,7 +195,7 @@ def LottiePanel(
         return _lottie_fallback(title, caption, accent, icon)
 
     error_content = _lottie_fallback(title, caption, accent, icon)
-    return panel(
+    return ConsolePanel(
         ft.Column(
             spacing=16,
             controls=[
@@ -135,18 +217,19 @@ def LottiePanel(
                         error_content=error_content,
                     ),
                 ),
-                ft.Text(title, color=TEXT, size=20, font_family="DisplayBold"),
                 ft.Text(caption, color=MUTED, size=14),
             ],
         ),
         padding=ft.Padding.all(22),
+        title=title,
         bgcolor=alpha(PANEL, 0.90),
+        glow=True,
     )
 
 
 def ConsoleFooter(metadata: dict) -> ft.Control:
     runtime = metadata.get("runtime", "static_web")
-    return panel(
+    return ConsolePanel(
         ft.Column(
             spacing=8,
             controls=[
@@ -159,12 +242,18 @@ def ConsoleFooter(metadata: dict) -> ft.Control:
             ],
         ),
         padding=ft.Padding.all(18),
+        title="console://runtime",
     )
 
 
 def link_button(label: str, url: str, page: ft.Page, *, accent: str = PRIMARY) -> ft.Control:
     return ft.TextButton(
         content=ft.Text(label, color=accent, size=13, font_family="Mono"),
+        style=ft.ButtonStyle(
+            side=ft.Border.all(1, alpha(accent, 0.28)),
+            padding=ft.Padding.symmetric(horizontal=14, vertical=10),
+            shape=ft.RoundedRectangleBorder(radius=16),
+        ),
         on_click=(lambda _: page.launch_url(url)) if url else None,
     )
 
