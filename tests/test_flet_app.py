@@ -69,11 +69,23 @@ def test_view_exposes_bound_links_and_interactive_controls() -> None:
         if isinstance(getattr(control, "data", None), dict)
         and control.data.get("kind") == "project_filter"
     ]
+    assistant_prompts = [
+        control.data
+        for control in controls
+        if isinstance(getattr(control, "data", None), dict)
+        and control.data.get("kind") == "assistant_prompt"
+    ]
     arcade_rails = [
         control.data
         for control in controls
         if isinstance(getattr(control, "data", None), dict)
         and control.data.get("kind") == "arcade_rail"
+    ]
+    border_pacman = [
+        control.data
+        for control in controls
+        if isinstance(getattr(control, "data", None), dict)
+        and control.data.get("kind") == "border_pacman"
     ]
 
     required_external_labels = {"GitHub", "LinkedIn", "Download Resume", "Email"}
@@ -81,8 +93,16 @@ def test_view_exposes_bound_links_and_interactive_controls() -> None:
     assert required_external_labels <= found_labels
     assert any(item["target"] == "projects" for item in section_links)
     assert assistant_terminal
+    assert assistant_prompts
     assert arcade_rails
+    assert border_pacman
     assert {item["filter"] for item in project_filters} == set(FILTER_ORDER)
+
+    ordered_keys = [
+        getattr(control, "key", None) for control in controls if getattr(control, "key", None)
+    ]
+    assert ordered_keys.index("experience") < ordered_keys.index("assistant")
+    assert ordered_keys.index("assistant") < ordered_keys.index("certifications")
 
 
 def test_project_filter_logic_matches_declared_filters() -> None:

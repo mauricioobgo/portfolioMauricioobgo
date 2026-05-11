@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-05-04T16:58:12+00:00",
+    "generated_at": "2026-05-11T13:32:24+00:00",
     "frontend": "flet",
     "runtime": "static_web",
     "deployment_url": "https://mauricioobgo.github.io/portfolioMauricioobgo/",
@@ -10,7 +10,9 @@
       "updates": [
         "github_repositories_weekly"
       ]
-    }
+    },
+    "assistant_mode": "cli",
+    "resume_drift": {}
   },
   "profile": {
     "name": "Mauricio Obando",
@@ -19,6 +21,7 @@
     "about": "Python-first engineer focused on backend, data, cloud, and AI systems. I work across production APIs, warehouse architecture, FinOps visibility, analytics pipelines, and applied LLM workflows with a strong delivery mindset.",
     "bio": "Passionate about leveraging the power of data and the cloud to drive meaningful insights and innovation. ",
     "resume_link": "https://drive.google.com/file/d/197iszNCfu2tIdIlV5CLF--6Lk3bMSBFH/view?usp=sharing",
+    "resume_pdf_url": "https://drive.google.com/uc?export=download&id=197iszNCfu2tIdIlV5CLF--6Lk3bMSBFH",
     "email": "mauricioobgo@gmail.com",
     "location": "Bogot\u00e1 Colombia",
     "company": "AWS",
@@ -45,6 +48,12 @@
       "",
       "$ stack --top",
       "python3.14 fastapi aws redshift dbt llms spark"
+    ],
+    "assistant_prompts": [
+      "Summarize Mauricio for a backend platform engineering role.",
+      "Which AWS, Redshift, and data engineering strengths stand out the most?",
+      "How does Mauricio apply AI and LLM systems in practical delivery work?",
+      "What production patterns appear across Mauricio's backend and cloud projects?"
     ],
     "github_url": "https://github.com/mauricioobgo",
     "linkedin_certifications_url": "https://www.linkedin.com/in/mauricioobgo/details/certifications/",
@@ -476,6 +485,32 @@
       ]
     }
   ],
+  "resume": {
+    "source_url": "https://drive.google.com/file/d/197iszNCfu2tIdIlV5CLF--6Lk3bMSBFH/view?usp=sharing",
+    "source_pdf_url": "https://drive.google.com/uc?export=download&id=197iszNCfu2tIdIlV5CLF--6Lk3bMSBFH",
+    "synced_at": null,
+    "excerpt": "",
+    "keywords": [],
+    "line_count": 0
+  },
+  "assistant": {
+    "status": "CLI mode",
+    "description": "This GitHub Pages site stays static. The Mauricio AI assistant is prepared as a local/admin CLI using generated portfolio context plus the public resume snapshot.",
+    "prompts": [
+      "Summarize Mauricio for a backend platform engineering role.",
+      "Which AWS, Redshift, and data engineering strengths stand out the most?",
+      "How does Mauricio apply AI and LLM systems in practical delivery work?",
+      "What production patterns appear across Mauricio's backend and cloud projects?"
+    ],
+    "cli_command": "uv run python -m portfolio_app.scripts.chat_cv --question \"What production-grade systems does Mauricio build?\"",
+    "context_files": [
+      "portfolio_app/generated/ai_context.json",
+      "portfolio_app/generated/resume_snapshot.json",
+      "src/assets/portfolio_content.json"
+    ],
+    "resume_synced_at": null,
+    "summary": "Python-first engineer focused on backend, data, cloud, and AI systems. I work across production APIs, warehouse architecture, FinOps visibility, analytics pipelines, and applied LLM workflows with a strong delivery mindset."
+  },
   "github": {
     "profile": {
       "login": "mauricioobgo",

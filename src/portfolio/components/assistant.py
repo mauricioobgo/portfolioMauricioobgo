@@ -1,14 +1,15 @@
 from __future__ import annotations
 
+import asyncio
 from collections.abc import Callable
 from typing import Any
 
 import flet as ft
 
-from portfolio.components.cards import BentoGrid, LottiePanel, SkillPill, panel
+from portfolio.components.cards import ConsolePanel, SkillPill
 from portfolio.components.mascots import ConsoleSweep
 from portfolio.interaction import attach_hover_lift
-from portfolio.theme import MUTED, PRIMARY, PURPLE, SECONDARY, TEXT, alpha
+from portfolio.theme import MUTED, PRIMARY, PURPLE, SECONDARY, TEXT, WARNING, alpha
 
 
 def _greeting_lines(content: dict[str, Any]) -> list[str]:
@@ -18,11 +19,11 @@ def _greeting_lines(content: dict[str, Any]) -> list[str]:
         prompts[0] if prompts else "Ask how Mauricio builds backend, data, AI, and cloud systems."
     )
     return [
-        "mauricio_ai@cloud-console ready",
-        "Welcome. Thanks for dropping into the command center.",
-        "This browser terminal is static-safe and runs on predefined portfolio context.",
-        f"Try this: {starter}",
-        "Tip: press Enter to submit and use the arrow keys to steer pacman across the arcade rail.",
+        "MauricioOS booting...",
+        "Welcome to the command center. Glad you are here.",
+        "This browser shell is static-safe and runs on predefined portfolio context.",
+        f"Try: {starter}",
+        "Press Enter to submit. Each command also boosts the arcade rail.",
     ]
 
 
@@ -75,7 +76,7 @@ def build_assistant_response(question: str, content: dict[str, Any]) -> list[str
         return [
             "AI engineering signal: RAG workflows, structured outputs, evaluation loops, tool calling, and LLM-assisted delivery.",
             "The portfolio positions AI work as applied systems engineering rather than isolated prompt experiments.",
-            "The local CV assistant prep is designed so a hosted bot can be added later without exposing secrets in GitHub Pages.",
+            "The full OpenAI-powered version stays in the local CLI flow so GitHub Pages remains static-safe.",
         ]
 
     if any(
@@ -123,6 +124,13 @@ def build_assistant_response(question: str, content: dict[str, Any]) -> list[str
             lines.append(f"Resume source: {resume_link}")
         return lines
 
+    if "matrix" in prompt:
+        return [
+            "Wake up, recruiter...",
+            "This shell can highlight backend, data, AI, AWS, certifications, and current experience without leaving the page.",
+            "Ask a real portfolio question next and I will route the answer.",
+        ]
+
     return [
         "I can answer predefined questions about Mauricio's backend, data, cloud, AI, projects, certifications, and recent roles.",
         "Try one of these topics: backend summary, AWS certifications, Redshift/data engineering, AI/LLM work, or recent experience.",
@@ -131,22 +139,17 @@ def build_assistant_response(question: str, content: dict[str, Any]) -> list[str
 
 
 def _terminal_line(text: str, role: str) -> ft.Control:
-    prefixes = {
-        "system": "#",
-        "assistant": ">",
-        "user": "$",
-    }
-    colors = {
-        "system": SECONDARY,
-        "assistant": TEXT,
-        "user": PRIMARY,
-    }
-    prefix = prefixes.get(role, ">")
-    color = colors.get(role, TEXT)
-    return ft.Text(f"{prefix} {text}", color=color, size=13, font_family="Mono")
+    prefixes = {"system": "#", "assistant": ">", "user": "$"}
+    colors = {"system": SECONDARY, "assistant": TEXT, "user": PRIMARY}
+    return ft.Text(
+        f"{prefixes.get(role, '>')} {text}",
+        color=colors.get(role, TEXT),
+        size=13,
+        font_family="Mono",
+    )
 
 
-class AssistantTerminal(ft.Container):
+class AssistantTerminalShell(ft.Container):
     def __init__(
         self,
         content: dict[str, Any],
@@ -157,75 +160,152 @@ class AssistantTerminal(ft.Container):
         self._content = content
         self._cli_command = cli_command
         self._on_enter_pacman = on_enter_pacman
-        self._log_ref = ft.Ref[ft.ListView]()
-        self._input_ref = ft.Ref[ft.TextField]()
-        self._status_ref = ft.Ref[ft.Text]()
-        self._sweep = ConsoleSweep(auto_start=False, accent=PURPLE)
         self._history: list[tuple[str, str]] = [
             ("system", line) for line in _greeting_lines(content)
         ]
+        self._log_ref = ft.Ref[ft.ListView]()
+        self._input_ref = ft.Ref[ft.TextField]()
+        self._status_ref = ft.Ref[ft.Text]()
+        self._thinking_ref = ft.Ref[ft.Row]()
+        self._busy = False
+        self._sweep = ConsoleSweep(auto_start=False, accent=WARNING)
         super().__init__(
-            data={"kind": "assistant_terminal", "mode": "browser_cli"},
-            content=self._build(),
+            data={"kind": "assistant_terminal", "mode": "browser_cli"}, content=self._build()
         )
 
     def _build(self) -> ft.Control:
-        return panel(
+        prompts = self._content.get("profile", {}).get("assistant_prompts", [])[:4]
+        resume_keywords = self._content.get("resume", {}).get("keywords", [])[:6]
+        return ConsolePanel(
             ft.Column(
-                spacing=14,
+                spacing=16,
                 controls=[
                     ft.Row(
-                        spacing=8,
+                        wrap=True,
+                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                         controls=[
-                            ft.Container(width=10, height=10, bgcolor="#FB7185", border_radius=999),
-                            ft.Container(width=10, height=10, bgcolor="#F59E0B", border_radius=999),
-                            ft.Container(width=10, height=10, bgcolor=SECONDARY, border_radius=999),
-                            ft.Text(
-                                "mauricio_ai.console", color=PRIMARY, size=12, font_family="Mono"
+                            ft.Column(
+                                spacing=6,
+                                controls=[
+                                    ft.Text(
+                                        "mauricio@cloud:~$",
+                                        color=PRIMARY,
+                                        size=28,
+                                        font_family="DisplayBold",
+                                        weight=ft.FontWeight.W_700,
+                                    ),
+                                    ft.Text(
+                                        "Recruiter-friendly browser CLI with predefined answers, portfolio context, and arcade feedback on Enter.",
+                                        color=MUTED,
+                                        size=14,
+                                    ),
+                                ],
+                            ),
+                            ft.Row(
+                                wrap=True,
+                                spacing=8,
+                                run_spacing=8,
+                                controls=[
+                                    SkillPill("BROWSER CLI", PRIMARY),
+                                    SkillPill("STATIC SAFE", SECONDARY),
+                                    SkillPill("PACMAN BOOST", PURPLE),
+                                ],
                             ),
                         ],
                     ),
+                    self._sweep,
                     ft.Row(
                         wrap=True,
                         spacing=10,
                         run_spacing=10,
-                        controls=[
-                            SkillPill("BROWSER CLI", PRIMARY),
-                            SkillPill("STATIC SITE SAFE", SECONDARY),
-                            SkillPill("ENTER = PACMAN BOOST", PURPLE),
-                        ],
+                        controls=[self._prefill_chip(prompt) for prompt in prompts],
                     ),
-                    self._sweep,
-                    ft.ListView(
-                        ref=self._log_ref,
-                        height=250,
-                        auto_scroll=True,
-                        spacing=8,
-                        controls=[_terminal_line(text, role) for role, text in self._history],
-                    ),
-                    ft.TextField(
-                        ref=self._input_ref,
-                        hint_text="Ask about backend, AWS, data engineering, AI, certifications, projects, or experience",
-                        border_radius=18,
-                        filled=True,
-                        bgcolor=alpha("#0B1120", 0.94),
-                        border_color=alpha(PRIMARY, 0.28),
-                        color=TEXT,
-                        cursor_color=PRIMARY,
-                        hint_style=ft.TextStyle(color=MUTED, size=13),
-                        text_style=ft.TextStyle(color=TEXT, size=14, font_family="Mono"),
-                        on_submit=self._handle_submit,
-                        autofocus=True,
+                    ft.Container(
+                        border_radius=20,
+                        border=ft.Border.all(1, alpha(PRIMARY, 0.18)),
+                        bgcolor=alpha("#08111E", 0.88),
+                        padding=ft.Padding.all(18),
+                        content=ft.Column(
+                            spacing=14,
+                            controls=[
+                                ft.ListView(
+                                    ref=self._log_ref,
+                                    height=360,
+                                    auto_scroll=True,
+                                    spacing=8,
+                                    controls=[
+                                        _terminal_line(text, role) for role, text in self._history
+                                    ],
+                                ),
+                                ft.Row(
+                                    ref=self._thinking_ref,
+                                    visible=False,
+                                    spacing=4,
+                                    controls=[
+                                        ft.Text(
+                                            "working", color=PRIMARY, size=13, font_family="Mono"
+                                        ),
+                                        ft.Text(".", color=PRIMARY, size=13, font_family="Mono"),
+                                        ft.Text(".", color=PRIMARY, size=13, font_family="Mono"),
+                                        ft.Text(".", color=PRIMARY, size=13, font_family="Mono"),
+                                    ],
+                                ),
+                                ft.Row(
+                                    spacing=10,
+                                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                                    controls=[
+                                        ft.Text(
+                                            "mauricio@cloud",
+                                            color=SECONDARY,
+                                            size=13,
+                                            font_family="Mono",
+                                        ),
+                                        ft.Text(":", color=MUTED, size=13, font_family="Mono"),
+                                        ft.Text("~", color=PRIMARY, size=13, font_family="Mono"),
+                                        ft.Text("$", color=TEXT, size=13, font_family="Mono"),
+                                        ft.TextField(
+                                            ref=self._input_ref,
+                                            expand=True,
+                                            hint_text="Ask about backend, AWS, data engineering, AI, certifications, projects, or experience",
+                                            filled=False,
+                                            border=ft.InputBorder.NONE,
+                                            color=TEXT,
+                                            cursor_color=PRIMARY,
+                                            hint_style=ft.TextStyle(color=MUTED, size=13),
+                                            text_style=ft.TextStyle(
+                                                color=TEXT, size=14, font_family="Mono"
+                                            ),
+                                            on_submit=self._handle_submit,
+                                            autofocus=True,
+                                        ),
+                                    ],
+                                ),
+                            ],
+                        ),
                     ),
                     ft.Row(
                         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                         wrap=True,
                         controls=[
-                            ft.Text(
-                                "Warm greetings are baked in. Responses come from local portfolio context, not live network calls.",
-                                ref=self._status_ref,
-                                color=MUTED,
-                                size=12,
+                            ft.Column(
+                                spacing=4,
+                                controls=[
+                                    ft.Text(
+                                        "Prompt helpers feed the CLI, but the terminal remains the primary interaction surface.",
+                                        ref=self._status_ref,
+                                        color=MUTED,
+                                        size=12,
+                                    ),
+                                    ft.Row(
+                                        wrap=True,
+                                        spacing=8,
+                                        run_spacing=8,
+                                        controls=[
+                                            SkillPill(keyword, WARNING)
+                                            for keyword in resume_keywords
+                                        ],
+                                    ),
+                                ],
                             ),
                             ft.Text(
                                 self._cli_command,
@@ -237,8 +317,36 @@ class AssistantTerminal(ft.Container):
                     ),
                 ],
             ),
-            bgcolor=alpha("#111827", 0.94),
+            title="MauricioOS /dev/tty1",
+            bgcolor=alpha("#0B1120", 0.95),
+            glow=True,
         )
+
+    def _prefill_chip(self, prompt: str) -> ft.Control:
+        return attach_hover_lift(
+            ft.Container(
+                data={"kind": "assistant_prompt", "prompt": prompt},
+                ink=True,
+                border_radius=999,
+                on_click=lambda _, value=prompt: self._prefill(value),
+                content=ft.Container(
+                    padding=ft.Padding.symmetric(horizontal=14, vertical=10),
+                    border_radius=999,
+                    bgcolor=alpha(PURPLE, 0.12),
+                    border=ft.Border.all(1, alpha(PURPLE, 0.3)),
+                    content=ft.Text(prompt, color=TEXT, size=12, font_family="Mono"),
+                ),
+            ),
+            scale=1.02,
+        )
+
+    def _prefill(self, value: str) -> None:
+        if self._input_ref.current:
+            self._input_ref.current.value = value
+            self._input_ref.current.update()
+            if self._status_ref.current:
+                self._status_ref.current.value = "Prompt injected into the browser terminal."
+                self._status_ref.current.update()
 
     def _append_line(self, role: str, text: str) -> None:
         self._history.append((role, text))
@@ -248,22 +356,39 @@ class AssistantTerminal(ft.Container):
 
     def _handle_submit(self, event: ft.ControlEvent) -> None:
         question = (event.control.value or "").strip()
-        if not question:
+        if not question or self._busy:
             return
-
-        self._append_line("user", question)
-        for line in build_assistant_response(question, self._content):
-            self._append_line("assistant", line)
-
-        if self._status_ref.current:
-            self._status_ref.current.value = "Response emitted from predefined portfolio context."
-            self._status_ref.current.update()
 
         event.control.value = ""
         event.control.update()
+        if self.page:
+            self.page.run_task(self._emit_response, question)
+
+    async def _emit_response(self, question: str) -> None:
+        self._busy = True
+        self._append_line("user", question)
+        if self._thinking_ref.current:
+            self._thinking_ref.current.visible = True
+            self._thinking_ref.current.update()
+        if self._status_ref.current:
+            self._status_ref.current.value = "Working through predefined portfolio context..."
+            self._status_ref.current.update()
         self._sweep.trigger()
         if self._on_enter_pacman:
             self._on_enter_pacman("assistant-enter")
+
+        await asyncio.sleep(0.4)
+        if self._thinking_ref.current:
+            self._thinking_ref.current.visible = False
+            self._thinking_ref.current.update()
+        for line in build_assistant_response(question, self._content):
+            self._append_line("assistant", line)
+            await asyncio.sleep(0.05)
+
+        if self._status_ref.current:
+            self._status_ref.current.value = "Response emitted from local portfolio context."
+            self._status_ref.current.update()
+        self._busy = False
 
 
 def AssistantExperienceGrid(
@@ -272,95 +397,5 @@ def AssistantExperienceGrid(
     on_enter_pacman: Callable[[str], None] | None = None,
 ) -> ft.Control:
     assistant = content.get("assistant", {})
-    resume = content.get("resume", {})
-    prompts = content.get("profile", {}).get("assistant_prompts", [])
     cli_command = assistant.get("cli_command", "uv run python -m portfolio_app.scripts.chat_cv")
-    cards = [
-        attach_hover_lift(
-            panel(
-                ft.Column(
-                    spacing=14,
-                    controls=[
-                        SkillPill("ASK MAURICIO AI", PRIMARY),
-                        ft.Text(
-                            "Interactive browser CLI",
-                            color=TEXT,
-                            size=24,
-                            font_family="DisplayBold",
-                            weight=ft.FontWeight.W_700,
-                        ),
-                        ft.Text(
-                            "The public page now behaves like a terminal console: warm greeting, typed prompts, predefined responses, and pacman feedback on every Enter keypress.",
-                            color=MUTED,
-                            size=14,
-                        ),
-                        AssistantTerminal(
-                            content,
-                            cli_command,
-                            on_enter_pacman=on_enter_pacman,
-                        ),
-                    ],
-                )
-            ),
-            scale=1.01,
-        ),
-        attach_hover_lift(
-            LottiePanel(
-                "AI context pipeline",
-                "lottie/developer_terminal.json",
-                caption=(
-                    "Resume, GitHub, certifications, and curated case studies are packed into generated context files ready for the local CLI assistant."
-                ),
-                accent=PURPLE,
-                icon=ft.Icons.DATA_OBJECT,
-            ),
-            scale=1.01,
-        ),
-        attach_hover_lift(
-            panel(
-                ft.Column(
-                    spacing=14,
-                    controls=[
-                        SkillPill("PREDEFINED QUERIES", SECONDARY),
-                        ft.Text(
-                            resume.get("synced_at") or "Awaiting monthly sync",
-                            color=TEXT,
-                            size=20,
-                            font_family="DisplayBold",
-                            weight=ft.FontWeight.W_700,
-                        ),
-                        ft.Text(
-                            "Starter topics rendered as terminal hints instead of buttons, so the experience stays CLI-first while still guiding recruiters through the strongest signals.",
-                            color=MUTED,
-                            size=14,
-                        ),
-                        ft.Column(
-                            spacing=8,
-                            controls=[
-                                ft.Text(prompt, color=PRIMARY, size=13, font_family="Mono")
-                                for prompt in prompts[:4]
-                            ],
-                        ),
-                        ft.Row(
-                            wrap=True,
-                            spacing=10,
-                            run_spacing=10,
-                            controls=[
-                                SkillPill(keyword, SECONDARY)
-                                for keyword in resume.get("keywords", [])[:6]
-                            ],
-                        ),
-                    ],
-                )
-            ),
-            scale=1.01,
-        ),
-    ]
-
-    return BentoGrid(
-        [
-            ft.Container(col={"xs": 12, "xl": 7}, content=cards[0]),
-            ft.Container(col={"xs": 12, "md": 6, "xl": 3}, content=cards[1]),
-            ft.Container(col={"xs": 12, "md": 6, "xl": 2}, content=cards[2]),
-        ]
-    )
+    return AssistantTerminalShell(content, cli_command, on_enter_pacman=on_enter_pacman)

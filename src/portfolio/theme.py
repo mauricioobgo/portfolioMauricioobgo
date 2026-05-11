@@ -22,7 +22,7 @@ CARD_RADIUS = 22
 CARD_SHADOW = [
     ft.BoxShadow(
         spread_radius=1,
-        blur_radius=20,
+        blur_radius=22,
         color="#000000",
         offset=ft.Offset(0, 10),
     )
@@ -49,16 +49,23 @@ def apply_theme(page: ft.Page) -> None:
     page.theme = ft.Theme(font_family="Body")
 
 
-def app_shell(content: ft.Control) -> ft.Control:
+def app_shell(
+    content: ft.Control,
+    *,
+    overlays: list[ft.Control] | None = None,
+    top_padding: int = 120,
+) -> ft.Control:
+    chrome = overlays or []
     return ft.Container(
         expand=True,
         content=ft.Stack(
             expand=True,
             controls=[
                 background_glow(),
+                *chrome,
                 ft.Container(
                     alignment=ft.Alignment(0, -1),
-                    padding=ft.Padding(left=18, right=18, top=18, bottom=32),
+                    padding=ft.Padding(left=18, right=18, top=top_padding, bottom=44),
                     content=ft.Container(width=SECTION_WIDTH, content=content),
                 ),
             ],
@@ -93,35 +100,43 @@ def background_glow() -> ft.Control:
                 gradient=ft.LinearGradient(
                     begin=ft.Alignment(-1, -1),
                     end=ft.Alignment(1, 1),
-                    colors=[BACKGROUND, "#06101B", "#091321"],
+                    colors=[BACKGROUND, "#06101B", "#081322"],
                 ),
             ),
-            *_grid_overlay(),
-            *_scanline_overlay(),
             ft.Container(
-                left=-140,
-                top=-80,
-                width=380,
-                height=380,
-                border_radius=220,
-                bgcolor=alpha(PRIMARY, 0.10),
+                expand=True,
+                image=ft.DecorationImage(
+                    src=_dot_grid_svg(),
+                    repeat=ft.ImageRepeat.REPEAT,
+                    opacity=0.28,
+                ),
             ),
             ft.Container(
-                right=-120,
-                top=260,
-                width=340,
-                height=340,
-                border_radius=220,
-                bgcolor=alpha(PURPLE, 0.10),
+                left=-180,
+                top=-120,
+                width=520,
+                height=520,
+                border_radius=260,
+                bgcolor=alpha(PRIMARY, 0.12),
+            ),
+            ft.Container(
+                right=-200,
+                top=180,
+                width=620,
+                height=620,
+                border_radius=310,
+                bgcolor=alpha(PURPLE, 0.12),
             ),
             ft.Container(
                 left=180,
-                bottom=-120,
-                width=300,
-                height=300,
-                border_radius=180,
-                bgcolor=alpha(SECONDARY, 0.10),
+                bottom=-180,
+                width=420,
+                height=420,
+                border_radius=210,
+                bgcolor=alpha(WARNING, 0.08),
             ),
+            *_grid_overlay(),
+            *_scanline_overlay(),
         ],
     )
 
@@ -129,11 +144,11 @@ def background_glow() -> ft.Control:
 def _grid_overlay() -> list[ft.Control]:
     verticals = [
         ft.Container(
-            left=48 + column * 96,
+            left=24 + column * 96,
             top=0,
             bottom=0,
             width=1,
-            bgcolor=alpha(PRIMARY, 0.08 if column % 2 == 0 else 0.04),
+            bgcolor=alpha(PRIMARY, 0.055 if column % 2 == 0 else 0.028),
         )
         for column in range(13)
     ]
@@ -141,9 +156,9 @@ def _grid_overlay() -> list[ft.Control]:
         ft.Container(
             left=0,
             right=0,
-            top=64 + row * 92,
+            top=40 + row * 92,
             height=1,
-            bgcolor=alpha(PRIMARY, 0.05 if row % 2 == 0 else 0.03),
+            bgcolor=alpha(PRIMARY, 0.04 if row % 2 == 0 else 0.02),
         )
         for row in range(10)
     ]
@@ -157,7 +172,16 @@ def _scanline_overlay() -> list[ft.Control]:
             right=0,
             top=4 + stripe * 8,
             height=1,
-            bgcolor=alpha(PRIMARY, 0.02),
+            bgcolor=alpha(PRIMARY, 0.022),
         )
         for stripe in range(120)
     ]
+
+
+def _dot_grid_svg() -> str:
+    return (
+        "data:image/svg+xml;utf8,"
+        "<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'>"
+        "<circle cx='1.5' cy='1.5' r='1.2' fill='%2338BDF8' fill-opacity='0.22' />"
+        "</svg>"
+    )

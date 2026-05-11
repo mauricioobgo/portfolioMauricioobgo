@@ -22,9 +22,9 @@ def AssistantSection(
             controls=[
                 SectionHeader(
                     page,
-                    "ASK MAURICIO AI",
-                    "Browser CLI for the Mauricio CV copilot.",
-                    "This section now feels like a command-line console instead of a static stub. The UI stays GitHub-Pages-safe while using predefined portfolio responses and leaving the full OpenAI-powered assistant in the local CLI flow.",
+                    "TERMINAL",
+                    "mauricio@cloud:~$",
+                    "A full-width browser terminal inspired by the reference template. It keeps the public site static-safe while turning portfolio questions into CLI-style interactions with prompt prefills and arcade feedback.",
                 ),
                 AssistantExperienceGrid(content, on_enter_pacman=on_enter_pacman),
             ],

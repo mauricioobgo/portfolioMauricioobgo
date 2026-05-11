@@ -2,119 +2,126 @@ from __future__ import annotations
 
 import flet as ft
 
-from portfolio.components.cards import ConsolePanel
 from portfolio.interaction import scroll_to, section_link_data
-from portfolio.theme import MUTED, PRIMARY, TEXT, alpha
+from portfolio.theme import PANEL, PRIMARY, SECTION_WIDTH, TEXT, alpha
 
 
-class _ConsoleTopbar(ft.Container):
+class ConsoleTopbar(ft.Container):
     def __init__(self, page: ft.Page) -> None:
         self._page = page
         self._active = "focus"
-        self._button_refs: dict[str, ft.Ref[ft.TextButton]] = {}
+        self._button_refs: dict[str, ft.Ref[ft.Container]] = {}
         self._items = [
             ("Focus", "focus"),
             ("Projects", "projects"),
             ("Experience", "experience"),
+            ("Terminal", "assistant"),
             ("Certifications", "certifications"),
             ("GitHub", "github"),
-            ("AI", "assistant"),
             ("Stack", "stack"),
             ("Contact", "contact"),
         ]
-        super().__init__(content=self._build())
-
-    def _build_button(self, label: str, section_key: str) -> ft.Control:
-        ref = ft.Ref[ft.TextButton]()
-        self._button_refs[section_key] = ref
-        active = section_key == self._active
-        return ft.TextButton(
-            ref=ref,
-            content=ft.Text(
-                label,
-                color=TEXT if active else MUTED,
-                size=12,
-                font_family="Mono",
-            ),
-            style=self._button_style(active),
-            data=section_link_data(label, section_key),
-            on_click=lambda _, key=section_key: self._activate(key),
-        )
-
-    def _button_style(self, active: bool) -> ft.ButtonStyle:
-        return ft.ButtonStyle(
-            bgcolor=alpha(PRIMARY, 0.14) if active else alpha("#0B1120", 0.65),
-            side=ft.Border.all(1, alpha(PRIMARY, 0.34) if active else alpha(MUTED, 0.18)),
-            padding=ft.Padding.symmetric(horizontal=14, vertical=10),
-            shape=ft.RoundedRectangleBorder(radius=18),
-        )
+        super().__init__(data={"kind": "topbar"}, content=self._build())
 
     def _build(self) -> ft.Control:
-        return ConsolePanel(
-            ft.ResponsiveRow(
-                columns=12,
-                spacing=14,
-                run_spacing=14,
+        return ft.Container(
+            width=SECTION_WIDTH,
+            padding=ft.Padding.symmetric(horizontal=18, vertical=14),
+            border_radius=24,
+            bgcolor=alpha(PANEL, 0.74),
+            border=ft.Border.all(1, alpha(PRIMARY, 0.22)),
+            shadow=[
+                ft.BoxShadow(
+                    spread_radius=1,
+                    blur_radius=18,
+                    color=alpha("#000000", 0.72),
+                    offset=ft.Offset(0, 8),
+                )
+            ],
+            content=ft.Row(
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                wrap=True,
                 controls=[
-                    ft.Container(
-                        col={"xs": 12, "md": 4},
-                        content=ft.Column(
-                            spacing=4,
-                            controls=[
-                                ft.Text(
-                                    "MAURICIO CLOUD CONSOLE",
-                                    color=PRIMARY,
-                                    size=11,
-                                    font_family="Mono",
-                                ),
-                                ft.Text(
-                                    "Mauricio Obando",
-                                    color=TEXT,
-                                    size=24,
-                                    font_family="DisplayBold",
-                                    weight=ft.FontWeight.W_700,
-                                ),
-                            ],
-                        ),
+                    ft.Column(
+                        spacing=2,
+                        controls=[
+                            ft.Text(
+                                "MAURICIO CLOUD CONSOLE",
+                                color=PRIMARY,
+                                size=10,
+                                font_family="Mono",
+                                weight=ft.FontWeight.W_700,
+                            ),
+                            ft.Text(
+                                "Mauricio Obando",
+                                color=TEXT,
+                                size=20,
+                                font_family="DisplayBold",
+                                weight=ft.FontWeight.W_700,
+                            ),
+                        ],
                     ),
-                    ft.Container(
-                        col={"xs": 12, "md": 8},
-                        alignment=ft.Alignment(1, 0),
-                        content=ft.Row(
-                            alignment=ft.MainAxisAlignment.END,
-                            wrap=True,
-                            spacing=8,
-                            run_spacing=8,
-                            controls=[
-                                self._build_button(label, section_key)
-                                for label, section_key in self._items
-                            ],
-                        ),
+                    ft.Row(
+                        wrap=True,
+                        spacing=8,
+                        run_spacing=8,
+                        controls=[self._build_button(label, key) for label, key in self._items],
                     ),
                 ],
             ),
-            padding=ft.Padding.symmetric(horizontal=20, vertical=16),
-            bgcolor=alpha("#0F172A", 0.82),
+        )
+
+    def _build_button(self, label: str, section_key: str) -> ft.Control:
+        ref = ft.Ref[ft.Container]()
+        self._button_refs[section_key] = ref
+        return ft.Container(
+            ref=ref,
+            data=section_link_data(label, section_key),
+            ink=True,
+            border_radius=999,
+            animate=ft.Animation(220, ft.AnimationCurve.EASE_OUT),
+            on_click=lambda _, key=section_key: self._activate(key),
+            content=self._button_content(label, section_key == self._active),
+        )
+
+    def _button_content(self, label: str, active: bool) -> ft.Control:
+        return ft.Container(
+            padding=ft.Padding.symmetric(horizontal=15, vertical=10),
+            border_radius=999,
+            bgcolor=alpha(PRIMARY, 0.12) if active else alpha("#09111E", 0.72),
+            border=ft.Border.all(1, alpha(PRIMARY, 0.32) if active else alpha(TEXT, 0.1)),
+            shadow=(
+                [
+                    ft.BoxShadow(
+                        blur_radius=18,
+                        color=alpha(PRIMARY, 0.18),
+                        offset=ft.Offset(0, 0),
+                    )
+                ]
+                if active
+                else None
+            ),
+            content=ft.Text(
+                label,
+                color=TEXT if active else alpha(TEXT, 0.72),
+                size=12,
+                font_family="Mono",
+            ),
         )
 
     def _activate(self, section_key: str) -> None:
+        self.set_active(section_key)
+        scroll_to(self._page, section_key, duration=680)
+
+    def set_active(self, section_key: str) -> None:
         self._active = section_key
-        for key, ref in self._button_refs.items():
-            button = ref.current
-            if not button:
-                continue
-            active = key == section_key
-            label = next(item_label for item_label, item_key in self._items if item_key == key)
-            button.style = self._button_style(active)
-            button.content = ft.Text(
-                label,
-                color=TEXT if active else MUTED,
-                size=12,
-                font_family="Mono",
-            )
-            button.update()
-        scroll_to(self._page, section_key, duration=650)
+        for label, key in self._items:
+            container = self._button_refs[key].current
+            if container:
+                container.content = self._button_content(label, key == section_key)
+                container.update()
 
 
-def NavigationBar(page: ft.Page) -> ft.Control:
-    return _ConsoleTopbar(page)
+def NavigationBar(page: ft.Page) -> ConsoleTopbar:
+    return ConsoleTopbar(page)

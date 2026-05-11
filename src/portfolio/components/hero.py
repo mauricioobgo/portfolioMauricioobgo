@@ -4,7 +4,7 @@ from typing import Any
 
 import flet as ft
 
-from portfolio.components.cards import ConsolePanel, LottiePanel, MetricCard, SkillPill
+from portfolio.components.cards import ConsolePanel, MetricCard, SkillPill
 from portfolio.components.mascots import RetroDroidRunway
 from portfolio.components.terminal import TerminalBlock
 from portfolio.interaction import (
@@ -16,6 +16,28 @@ from portfolio.interaction import (
 )
 from portfolio.responsive import hero_title_size, is_mobile
 from portfolio.theme import MUTED, PRIMARY, PURPLE, SECONDARY, TEXT, WARNING
+
+
+def _signal_bars() -> ft.Control:
+    heights = [24, 46, 34, 58, 26, 52, 38, 62, 28, 56, 32, 48]
+    return ft.Row(
+        spacing=8,
+        vertical_alignment=ft.CrossAxisAlignment.END,
+        controls=[
+            ft.Container(
+                width=12,
+                height=height,
+                border_radius=6,
+                gradient=ft.LinearGradient(
+                    begin=ft.Alignment(0, 1),
+                    end=ft.Alignment(0, -1),
+                    colors=[PRIMARY, PURPLE],
+                ),
+                opacity=0.84,
+            )
+            for height in heights
+        ],
+    )
 
 
 def HeroPanel(page: ft.Page, content: dict[str, Any]) -> ft.Control:
@@ -125,7 +147,7 @@ def HeroPanel(page: ft.Page, content: dict[str, Any]) -> ft.Control:
             ),
             ft.Text(
                 profile.get("title", ""),
-                size=22 if is_mobile(page) else 28,
+                size=22 if is_mobile(page) else 26,
                 color=PRIMARY,
                 font_family="Display",
                 weight=ft.FontWeight.W_600,
@@ -142,23 +164,34 @@ def HeroPanel(page: ft.Page, content: dict[str, Any]) -> ft.Control:
     )
 
     right = ft.Column(
-        spacing=18,
+        spacing=14,
         controls=[
-            attach_hover_lift(
-                LottiePanel(
-                    "AI / Cloud command center",
-                    "lottie/ai_network.json",
-                    caption=(
-                        "Animated network pulses, terminal energy, and command-center motion inspired by the reference Pac-Man console portfolio."
-                    ),
-                    accent=PRIMARY,
+            ConsolePanel(
+                ft.Column(
+                    spacing=14,
+                    controls=[
+                        ft.Row(
+                            spacing=8,
+                            controls=[
+                                SkillPill("AI / CLOUD COMMAND CENTER", PRIMARY),
+                                SkillPill("SIGNAL LIVE", SECONDARY),
+                            ],
+                        ),
+                        ft.Text(
+                            "Network rhythm, status pulses, and console motion shaped after the reference portfolio hero stack.",
+                            color=MUTED,
+                            size=14,
+                        ),
+                        _signal_bars(),
+                    ],
                 ),
-                scale=1.01,
+                padding=ft.Padding.all(20),
+                glow=True,
             ),
             RetroDroidRunway(),
             ConsolePanel(
                 ft.Column(
-                    spacing=16,
+                    spacing=14,
                     controls=[
                         ft.Row(
                             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
@@ -197,8 +230,8 @@ def HeroPanel(page: ft.Page, content: dict[str, Any]) -> ft.Control:
                         ),
                         ft.ResponsiveRow(
                             columns=12,
-                            spacing=14,
-                            run_spacing=14,
+                            spacing=10,
+                            run_spacing=10,
                             controls=[
                                 ft.Container(col={"xs": 6, "md": 6}, content=metric)
                                 for metric in metrics
@@ -215,13 +248,13 @@ def HeroPanel(page: ft.Page, content: dict[str, Any]) -> ft.Control:
     return ConsolePanel(
         ft.ResponsiveRow(
             columns=12,
-            spacing=20,
-            run_spacing=20,
+            spacing=24,
+            run_spacing=22,
             controls=[
                 ft.Container(col={"xs": 12, "xl": 7}, content=left),
                 ft.Container(col={"xs": 12, "xl": 5}, content=right),
             ],
         ),
-        padding=ft.Padding.all(28),
+        padding=ft.Padding.all(30),
         glow=True,
     )

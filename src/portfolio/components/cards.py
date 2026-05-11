@@ -55,12 +55,26 @@ def ConsolePanel(
     if title:
         controls.append(
             ft.Row(
-                spacing=8,
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                 controls=[
-                    ft.Container(width=10, height=10, bgcolor=ROSE, border_radius=999),
-                    ft.Container(width=10, height=10, bgcolor=WARNING, border_radius=999),
-                    ft.Container(width=10, height=10, bgcolor=SECONDARY, border_radius=999),
-                    ft.Text(title, color=PRIMARY, size=12, font_family="Mono"),
+                    ft.Row(
+                        spacing=8,
+                        controls=[
+                            ft.Container(width=10, height=10, bgcolor=ROSE, border_radius=999),
+                            ft.Container(width=10, height=10, bgcolor=WARNING, border_radius=999),
+                            ft.Container(width=10, height=10, bgcolor=SECONDARY, border_radius=999),
+                            ft.Text(title, color=PRIMARY, size=12, font_family="Mono"),
+                        ],
+                    ),
+                    ft.Container(
+                        width=74,
+                        height=1,
+                        gradient=ft.LinearGradient(
+                            begin=ft.Alignment(-1, 0),
+                            end=ft.Alignment(1, 0),
+                            colors=[alpha(PRIMARY, 0.0), alpha(PRIMARY, 0.65)],
+                        ),
+                    ),
                 ],
             )
         )
@@ -77,9 +91,9 @@ def ConsolePanel(
             begin=ft.Alignment(-1, -1),
             end=ft.Alignment(1, 1),
             colors=[
-                alpha(PANEL, 0.97),
-                alpha(CARD, 0.94),
-                alpha("#101B2B", 0.94),
+                alpha("#101827", 0.95),
+                alpha(PANEL, 0.93),
+                alpha("#0C1422", 0.95),
             ],
         ),
     )
@@ -124,7 +138,7 @@ def MetricCard(label: str, value: str, caption: str, accent: str = PRIMARY) -> f
 
 def SectionHeader(page: ft.Page, eyebrow: str, title: str, description: str) -> ft.Control:
     return ft.Column(
-        spacing=12,
+        spacing=10,
         controls=[
             ft.Text(
                 f"// {eyebrow.lower()}",
@@ -141,7 +155,7 @@ def SectionHeader(page: ft.Page, eyebrow: str, title: str, description: str) -> 
                 weight=ft.FontWeight.W_700,
             ),
             ft.Container(
-                width=880,
+                width=min(880, int((page.width or 1240) - 48)),
                 content=ft.Text(description, color=MUTED, size=16),
             ),
         ],
