@@ -99,8 +99,8 @@ def test_build_content_merges_curated_and_generated(tmp_path, monkeypatch) -> No
                 "bio": "Generated profile bio",
                 "avatar_url": "https://example.com/avatar.png",
                 "html_url": "https://github.com/mauricioobgo",
-                "followers": 9,
-                "public_repos": 42,
+                "followers": None,
+                "public_repos": None,
                 "updated_at": "2026-05-03T00:00:00Z",
             }
         ),
@@ -114,7 +114,9 @@ def test_build_content_merges_curated_and_generated(tmp_path, monkeypatch) -> No
                     "html_url": "https://github.com/mauricioobgo/portfolioMauricioobgo",
                     "description": "Portfolio source",
                     "updated_at": "2026-05-03T00:00:00Z",
-                    "stargazers_count": 2,
+                    "stargazers_count": None,
+                    "forks_count": None,
+                    "open_issues_count": None,
                     "topics": ["portfolio"],
                 }
             ]
@@ -178,7 +180,8 @@ def test_build_content_merges_curated_and_generated(tmp_path, monkeypatch) -> No
     assert payload["metadata"]["frontend"] == "flet"
     assert payload["profile"]["github_url"] == "https://github.com/mauricioobgo"
     assert payload["profile"]["avatar_url"] == "https://example.com/avatar.png"
-    assert payload["profile"]["github_followers"] == 9
+    assert payload["profile"]["github_followers"] == 0
+    assert payload["profile"]["github_public_repos"] == 0
     assert payload["experience"][0]["company"] == "Globant"
     assert (
         payload["certifications"][0]["title"] == "AWS Certified Solutions Architect - Professional"
@@ -187,6 +190,10 @@ def test_build_content_merges_curated_and_generated(tmp_path, monkeypatch) -> No
     assert payload["assistant"]["status"] == "CLI mode"
     assert payload["featured_projects"][0]["name"] == "AI DataOps Platform"
     assert payload["github"]["repositories"][0]["name"] == "portfolioMauricioobgo"
+    assert payload["github"]["repositories"][0]["stargazers_count"] == 0
+    assert payload["github"]["repositories"][0]["forks_count"] == 0
+    assert payload["github"]["repositories"][0]["open_issues_count"] == 0
+    assert payload["github"]["summary"]["top_starred"] == 0
 
 
 def test_write_frontend_content_writes_json_asset(tmp_path, monkeypatch) -> None:

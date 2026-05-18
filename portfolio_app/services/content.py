@@ -164,6 +164,15 @@ def _utc_now_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
 
 
+def _int_value(value: Any, default: int = 0) -> int:
+    if value is None:
+        return default
+    try:
+        return int(value)
+    except TypeError, ValueError:
+        return default
+
+
 def _trim_generated_profile(profile: dict[str, Any]) -> dict[str, Any]:
     return {
         "login": profile.get("login"),
@@ -173,8 +182,8 @@ def _trim_generated_profile(profile: dict[str, Any]) -> dict[str, Any]:
         "bio": profile.get("bio"),
         "avatar_url": profile.get("avatar_url"),
         "html_url": profile.get("html_url"),
-        "followers": profile.get("followers"),
-        "public_repos": profile.get("public_repos"),
+        "followers": _int_value(profile.get("followers")),
+        "public_repos": _int_value(profile.get("public_repos")),
         "updated_at": profile.get("updated_at"),
     }
 
@@ -190,9 +199,9 @@ def _trim_generated_repo(repo: dict[str, Any]) -> dict[str, Any]:
         "topics": repo.get("topics", []),
         "updated_at": repo.get("updated_at"),
         "pushed_at": repo.get("pushed_at"),
-        "stargazers_count": repo.get("stargazers_count", 0),
-        "forks_count": repo.get("forks_count", 0),
-        "open_issues_count": repo.get("open_issues_count", 0),
+        "stargazers_count": _int_value(repo.get("stargazers_count")),
+        "forks_count": _int_value(repo.get("forks_count")),
+        "open_issues_count": _int_value(repo.get("open_issues_count")),
         "archived": repo.get("archived", False),
     }
 
@@ -287,8 +296,8 @@ def _normalize_profile(
         "location": generated_profile.get("location") or profile.get("location"),
         "company": generated_profile.get("company") or profile.get("company"),
         "bio": generated_profile.get("bio") or profile.get("bio") or profile.get("about"),
-        "github_followers": generated_profile.get("followers", 0),
-        "github_public_repos": generated_profile.get("public_repos", 0),
+        "github_followers": _int_value(generated_profile.get("followers")),
+        "github_public_repos": _int_value(generated_profile.get("public_repos")),
         "github_updated_at": generated_profile.get("updated_at"),
         "assistant_prompts": profile.get("assistant_prompts") or DEFAULT_ASSISTANT_PROMPTS,
     }
@@ -307,7 +316,9 @@ def _build_github_summary(repositories: list[dict[str, Any]]) -> dict[str, Any]:
     ]
     return {
         "language_breakdown": language_breakdown,
-        "top_starred": max((repo.get("stargazers_count", 0) for repo in repositories), default=0),
+        "top_starred": max(
+            (_int_value(repo.get("stargazers_count")) for repo in repositories), default=0
+        ),
         "repo_count": len(repositories),
     }
 

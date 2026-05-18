@@ -4,6 +4,7 @@ import flet as ft
 
 from portfolio.app import build_portfolio_view
 from portfolio.components.assistant import build_assistant_response
+from portfolio.components.github_feed import GitHubSummaryCard
 from portfolio.components.projects import FILTER_ORDER, project_matches
 from portfolio_app.services.content import build_portfolio_content
 
@@ -103,6 +104,15 @@ def test_view_exposes_bound_links_and_interactive_controls() -> None:
     ]
     assert ordered_keys.index("experience") < ordered_keys.index("assistant")
     assert ordered_keys.index("assistant") < ordered_keys.index("certifications")
+
+
+def test_github_summary_card_tolerates_missing_profile_counts() -> None:
+    summary = {"repo_count": 12, "top_starred": None, "language_breakdown": []}
+    profile = {"followers": None, "html_url": "https://github.com/mauricioobgo"}
+
+    card = GitHubSummaryCard(summary, profile)
+
+    assert isinstance(card, ft.Control)
 
 
 def test_project_filter_logic_matches_declared_filters() -> None:

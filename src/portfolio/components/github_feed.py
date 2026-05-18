@@ -40,6 +40,15 @@ def _activity_color(level: int) -> str:
     return alpha(SECONDARY, 0.9)
 
 
+def _int_value(value: Any, default: int = 0) -> int:
+    if value is None:
+        return default
+    try:
+        return int(value)
+    except TypeError, ValueError:
+        return default
+
+
 def GitHubRepoCard(_page: ft.Page, repo: dict[str, Any]) -> ft.Control:
     topics = repo.get("topics", [])[:3]
     links = [link_button("Repository", repo.get("html_url", ""))]
@@ -97,7 +106,10 @@ def GitHubRepoCard(_page: ft.Page, repo: dict[str, Any]) -> ft.Control:
 
 def GitHubSummaryCard(summary: dict[str, Any], profile: dict[str, Any]) -> ft.Control:
     language_breakdown = summary.get("language_breakdown", [])[:5]
-    cells = _activity_cells(summary.get("repo_count", 0) + profile.get("followers", 0))
+    repo_count = _int_value(summary.get("repo_count"))
+    follower_count = _int_value(profile.get("followers"))
+    top_starred = _int_value(summary.get("top_starred"))
+    cells = _activity_cells(repo_count + follower_count)
     heatmap = [
         ft.Container(
             width=11,
@@ -118,9 +130,9 @@ def GitHubSummaryCard(summary: dict[str, Any], profile: dict[str, Any]) -> ft.Co
                         spacing=10,
                         run_spacing=10,
                         controls=[
-                            SkillPill(f"Repos {summary.get('repo_count', 0)}", PRIMARY),
-                            SkillPill(f"Followers {profile.get('followers', 0)}", SECONDARY),
-                            SkillPill(f"Top stars {summary.get('top_starred', 0)}", WARNING),
+                            SkillPill(f"Repos {repo_count}", PRIMARY),
+                            SkillPill(f"Followers {follower_count}", SECONDARY),
+                            SkillPill(f"Top stars {top_starred}", WARNING),
                         ],
                     ),
                     ft.ResponsiveRow(
