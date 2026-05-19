@@ -18,7 +18,6 @@ def ExperienceSection(page: ft.Page, content: dict[str, Any]) -> ft.Control:
                     page,
                     "EXPERIENCE",
                     "Where I've shipped",
-                    "The latest three roles stay prominent and read like a command log instead of a conventional CV block.",
                 ),
                 ExperienceTimeline(page, content.get("experience", [])),
             ],

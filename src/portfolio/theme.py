@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import flet as ft
 
+from portfolio.responsive import content_gutter, content_width
+
 
 BACKGROUND = "#020617"
 PANEL = "#0F172A"
@@ -21,10 +23,10 @@ SECTION_WIDTH = 1240
 CARD_RADIUS = 22
 CARD_SHADOW = [
     ft.BoxShadow(
-        spread_radius=1,
-        blur_radius=22,
+        spread_radius=0,
+        blur_radius=14,
         color="#000000",
-        offset=ft.Offset(0, 10),
+        offset=ft.Offset(0, 8),
     )
 ]
 
@@ -53,9 +55,14 @@ def app_shell(
     content: ft.Control,
     *,
     overlays: list[ft.Control] | None = None,
+    page_width: float | int | None = None,
+    layout_ref: ft.Ref[ft.Container] | None = None,
+    content_ref: ft.Ref[ft.Container] | None = None,
     top_padding: int = 120,
 ) -> ft.Control:
     chrome = overlays or []
+    gutter = content_gutter(page_width)
+    width = content_width(page_width)
     return ft.Container(
         expand=True,
         content=ft.Stack(
@@ -64,9 +71,15 @@ def app_shell(
                 background_glow(),
                 *chrome,
                 ft.Container(
+                    ref=layout_ref,
                     alignment=ft.Alignment(0, -1),
-                    padding=ft.Padding(left=18, right=18, top=top_padding, bottom=44),
-                    content=ft.Container(width=SECTION_WIDTH, content=content),
+                    padding=ft.Padding(
+                        left=gutter,
+                        right=gutter,
+                        top=top_padding,
+                        bottom=44,
+                    ),
+                    content=ft.Container(ref=content_ref, width=width, content=content),
                 ),
             ],
         ),

@@ -3,21 +3,24 @@ from __future__ import annotations
 import flet as ft
 
 from portfolio.interaction import scroll_to, section_link_data
-from portfolio.theme import PANEL, PRIMARY, SECTION_WIDTH, TEXT, alpha
+from portfolio.responsive import content_width
+from portfolio.theme import PANEL, PRIMARY, TEXT, alpha
 
 
 class ConsoleTopbar(ft.Container):
     def __init__(self, page: ft.Page) -> None:
         self._page = page
         self._active = "focus"
+        self._shell_ref = ft.Ref[ft.Container]()
         self._button_refs: dict[str, ft.Ref[ft.Container]] = {}
         self._items = [
             ("Focus", "focus"),
             ("Projects", "projects"),
             ("Experience", "experience"),
-            ("Terminal", "assistant"),
+            ("Terminal", "terminal"),
             ("Certifications", "certifications"),
             ("GitHub", "github"),
+            ("AI", "ai"),
             ("Stack", "stack"),
             ("Contact", "contact"),
         ]
@@ -25,23 +28,18 @@ class ConsoleTopbar(ft.Container):
 
     def _build(self) -> ft.Control:
         return ft.Container(
-            width=SECTION_WIDTH,
-            padding=ft.Padding.symmetric(horizontal=18, vertical=14),
-            border_radius=24,
-            bgcolor=alpha(PANEL, 0.74),
-            border=ft.Border.all(1, alpha(PRIMARY, 0.22)),
-            shadow=[
-                ft.BoxShadow(
-                    spread_radius=1,
-                    blur_radius=18,
-                    color=alpha("#000000", 0.72),
-                    offset=ft.Offset(0, 8),
-                )
-            ],
+            ref=self._shell_ref,
+            width=content_width(self._page),
+            padding=ft.Padding.symmetric(horizontal=20, vertical=12),
+            border_radius=22,
+            bgcolor=alpha(PANEL, 0.82),
+            border=ft.Border.all(1, alpha(PRIMARY, 0.18)),
             content=ft.Row(
                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                 vertical_alignment=ft.CrossAxisAlignment.CENTER,
                 wrap=True,
+                spacing=16,
+                run_spacing=12,
                 controls=[
                     ft.Column(
                         spacing=2,
@@ -56,7 +54,7 @@ class ConsoleTopbar(ft.Container):
                             ft.Text(
                                 "Mauricio Obando",
                                 color=TEXT,
-                                size=20,
+                                size=18,
                                 font_family="DisplayBold",
                                 weight=ft.FontWeight.W_700,
                             ),
@@ -64,7 +62,7 @@ class ConsoleTopbar(ft.Container):
                     ),
                     ft.Row(
                         wrap=True,
-                        spacing=8,
+                        spacing=6,
                         run_spacing=8,
                         controls=[self._build_button(label, key) for label, key in self._items],
                     ),
@@ -87,10 +85,10 @@ class ConsoleTopbar(ft.Container):
 
     def _button_content(self, label: str, active: bool) -> ft.Control:
         return ft.Container(
-            padding=ft.Padding.symmetric(horizontal=15, vertical=10),
+            padding=ft.Padding.symmetric(horizontal=14, vertical=8),
             border_radius=999,
-            bgcolor=alpha(PRIMARY, 0.12) if active else alpha("#09111E", 0.72),
-            border=ft.Border.all(1, alpha(PRIMARY, 0.32) if active else alpha(TEXT, 0.1)),
+            bgcolor=alpha(PRIMARY, 0.04) if active else None,
+            border=ft.Border.all(1, alpha(PRIMARY, 0.75)) if active else None,
             shadow=(
                 [
                     ft.BoxShadow(
@@ -104,7 +102,7 @@ class ConsoleTopbar(ft.Container):
             ),
             content=ft.Text(
                 label,
-                color=TEXT if active else alpha(TEXT, 0.72),
+                color=TEXT if active else alpha(TEXT, 0.78),
                 size=12,
                 font_family="Mono",
             ),
@@ -121,6 +119,11 @@ class ConsoleTopbar(ft.Container):
             if container:
                 container.content = self._button_content(label, key == section_key)
                 container.update()
+
+    def sync_width(self, page_width: float | int | None) -> None:
+        if self._shell_ref.current:
+            self._shell_ref.current.width = content_width(page_width)
+            self._shell_ref.current.update()
 
 
 def NavigationBar(page: ft.Page) -> ConsoleTopbar:

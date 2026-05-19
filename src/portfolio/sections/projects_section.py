@@ -18,7 +18,7 @@ def ProjectsSection(page: ft.Page, content: dict[str, Any]) -> ft.Control:
                     page,
                     "PROJECTS",
                     "Selected work",
-                    "Production patterns from backend, data, cloud, and AI delivery with expandable architecture notes.",
+                    "Production patterns from backend, data, cloud, and LLM delivery.",
                 ),
                 ProjectGrid(page, content.get("featured_projects", [])),
             ],

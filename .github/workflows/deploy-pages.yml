@@ -102,7 +102,10 @@ jobs:
         run: uv run python -m pytest -q
 
       - name: Build Flet static website
-        run: uv run flet build web --yes --base-url /portfolioMauricioobgo/ --route-url-strategy hash
+        run: uv run flet build web src --module-name main --yes --base-url /portfolioMauricioobgo/ --route-url-strategy hash
+
+      - name: Patch bundled Pyodide runtime
+        run: uv run python -m portfolio_app.scripts.patch_web_bundle
 
       - name: Upload resume drift artifact
         uses: actions/upload-artifact@v4

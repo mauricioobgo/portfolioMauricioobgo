@@ -1,4 +1,6 @@
 flet>=0.84.0
 flet-lottie>=0.84.0
 httpx>=0.28.1
+openai>=1.75.0
+pypdf>=5.5.0
 pyyaml>=6.0.2

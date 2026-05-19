@@ -18,7 +18,7 @@ def GitHubSection(page: ft.Page, content: dict[str, Any]) -> ft.Control:
                     page,
                     "GITHUB",
                     "Open work",
-                    "Weekly-refreshed repository data from the GitHub API, styled closer to a contribution console than a generic repo list.",
+                    "Selected repositories on GitHub.",
                 ),
                 GitHubGrid(page, content.get("github", {})),
             ],

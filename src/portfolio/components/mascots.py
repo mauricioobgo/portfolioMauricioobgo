@@ -5,6 +5,7 @@ from collections.abc import Callable
 
 import flet as ft
 
+from portfolio.responsive import TABLET
 from portfolio.theme import (
     BACKGROUND,
     CARD,
@@ -48,9 +49,10 @@ class PacmanBorderOverlay(ft.Container):
     def sync(self, *, pixels: float, max_scroll: float, width: float, height: float) -> None:
         width = int(width or 0)
         height = int(height or 0)
-        if width < 768 or height < 600:
+        if width < TABLET or height < 640:
             self.visible = False
-            self.update()
+            if self.parent is not None:
+                self.update()
             return
 
         self.visible = True
@@ -184,7 +186,8 @@ class PacmanBorderOverlay(ft.Container):
             )
         )
         self._stack_ref.current.controls = controls
-        self._stack_ref.current.update()
+        if self.parent is not None:
+            self._stack_ref.current.update()
 
     def _perimeter_points(self, metrics: dict[str, float]) -> list[tuple[float, float]]:
         inset = metrics["inset"]
@@ -242,7 +245,8 @@ class PacmanBorderOverlay(ft.Container):
         runner = self._runner_ref.current
         runner.left = x - pac_half
         runner.top = y - pac_half
-        runner.update()
+        if self.parent is not None:
+            runner.update()
         self._direction = direction
         self._apply_direction()
 
@@ -273,8 +277,9 @@ class PacmanBorderOverlay(ft.Container):
             eye.left, eye.top = 12, 12
             mouth.left, mouth.top = 7, -1
             mouth.width, mouth.height = 11, 10
-        eye.update()
-        mouth.update()
+        if self.parent is not None:
+            eye.update()
+            mouth.update()
 
     async def _animate_chomp(self) -> None:
         open_close = [(10, 11), (3, 4), (8, 9), (4, 5)]

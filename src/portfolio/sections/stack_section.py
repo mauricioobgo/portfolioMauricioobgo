@@ -18,7 +18,6 @@ def StackSection(page: ft.Page, content: dict[str, Any]) -> ft.Control:
                     page,
                     "STACK",
                     "Tooling I reach for",
-                    "The stack stays grouped by execution surface so it reads like a console inventory instead of one flat skills list.",
                 ),
                 TechnicalStackGrid(content.get("technical_stack", [])),
             ],

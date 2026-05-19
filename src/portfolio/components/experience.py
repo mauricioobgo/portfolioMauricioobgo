@@ -4,104 +4,126 @@ from typing import Any
 
 import flet as ft
 
-from portfolio.components.cards import ConsolePanel, SkillPill, link_button
-from portfolio.interaction import attach_hover_lift
-from portfolio.theme import MUTED, PRIMARY, SECONDARY, TEXT, alpha
+from portfolio.components.cards import ConsolePanel
+from portfolio.interaction import normalize_external_url
+from portfolio.theme import MUTED, PRIMARY, TEXT, WARNING, alpha
 
 
-def _timeline_item(_page: ft.Page, item: dict[str, Any], *, accent: str) -> ft.Control:
+def _highlight_row(highlight: str) -> ft.Control:
     return ft.Row(
-        spacing=16,
+        spacing=10,
         vertical_alignment=ft.CrossAxisAlignment.START,
         controls=[
-            ft.Column(
-                spacing=0,
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                controls=[
-                    ft.Container(width=14, height=14, bgcolor=accent, border_radius=999),
-                    ft.Container(width=2, height=180, bgcolor=alpha(accent, 0.35)),
-                ],
-            ),
             ft.Container(
-                expand=True,
-                content=attach_hover_lift(
-                    ConsolePanel(
-                        ft.Column(
-                            spacing=14,
+                width=4,
+                height=4,
+                margin=ft.Margin.only(top=7),
+                bgcolor=WARNING,
+                border_radius=999,
+            ),
+            ft.Container(expand=True, content=ft.Text(highlight, color=MUTED, size=14)),
+        ],
+    )
+
+
+def _experience_card(item: dict[str, Any]) -> ft.Control:
+    company_name = item.get("company", "")
+    company_url = normalize_external_url(item.get("company_url"))
+    company_control: ft.Control
+    if company_url:
+        company_control = ft.TextButton(
+            content=ft.Text(company_name, color=PRIMARY, size=18, font_family="Display"),
+            url=company_url,
+            style=ft.ButtonStyle(padding=0),
+        )
+    else:
+        company_control = ft.Text(
+            company_name,
+            color=PRIMARY,
+            size=18,
+            font_family="Display",
+        )
+
+    return ConsolePanel(
+        ft.Column(
+            spacing=12,
+            controls=[
+                ft.Row(
+                    wrap=True,
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    controls=[
+                        ft.Row(
+                            wrap=True,
+                            spacing=6,
                             controls=[
-                                ft.Row(
-                                    wrap=True,
-                                    spacing=10,
-                                    run_spacing=10,
-                                    controls=[
-                                        SkillPill(item.get("date", ""), accent),
-                                        SkillPill(item.get("location", ""), SECONDARY),
-                                    ],
-                                ),
                                 ft.Text(
                                     item.get("role", ""),
                                     color=TEXT,
-                                    size=24,
+                                    size=18,
                                     font_family="DisplayBold",
                                     weight=ft.FontWeight.W_700,
                                 ),
-                                ft.Text(
-                                    item.get("company", ""),
-                                    color=PRIMARY,
-                                    size=18,
-                                    font_family="Display",
-                                ),
-                                ft.Text(item.get("description", ""), color=MUTED, size=15),
-                                ft.Column(
-                                    spacing=8,
-                                    controls=[
-                                        ft.Row(
-                                            spacing=10,
-                                            vertical_alignment=ft.CrossAxisAlignment.START,
-                                            controls=[
-                                                ft.Text(">", color=accent, font_family="Mono"),
-                                                ft.Container(
-                                                    expand=True,
-                                                    content=ft.Text(highlight, color=TEXT, size=14),
-                                                ),
-                                            ],
-                                        )
-                                        for highlight in item.get("highlights", [])
-                                    ],
-                                ),
-                                ft.Row(
-                                    wrap=True,
-                                    spacing=10,
-                                    controls=[
-                                        link_button(
-                                            item.get("reference_label", "Reference"),
-                                            item.get("reference_url", ""),
-                                        ),
-                                        link_button(
-                                            "Company",
-                                            item.get("company_url", ""),
-                                            accent=SECONDARY,
-                                        ),
-                                    ],
-                                ),
+                                ft.Text("/", color=TEXT, size=18),
+                                company_control,
                             ],
                         ),
-                        title="experience://entry",
-                        bgcolor="#111827",
-                    ),
-                    scale=1.015,
+                        ft.Text(
+                            f"{item.get('date', '')} / {item.get('location', '')}",
+                            color=MUTED,
+                            size=12,
+                            font_family="Mono",
+                        ),
+                    ],
                 ),
-            ),
-        ],
+                ft.Text(item.get("description", ""), color=MUTED, size=14),
+                ft.Column(
+                    spacing=8,
+                    controls=[
+                        _highlight_row(highlight) for highlight in item.get("highlights", [])
+                    ],
+                ),
+            ],
+        ),
+        padding=ft.Padding.all(22),
+        bgcolor="#111827",
     )
 
 
-def ExperienceTimeline(page: ft.Page, items: list[dict[str, Any]]) -> ft.Control:
-    accents = [PRIMARY, SECONDARY, "#A855F7"]
-    return ft.Column(
-        spacing=0,
-        controls=[
-            _timeline_item(page, item, accent=accents[index % len(accents)])
-            for index, item in enumerate(items[:3])
-        ],
-    )
+def ExperienceTimeline(_page: ft.Page, items: list[dict[str, Any]]) -> ft.Control:
+    controls: list[ft.Control] = []
+    visible_items = items[:3]
+    for index, item in enumerate(visible_items):
+        controls.append(
+            ft.Row(
+                spacing=16,
+                vertical_alignment=ft.CrossAxisAlignment.START,
+                controls=[
+                    ft.Column(
+                        spacing=0,
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                        controls=[
+                            ft.Container(
+                                width=12,
+                                height=12,
+                                bgcolor=PRIMARY,
+                                border_radius=999,
+                                shadow=[
+                                    ft.BoxShadow(
+                                        blur_radius=14,
+                                        color=alpha(PRIMARY, 0.26),
+                                        offset=ft.Offset(0, 0),
+                                    )
+                                ],
+                            ),
+                            ft.Container(
+                                width=1,
+                                height=176 if index < len(visible_items) - 1 else 0,
+                                bgcolor=alpha(TEXT, 0.12),
+                            ),
+                        ],
+                    ),
+                    ft.Container(expand=True, content=_experience_card(item)),
+                ],
+            )
+        )
+    return ft.Column(spacing=18, controls=controls)

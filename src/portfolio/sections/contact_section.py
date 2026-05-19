@@ -18,7 +18,6 @@ def ContactSection(page: ft.Page, content: dict[str, Any]) -> ft.Control:
                     page,
                     "CONTACT",
                     "Open a connection",
-                    "Direct contact paths, terminal-style footer, and a closer match to the reference portfolio's closing console surface.",
                 ),
                 ContactGrid(page, content),
             ],

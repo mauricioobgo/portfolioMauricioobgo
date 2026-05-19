@@ -18,7 +18,7 @@ def FocusSection(page: ft.Page, content: dict[str, Any]) -> ft.Control:
                     page,
                     "FOCUS",
                     "What I build",
-                    "Three delivery pillars translated into console cards so the page feels like an engineering operating surface rather than a static resume.",
+                    "Three pillars where my delivery work compounds.",
                 ),
                 FocusGrid(content.get("engineering_focus", [])),
             ],

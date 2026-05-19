@@ -54,31 +54,20 @@ def ConsolePanel(
     controls: list[ft.Control] = []
     if title:
         controls.append(
-            ft.Row(
-                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                controls=[
-                    ft.Row(
-                        spacing=8,
-                        controls=[
-                            ft.Container(width=10, height=10, bgcolor=ROSE, border_radius=999),
-                            ft.Container(width=10, height=10, bgcolor=WARNING, border_radius=999),
-                            ft.Container(width=10, height=10, bgcolor=SECONDARY, border_radius=999),
-                            ft.Text(title, color=PRIMARY, size=12, font_family="Mono"),
-                        ],
-                    ),
-                    ft.Container(
-                        width=74,
-                        height=1,
-                        gradient=ft.LinearGradient(
-                            begin=ft.Alignment(-1, 0),
-                            end=ft.Alignment(1, 0),
-                            colors=[alpha(PRIMARY, 0.0), alpha(PRIMARY, 0.65)],
-                        ),
-                    ),
-                ],
+            ft.Container(
+                padding=ft.Padding.only(bottom=12),
+                border=ft.Border(bottom=ft.BorderSide(1, alpha(BORDER, 0.92))),
+                content=ft.Row(
+                    spacing=8,
+                    controls=[
+                        ft.Container(width=10, height=10, bgcolor=ROSE, border_radius=999),
+                        ft.Container(width=10, height=10, bgcolor=WARNING, border_radius=999),
+                        ft.Container(width=10, height=10, bgcolor=SECONDARY, border_radius=999),
+                        ft.Text(title, color=PRIMARY, size=12, font_family="Mono"),
+                    ],
+                ),
             )
         )
-        controls.append(ft.Container(height=1, bgcolor=alpha(BORDER, 0.92)))
     controls.append(content)
     base_panel = panel(
         ft.Column(
@@ -87,15 +76,6 @@ def ConsolePanel(
         ),
         padding=padding or ft.Padding.all(22),
         bgcolor=bgcolor or alpha(PANEL, 0.86),
-        gradient=ft.LinearGradient(
-            begin=ft.Alignment(-1, -1),
-            end=ft.Alignment(1, 1),
-            colors=[
-                alpha("#101827", 0.95),
-                alpha(PANEL, 0.93),
-                alpha("#0C1422", 0.95),
-            ],
-        ),
     )
     if not glow:
         return base_panel
@@ -136,30 +116,28 @@ def MetricCard(label: str, value: str, caption: str, accent: str = PRIMARY) -> f
     )
 
 
-def SectionHeader(page: ft.Page, eyebrow: str, title: str, description: str) -> ft.Control:
-    return ft.Column(
-        spacing=10,
-        controls=[
-            ft.Text(
-                f"// {eyebrow.lower()}",
-                color=PRIMARY,
-                size=12,
-                font_family="Mono",
-                weight=ft.FontWeight.W_600,
-            ),
-            ft.Text(
-                title,
-                size=section_title_size(page),
-                color=TEXT,
-                font_family="DisplayBold",
-                weight=ft.FontWeight.W_700,
-            ),
-            ft.Container(
-                width=min(880, int((page.width or 1240) - 48)),
-                content=ft.Text(description, color=MUTED, size=16),
-            ),
-        ],
-    )
+def SectionHeader(
+    page: ft.Page, eyebrow: str, title: str, description: str | None = None
+) -> ft.Control:
+    controls: list[ft.Control] = [
+        ft.Text(
+            f"// {eyebrow.lower()}",
+            color=PRIMARY,
+            size=12,
+            font_family="Mono",
+            weight=ft.FontWeight.W_600,
+        ),
+        ft.Text(
+            title,
+            size=section_title_size(page),
+            color=TEXT,
+            font_family="DisplayBold",
+            weight=ft.FontWeight.W_700,
+        ),
+    ]
+    if description:
+        controls.append(ft.Text(description, color=MUTED, size=16))
+    return ft.Column(spacing=10, controls=controls)
 
 
 def BentoGrid(controls: list[ft.Control]) -> ft.Control:

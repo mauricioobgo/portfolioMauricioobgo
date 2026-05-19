@@ -18,7 +18,6 @@ def CertificationsSection(page: ft.Page, content: dict[str, Any]) -> ft.Control:
                     page,
                     "CERTIFICATIONS",
                     "Validated credentials",
-                    "Featured AWS credentials stay prominent and link back to the LinkedIn certifications page through managed data.",
                 ),
                 CertificationGrid(page, content.get("certifications", [])),
             ],
