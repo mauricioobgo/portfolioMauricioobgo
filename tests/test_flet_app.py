@@ -124,6 +124,15 @@ def test_pacman_border_overlay_hides_below_desktop_breakpoint() -> None:
     assert overlay.visible is True
 
 
+def test_github_summary_card_tolerates_missing_profile_counts() -> None:
+    summary = {"repo_count": 12, "top_starred": None, "language_breakdown": []}
+    profile = {"followers": None, "html_url": "https://github.com/mauricioobgo"}
+
+    card = GitHubSummaryCard(summary, profile)
+
+    assert isinstance(card, ft.Control)
+
+
 def test_project_filter_logic_matches_declared_filters() -> None:
     project = {"filters": ["Backend", "AWS", "FastAPI"]}
 
