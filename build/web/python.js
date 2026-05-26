@@ -44,6 +44,9 @@ globalThis.jsConnect = async function(appId, args, dartOnMessage) {
         console.log("Python worker init error:", error);
         throw error;
     } else {
+        if (typeof globalThis.removeSplashFromWeb === "function") {
+            globalThis.removeSplashFromWeb();
+        }
         console.log(`Python worker initialized: ${appId}`);
     }
 }

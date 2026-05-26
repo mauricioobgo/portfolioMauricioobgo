@@ -15,11 +15,25 @@ self.initPyodide = async function () {
         self.pyodide.globals.set("python_module_name", self.pythonModuleName);
         self.pyodide.globals.set("micropip_include_pre", self.micropipIncludePre);
         flet_js.documentUrl = documentUrl;
+        const pyArgs = self.flet_js.args || {};
+        if (!("script" in pyArgs)) {
+            const appPackageUrl = new URL(
+                pyArgs["app_package_url"] || self.appPackageUrl || "assets/app/app.zip",
+                self.documentUrl || self.location.href
+            ).toString();
+            console.log("Downloading app archive");
+            const archiveResponse = await fetch(appPackageUrl);
+            if (!archiveResponse.ok) {
+                throw new Error(`Unable to fetch app archive: ${archiveResponse.status} ${archiveResponse.statusText}`);
+            }
+            const archiveBuffer = await archiveResponse.arrayBuffer();
+            self.pyodide.unpackArchive(archiveBuffer, "zip");
+        }
         await self.pyodide.runPythonAsync(`
         import flet_js, os, runpy, sys, traceback
         from pyodide.http import pyfetch
 
-        py_args = flet_js.args.to_py() if flet_js.args else None
+        py_args = flet_js.args.to_py() if flet_js.args else {}
 
         if "app_package_url" in py_args:
             app_package_url = py_args["app_package_url"]
@@ -42,11 +56,7 @@ self.initPyodide = async function () {
         print("python_module_name:", python_module_name)
         print("micropip_include_pre:", micropip_include_pre)
 
-        if "script" not in py_args:
-            print("Downloading app archive")
-            response = await pyfetch(app_package_url)
-            await response.unpack_archive()
-        else:
+        if "script" in py_args:
             print("Saving script to a file")
             with open(f"{python_module_name}.py", "w") as f:
                 f.write(py_args["script"]);

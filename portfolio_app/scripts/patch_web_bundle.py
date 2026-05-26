@@ -2,12 +2,91 @@ from __future__ import annotations
 
 import argparse
 import importlib.util
+import json
+from dataclasses import dataclass
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
 
+DEFAULT_WEB_ROOT = Path("build/web")
+BUNDLE_RELATIVE_PATH = Path("assets/app/app.zip")
+PYTHON_WORKER_RELATIVE_PATH = Path("python-worker.js")
+PYTHON_LOADER_RELATIVE_PATH = Path("python.js")
+FLUTTER_BOOTSTRAP_RELATIVE_PATH = Path("flutter_bootstrap.js")
+
 RUNTIME_MODULES = ("flet", "flet_lottie", "msgpack")
-RUNTIME_FILES = ("repath.py",)
+RUNTIME_FILES = ("repath.py", "six.py")
+REQUIRED_BUNDLE_ENTRIES = (
+    "main.py",
+    "flet/__init__.py",
+    "flet_lottie/__init__.py",
+    "msgpack/__init__.py",
+    "repath.py",
+    "six.py",
+)
+
+WORKER_IMPORT_OLD = (
+    "        import flet_js, os, runpy, sys, traceback\n        from pyodide.http import pyfetch\n"
+)
+WORKER_IMPORT_NEW = "        import flet_js, os, runpy, sys, traceback\n"
+WORKER_PY_ARGS_OLD = "        py_args = flet_js.args.to_py() if flet_js.args else None\n"
+WORKER_PY_ARGS_NEW = "        py_args = flet_js.args.to_py() if flet_js.args else {}\n"
+WORKER_HOOK_OLD = (
+    "        flet_js.documentUrl = documentUrl;\n        await self.pyodide.runPythonAsync(`\n"
+)
+WORKER_HOOK_NEW = """        flet_js.documentUrl = documentUrl;
+        const pyArgs = self.flet_js.args || {};
+        if (!("script" in pyArgs)) {
+            const appPackageUrl = new URL(
+                pyArgs["app_package_url"] || self.appPackageUrl || "assets/app/app.zip",
+                self.documentUrl || self.location.href
+            ).toString();
+            console.log("Downloading app archive");
+            const archiveResponse = await fetch(appPackageUrl);
+            if (!archiveResponse.ok) {
+                throw new Error(`Unable to fetch app archive: ${archiveResponse.status} ${archiveResponse.statusText}`);
+            }
+            const archiveBuffer = await archiveResponse.arrayBuffer();
+            self.pyodide.unpackArchive(archiveBuffer, "zip");
+        }
+        await self.pyodide.runPythonAsync(`
+"""
+WORKER_ARCHIVE_BLOCK_OLD = """        if "script" not in py_args:
+            print("Downloading app archive")
+            response = await pyfetch(app_package_url)
+            await response.unpack_archive()
+        else:
+            print("Saving script to a file")
+            with open(f"{python_module_name}.py", "w") as f:
+                f.write(py_args["script"]);
+"""
+WORKER_ARCHIVE_BLOCK_NEW = """        if "script" in py_args:
+            print("Saving script to a file")
+            with open(f"{python_module_name}.py", "w") as f:
+                f.write(py_args["script"]);
+"""
+WORKER_PATCH_MARKER = 'self.pyodide.unpackArchive(archiveBuffer, "zip");'
+PYTHON_LOADER_READY_OLD = """    } else {
+        console.log(`Python worker initialized: ${appId}`);
+    }
+"""
+PYTHON_LOADER_READY_NEW = """    } else {
+        if (typeof globalThis.removeSplashFromWeb === "function") {
+            globalThis.removeSplashFromWeb();
+        }
+        console.log(`Python worker initialized: ${appId}`);
+    }
+"""
+PYTHON_LOADER_PATCH_MARKER = "globalThis.removeSplashFromWeb();"
+FLUTTER_BUILD_CONFIG_PREFIX = "_flutter.buildConfig = "
+
+
+@dataclass(frozen=True)
+class PatchSummary:
+    bundle_entries_added: int
+    worker_patched: bool
+    python_loader_patched: bool
+    bootstrap_patched: bool
 
 
 def _module_root(module_name: str) -> Path:
@@ -44,6 +123,21 @@ def _iter_runtime_sources() -> list[tuple[Path, str]]:
     return sources
 
 
+def _web_root_from_input(value: str) -> Path:
+    path = Path(value).resolve()
+    if path.name == "app.zip":
+        return path.parents[2]
+    return path
+
+
+def _replace_once(text: str, old: str, new: str, *, label: str) -> tuple[str, bool]:
+    if new in text:
+        return text, False
+    if old not in text:
+        raise RuntimeError(f"Unable to find {label} while patching generated web assets.")
+    return text.replace(old, new, 1), True
+
+
 def patch_bundle(bundle_path: Path) -> int:
     if not bundle_path.exists():
         raise FileNotFoundError(f"Bundle not found: {bundle_path}")
@@ -59,24 +153,184 @@ def patch_bundle(bundle_path: Path) -> int:
     return added
 
 
+def patch_python_worker(worker_path: Path) -> bool:
+    if not worker_path.exists():
+        raise FileNotFoundError(f"Python worker not found: {worker_path}")
+
+    content = worker_path.read_text(encoding="utf-8")
+    original = content
+
+    content, _ = _replace_once(content, WORKER_IMPORT_OLD, WORKER_IMPORT_NEW, label="worker import")
+    content, _ = _replace_once(content, WORKER_PY_ARGS_OLD, WORKER_PY_ARGS_NEW, label="worker args")
+    content, archive_block_changed = _replace_once(
+        content,
+        WORKER_ARCHIVE_BLOCK_OLD,
+        WORKER_ARCHIVE_BLOCK_NEW,
+        label="worker archive block",
+    )
+    content, hook_changed = _replace_once(
+        content,
+        WORKER_HOOK_OLD,
+        WORKER_HOOK_NEW,
+        label="worker JS archive hook",
+    )
+
+    if content != original:
+        worker_path.write_text(content, encoding="utf-8")
+
+    return archive_block_changed or hook_changed
+
+
+def patch_python_loader(loader_path: Path) -> bool:
+    if not loader_path.exists():
+        raise FileNotFoundError(f"Python loader not found: {loader_path}")
+
+    content = loader_path.read_text(encoding="utf-8")
+    updated, changed = _replace_once(
+        content,
+        PYTHON_LOADER_READY_OLD,
+        PYTHON_LOADER_READY_NEW,
+        label="python loader ready hook",
+    )
+    if changed:
+        loader_path.write_text(updated, encoding="utf-8")
+    return changed
+
+
+def patch_flutter_bootstrap(bootstrap_path: Path) -> bool:
+    if not bootstrap_path.exists():
+        raise FileNotFoundError(f"Flutter bootstrap not found: {bootstrap_path}")
+
+    content = bootstrap_path.read_text(encoding="utf-8")
+    newline = "\r\n" if "\r\n" in content else "\n"
+    lines = content.splitlines()
+
+    for index, line in enumerate(lines):
+        if not line.startswith(FLUTTER_BUILD_CONFIG_PREFIX):
+            continue
+
+        json_text = line.removeprefix(FLUTTER_BUILD_CONFIG_PREFIX)
+        if not json_text.endswith(";"):
+            raise RuntimeError("Unable to parse _flutter.buildConfig from flutter_bootstrap.js.")
+
+        build_config = json.loads(json_text.removesuffix(";"))
+        builds = build_config.get("builds")
+        if not isinstance(builds, list):
+            raise RuntimeError("flutter_bootstrap.js does not expose a valid builds list.")
+
+        js_builds = [build for build in builds if build.get("compileTarget") == "dart2js"]
+        if not js_builds:
+            raise RuntimeError("flutter_bootstrap.js does not expose a dart2js build to keep.")
+
+        build_config["builds"] = js_builds
+        updated_line = (
+            f"{FLUTTER_BUILD_CONFIG_PREFIX}{json.dumps(build_config, separators=(',', ':'))};"
+        )
+        changed = updated_line != line
+        lines[index] = updated_line
+        if changed:
+            bootstrap_path.write_text(newline.join(lines) + newline, encoding="utf-8")
+        return changed
+
+    raise RuntimeError("Unable to find _flutter.buildConfig in flutter_bootstrap.js.")
+
+
+def verify_bundle(bundle_path: Path) -> None:
+    if not bundle_path.exists():
+        raise FileNotFoundError(f"Bundle not found: {bundle_path}")
+
+    with ZipFile(bundle_path) as archive:
+        entries = set(archive.namelist())
+
+    missing = [entry for entry in REQUIRED_BUNDLE_ENTRIES if entry not in entries]
+    if missing:
+        raise RuntimeError(f"Generated app bundle is missing required runtime entries: {missing}")
+
+
+def verify_python_worker(worker_path: Path) -> None:
+    if not worker_path.exists():
+        raise FileNotFoundError(f"Python worker not found: {worker_path}")
+
+    content = worker_path.read_text(encoding="utf-8")
+    if "response.unpack_archive()" in content:
+        raise RuntimeError("python-worker.js still uses response.unpack_archive().")
+    if WORKER_PATCH_MARKER not in content:
+        raise RuntimeError("python-worker.js is missing the JS-side app.zip unpack patch.")
+
+
+def verify_python_loader(loader_path: Path) -> None:
+    if not loader_path.exists():
+        raise FileNotFoundError(f"Python loader not found: {loader_path}")
+
+    content = loader_path.read_text(encoding="utf-8")
+    if PYTHON_LOADER_PATCH_MARKER not in content:
+        raise RuntimeError("python.js is missing the splash removal hook after worker init.")
+
+
+def verify_flutter_bootstrap(bootstrap_path: Path) -> None:
+    if not bootstrap_path.exists():
+        raise FileNotFoundError(f"Flutter bootstrap not found: {bootstrap_path}")
+
+    content = bootstrap_path.read_text(encoding="utf-8")
+    forbidden_tokens = ('"compileTarget":"dart2wasm"', '"renderer":"skwasm"', "main.dart.wasm")
+    for token in forbidden_tokens:
+        if token in content:
+            raise RuntimeError(
+                f"flutter_bootstrap.js still advertises the WASM startup path: {token}"
+            )
+    if '"mainJsPath":"main.dart.js"' not in content:
+        raise RuntimeError("flutter_bootstrap.js is missing the JS entrypoint declaration.")
+
+
+def verify_web_build(web_root: Path) -> None:
+    verify_bundle(web_root / BUNDLE_RELATIVE_PATH)
+    verify_python_worker(web_root / PYTHON_WORKER_RELATIVE_PATH)
+    verify_python_loader(web_root / PYTHON_LOADER_RELATIVE_PATH)
+    verify_flutter_bootstrap(web_root / FLUTTER_BOOTSTRAP_RELATIVE_PATH)
+
+
+def patch_web_build(web_root: Path) -> PatchSummary:
+    bundle_path = web_root / BUNDLE_RELATIVE_PATH
+    worker_path = web_root / PYTHON_WORKER_RELATIVE_PATH
+    loader_path = web_root / PYTHON_LOADER_RELATIVE_PATH
+    bootstrap_path = web_root / FLUTTER_BOOTSTRAP_RELATIVE_PATH
+
+    bundle_entries_added = patch_bundle(bundle_path)
+    worker_patched = patch_python_worker(worker_path)
+    python_loader_patched = patch_python_loader(loader_path)
+    bootstrap_patched = patch_flutter_bootstrap(bootstrap_path)
+    verify_web_build(web_root)
+    return PatchSummary(
+        bundle_entries_added=bundle_entries_added,
+        worker_patched=worker_patched,
+        python_loader_patched=python_loader_patched,
+        bootstrap_patched=bootstrap_patched,
+    )
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Inject required pure-Python runtime packages into a Flet web app.zip bundle."
+        description="Patch and verify the generated Flet static web bundle for GitHub Pages."
     )
     parser.add_argument(
-        "bundle",
+        "web_root",
         nargs="?",
-        default="build/web/assets/app/app.zip",
-        help="Path to the generated app.zip bundle.",
+        default=str(DEFAULT_WEB_ROOT),
+        help="Path to the generated build/web directory. For backward compatibility, app.zip is also accepted.",
     )
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
-    bundle_path = Path(args.bundle).resolve()
-    added = patch_bundle(bundle_path)
-    print(f"Patched {bundle_path} with {added} runtime files.")
+    web_root = _web_root_from_input(args.web_root)
+    summary = patch_web_build(web_root)
+    print(
+        f"Patched {web_root} with {summary.bundle_entries_added} runtime files; "
+        f"python-worker.js updated={summary.worker_patched}; "
+        f"python.js updated={summary.python_loader_patched}; "
+        f"flutter_bootstrap.js updated={summary.bootstrap_patched}."
+    )
 
 
 if __name__ == "__main__":

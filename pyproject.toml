@@ -41,7 +41,7 @@ route_url_strategy = "hash"
 renderer = "auto"
 pwa_background_color = "#071018"
 pwa_theme_color = "#12F7A0"
-wasm = true
+wasm = false
 
 [tool.setuptools.packages.find]
 include = ["portfolio_app*"]
