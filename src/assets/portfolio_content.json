@@ -19,12 +19,12 @@
     "title": "Backend, Data, Cloud, and AI Engineer",
     "subtitle": "I build production-grade data platforms, FastAPI backends, AWS architectures, Redshift analytics systems, and LLM-powered workflows.",
     "about": "Python-first engineer focused on backend, data, cloud, and AI systems. I work across production APIs, warehouse architecture, FinOps visibility, analytics pipelines, and applied LLM workflows with a strong delivery mindset.",
-    "bio": "Passionate about leveraging the power of data and the cloud to drive meaningful insights and innovation. ",
+    "bio": "Backend, data, and cloud engineer with hands-on delivery across AWS, Redshift, dbt, Spark, FastAPI, and AI-assisted engineering workflows.",
     "resume_link": "https://drive.google.com/file/d/197iszNCfu2tIdIlV5CLF--6Lk3bMSBFH/view?usp=sharing",
     "resume_pdf_url": "https://drive.google.com/uc?export=download&id=197iszNCfu2tIdIlV5CLF--6Lk3bMSBFH",
     "email": "mauricioobgo@gmail.com",
-    "location": "Bogot\u00e1 Colombia",
-    "company": "AWS",
+    "location": "Bogotá Colombia",
+    "company": "Globant",
     "social_links": {
       "github": "https://github.com/mauricioobgo",
       "linkedin": "https://www.linkedin.com/in/mauricioobgo/"
@@ -74,105 +74,108 @@
   ],
   "engineering_focus": [
     {
-      "name": "Backend Engineering",
+      "name": "Backend & APIs",
       "eyebrow": "API / SYSTEMS",
-      "description": "Production-minded Python services, FastAPI APIs, async workflows, testing, and architecture that stays maintainable under delivery pressure.",
+      "description": "Production FastAPI services with clean architecture, async I/O, migrations, observability, and CI/CD baked in.",
       "skills": [
         "Python 3.14",
         "FastAPI",
-        "APIs",
+        "SQLAlchemy",
+        "Alembic",
         "PostgreSQL",
-        "Async systems",
-        "Testing",
-        "Clean architecture"
+        "REST",
+        "Async I/O"
       ]
     },
     {
-      "name": "Data Engineering",
+      "name": "Data & Cloud",
       "eyebrow": "DATA / ANALYTICS",
-      "description": "Cloud-scale ingestion, transformation, warehouse modeling, and delivery workflows built for analytics reliability and operational clarity.",
-      "skills": [
-        "Redshift",
-        "dbt",
-        "Spark",
-        "Glue",
-        "Athena",
-        "Airflow",
-        "Data quality"
-      ]
-    },
-    {
-      "name": "LLM Engineering",
-      "eyebrow": "AI / ORCHESTRATION",
-      "description": "Applied LLM systems that combine RAG, evaluation, tool calling, structured outputs, and production feedback loops.",
-      "skills": [
-        "RAG",
-        "Agents",
-        "Vector databases",
-        "Evaluation",
-        "Prompt pipelines",
-        "Tool calling",
-        "Structured outputs"
-      ]
-    },
-    {
-      "name": "Cloud & DevOps",
-      "eyebrow": "OPS / DELIVERY",
-      "description": "AWS-focused delivery with CI/CD, observability, container workflows, cost awareness, and cloud platform execution.",
+      "description": "Redshift, dbt, S3, Athena, Glue. Warehouse modeling, FinOps visibility, and analytics pipelines that hold under load.",
       "skills": [
         "AWS",
-        "Docker",
-        "CI/CD",
-        "Observability",
-        "Infrastructure as Code",
-        "FinOps",
-        "GitHub Actions"
+        "Redshift",
+        "S3",
+        "Athena",
+        "Glue",
+        "dbt",
+        "Spark"
+      ]
+    },
+    {
+      "name": "AI Systems",
+      "eyebrow": "AI / ORCHESTRATION",
+      "description": "Applied LLM workflows, retrieval, tool calling, and structured outputs wired into real engineering delivery.",
+      "skills": [
+        "LLMs",
+        "OpenAI SDK",
+        "RAG",
+        "Tool calling",
+        "Structured outputs",
+        "Evaluation"
       ]
     }
   ],
   "technical_stack": [
     {
-      "name": "Application",
+      "name": "Languages",
       "items": [
         "Python 3.14",
+        "SQL",
+        "TypeScript",
+        "Bash"
+      ]
+    },
+    {
+      "name": "Backend",
+      "items": [
         "FastAPI",
         "SQLAlchemy",
         "Alembic",
-        "Pytest",
-        "AsyncIO"
-      ]
-    },
-    {
-      "name": "Data",
-      "items": [
-        "Redshift",
-        "dbt",
-        "Athena",
-        "Glue",
-        "Spark",
-        "PostgreSQL"
-      ]
-    },
-    {
-      "name": "AI",
-      "items": [
-        "LLMs",
-        "RAG",
-        "Prompt pipelines",
-        "Structured outputs",
-        "Evaluation",
-        "Vector search"
+        "PostgreSQL",
+        "REST",
+        "Async I/O"
       ]
     },
     {
       "name": "Cloud",
       "items": [
         "AWS",
+        "Redshift",
+        "S3",
+        "Athena",
+        "Glue",
+        "Lambda",
+        "CloudWatch",
+        "GCP"
+      ]
+    },
+    {
+      "name": "Data",
+      "items": [
+        "dbt",
+        "Spark",
+        "pgvector",
+        "Tableau",
+        "Looker"
+      ]
+    },
+    {
+      "name": "AI",
+      "items": [
+        "LLMs",
+        "OpenAI SDK",
+        "RAG",
+        "Tool calling",
+        "Structured outputs"
+      ]
+    },
+    {
+      "name": "DevOps",
+      "items": [
         "Docker",
         "GitHub Actions",
-        "CloudWatch",
-        "FinOps",
-        "Observability"
+        "CI/CD",
+        "uv"
       ]
     }
   ],
@@ -180,13 +183,13 @@
     {
       "role": "Data Engineer",
       "company": "Globant",
-      "date": "Current role listed on public LinkedIn",
-      "location": "Bogota, Colombia",
-      "description": "Public LinkedIn profile currently lists Globant as the active company, with delivery centered on modern data engineering, AI-oriented workflows, and cloud execution.",
+      "date": "Current",
+      "location": "Bogotá, Colombia",
+      "description": "Delivery centered on modern data engineering, AI-oriented workflows, and cloud execution.",
       "highlights": [
-        "Public LinkedIn profile shows Globant as the current employer.",
-        "Working close to practical AI workflows, platform delivery, and modern data engineering patterns.",
-        "Current title and exact dates remain intentionally conservative until a public source confirms them more precisely."
+        "Modern data engineering and platform delivery",
+        "Practical AI workflows close to production",
+        "Cloud-native execution patterns"
       ],
       "company_url": "https://www.globant.com/",
       "reference_url": "https://www.linkedin.com/in/mauricioobgo/",
@@ -195,13 +198,13 @@
     {
       "role": "Technical Account Manager",
       "company": "Amazon Web Services",
-      "date": "May 2024 - Previous role",
+      "date": "May 2024 — Previous role",
       "location": "Colombia",
-      "description": "Worked with AWS customers on architecture reliability, Well-Architected guidance, cost optimization, Redshift performance, and cloud intelligence practices.",
+      "description": "Worked with AWS customers on architecture reliability, Well-Architected guidance, cost optimization, Redshift performance, and cloud intelligence.",
       "highlights": [
-        "Delivered recommendations across resiliency, security, and operational excellence.",
-        "Built cost and usage visibility workflows with Python, Athena, Glue, S3, and analytics services.",
-        "Supported migrations and service adoption with architecture guidance tailored to client workloads."
+        "Resiliency, security, and operational-excellence recommendations",
+        "FinOps visibility with Python, Athena, Glue, S3",
+        "Migration and adoption guidance across services"
       ],
       "company_url": "https://aws.amazon.com/",
       "reference_url": "https://www.linkedin.com/in/mauricioobgo/",
@@ -210,13 +213,13 @@
     {
       "role": "Data Engineer Specialist",
       "company": "Publicis Media",
-      "date": "Feb 2023 - May 2024",
+      "date": "Feb 2023 — May 2024",
       "location": "Hybrid delivery",
       "description": "Designed and operated high-value data pipelines, dashboard architectures, and marketing analytics workflows for enterprise client programs.",
       "highlights": [
-        "Built data ingestion and transformation pipelines for Stellantis programs on AWS and GCP.",
-        "Created architecture patterns for Tableau and Looker-based insight delivery.",
-        "Developed a classification model for marketing moments to purchase from Google Ads interaction data."
+        "AWS + GCP ingestion pipelines for Stellantis programs",
+        "Tableau and Looker insight delivery patterns",
+        "Marketing-moment classification model from Google Ads data"
       ],
       "company_url": "https://www.publicismedia.com/",
       "reference_url": "https://www.linkedin.com/in/mauricioobgo/",
@@ -229,7 +232,7 @@
       "category": "LLM",
       "summary": "Production-style platform for ingesting, validating, querying, and understanding datasets with LLM support.",
       "problem": "Teams need one workflow for data ingestion, validation, warehouse curation, and AI-assisted dataset understanding.",
-      "solution": "Designed a Python-first platform with async APIs, governed dataset flows, retrieval-enhanced assistance, and operational observability.",
+      "solution": "Python-first platform with async APIs, governed dataset flows, retrieval-enhanced assistance, and operational observability.",
       "architecture": "Event-driven ingestion, storage in S3, curated dbt models, vector-backed retrieval, and deployment checks wired through CI/CD.",
       "tech_stack": [
         "FastAPI",
@@ -244,7 +247,6 @@
         "Async ingestion API",
         "RAG assistant",
         "Data quality checks",
-        "Observability",
         "CI/CD"
       ],
       "github_url": "https://github.com/mauricioobgo/langfuseExploration",
@@ -263,7 +265,7 @@
       "category": "AWS",
       "summary": "Tooling for analyzing Redshift workloads, WLM behavior, and cost optimization opportunities.",
       "problem": "Redshift teams often lack a single view that combines workload patterns, tuning signals, and cost guidance.",
-      "solution": "Built a diagnostic layer that reviews query history, warehouse behavior, and cost signals to surface practical optimization paths.",
+      "solution": "Diagnostic layer that reviews query history, warehouse behavior, and cost signals to surface practical optimization paths.",
       "architecture": "Workload snapshots flow into warehouse diagnostics, operational metrics, and recommendation outputs for both provisioned and serverless setups.",
       "tech_stack": [
         "Python",
@@ -276,8 +278,8 @@
       "highlights": [
         "Query history analysis",
         "WLM insights",
-        "Cost optimization recommendations",
-        "Serverless and provisioned comparison"
+        "Cost optimization",
+        "Serverless vs provisioned"
       ],
       "github_url": "https://github.com/mauricioobgo/RedshiftDataApIReferenceArchitecture",
       "demo_url": null,
@@ -293,7 +295,7 @@
       "category": "LLM",
       "summary": "AI agent that classifies HL7 messages, extracts structured patient context, and evaluates relevance for healthcare workflows.",
       "problem": "HL7 payloads are noisy, domain-heavy, and difficult to triage quickly inside operational healthcare flows.",
-      "solution": "Designed an agent workflow that parses messages, enriches context, and produces structured outputs for downstream review.",
+      "solution": "Agent workflow that parses messages, enriches context, and produces structured outputs for downstream review.",
       "architecture": "HL7 ingestion feeds prompt pipelines, retrieval context, tool-calling steps, and evaluation datasets for safer iteration.",
       "tech_stack": [
         "Python",
@@ -306,8 +308,7 @@
         "HL7 parsing",
         "LLM classification",
         "Tool calling",
-        "Evaluation dataset",
-        "JSON structured output"
+        "Evaluation dataset"
       ],
       "github_url": null,
       "demo_url": null,
@@ -323,7 +324,7 @@
       "category": "AWS",
       "summary": "AWS FinOps dashboard that analyzes service usage and recommends cost optimizations.",
       "problem": "Cloud teams need cost transparency that is technical enough for engineers and practical enough for platform planning.",
-      "solution": "Combined billing, usage, and warehouse views into an engineering-friendly dashboard that supports cost-aware decisions.",
+      "solution": "Combined billing, usage, and warehouse views into an engineering-friendly dashboard for cost-aware decisions.",
       "architecture": "Cost signals land in S3 and Athena, are modeled into decision views, and feed recommendation panels for engineering review.",
       "tech_stack": [
         "AWS Cost Explorer",
@@ -336,8 +337,8 @@
       "highlights": [
         "Cost trend analysis",
         "S3 optimization",
-        "Athena scan estimation",
-        "Redshift cost insights"
+        "Athena estimation",
+        "Redshift insights"
       ],
       "github_url": null,
       "demo_url": null,
@@ -352,7 +353,7 @@
       "category": "Backend",
       "summary": "Backend template with production-ready architecture, delivery guardrails, and CI/CD foundations.",
       "problem": "Teams moving fast still need consistent architecture, migrations, testing, and deployment checks from day one.",
-      "solution": "Created a reusable backend foundation that emphasizes clean structure, observability, and readiness for team scale.",
+      "solution": "Reusable backend foundation that emphasizes clean structure, observability, and team scale readiness.",
       "architecture": "Layered application boundaries, database migrations, test harnesses, container builds, and pipeline automation.",
       "tech_stack": [
         "Python 3.14",
@@ -360,12 +361,11 @@
         "SQLAlchemy",
         "Alembic",
         "PostgreSQL",
-        "Docker",
-        "GitHub Actions"
+        "Docker"
       ],
       "highlights": [
         "Clean architecture",
-        "Auth-ready structure",
+        "Auth-ready",
         "Logging",
         "Tests",
         "CI/CD"
@@ -381,23 +381,6 @@
     }
   ],
   "certifications": [
-    {
-      "title": "DS4A / Colombia 6.0",
-      "issuer": "Correlation One",
-      "level": "Program",
-      "category": "Data Science",
-      "status": "Completed",
-      "featured": false,
-      "issued": "Jul 2022",
-      "credential_id": "54847879",
-      "credential_url": "https://www.linkedin.com/in/mauricioobgo/details/certifications/",
-      "credential_label": "View on LinkedIn",
-      "skills": [
-        "Applied data science",
-        "Analytics",
-        "Python"
-      ]
-    },
     {
       "title": "AWS Certified Solutions Architect - Professional",
       "issuer": "Amazon Web Services",
@@ -434,6 +417,23 @@
         "Data Engineering",
         "AWS",
         "AI Systems"
+      ]
+    },
+    {
+      "title": "DS4A / Colombia 6.0",
+      "issuer": "Correlation One",
+      "level": "Program",
+      "category": "Data Science",
+      "status": "Completed",
+      "featured": false,
+      "issued": "Jul 2022",
+      "credential_id": "54847879",
+      "credential_url": "https://www.linkedin.com/in/mauricioobgo/details/certifications/",
+      "credential_label": "View on LinkedIn",
+      "skills": [
+        "Applied data science",
+        "Analytics",
+        "Python"
       ]
     },
     {
@@ -515,9 +515,9 @@
     "profile": {
       "login": "mauricioobgo",
       "name": "Mauricio Obando",
-      "company": "AWS",
-      "location": "Bogot\u00e1 Colombia",
-      "bio": "Passionate about leveraging the power of data and the cloud to drive meaningful insights and innovation. ",
+      "company": "Globant",
+      "location": "Bogotá Colombia",
+      "bio": "Backend, data, and cloud engineer with hands-on delivery across AWS, Redshift, dbt, Spark, FastAPI, and AI-assisted engineering workflows.",
       "avatar_url": "https://avatars.githubusercontent.com/u/14032180?v=4",
       "html_url": "https://github.com/mauricioobgo",
       "followers": 7,
