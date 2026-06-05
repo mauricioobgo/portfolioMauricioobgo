@@ -1,36 +1,36 @@
 - role: Data Engineer
   company: Globant
-  date: Current role listed on public LinkedIn
-  location: Bogota, Colombia
-  description: Public LinkedIn profile currently lists Globant as the active company, with delivery centered on modern data engineering, AI-oriented workflows, and cloud execution.
+  date: Current
+  location: "Bogotá, Colombia"
+  description: "Delivery centered on modern data engineering, AI-oriented workflows, and cloud execution."
   highlights:
-    - Public LinkedIn profile shows Globant as the current employer.
-    - Working close to practical AI workflows, platform delivery, and modern data engineering patterns.
-    - Current title and exact dates remain intentionally conservative until a public source confirms them more precisely.
+    - "Modern data engineering and platform delivery"
+    - "Practical AI workflows close to production"
+    - "Cloud-native execution patterns"
   company_url: https://www.globant.com/
   reference_url: https://www.linkedin.com/in/mauricioobgo/
   reference_label: LinkedIn
 - role: Technical Account Manager
   company: Amazon Web Services
-  date: May 2024 - Previous role
+  date: "May 2024 — Previous role"
   location: Colombia
-  description: Worked with AWS customers on architecture reliability, Well-Architected guidance, cost optimization, Redshift performance, and cloud intelligence practices.
+  description: "Worked with AWS customers on architecture reliability, Well-Architected guidance, cost optimization, Redshift performance, and cloud intelligence."
   highlights:
-    - Delivered recommendations across resiliency, security, and operational excellence.
-    - Built cost and usage visibility workflows with Python, Athena, Glue, S3, and analytics services.
-    - Supported migrations and service adoption with architecture guidance tailored to client workloads.
+    - "Resiliency, security, and operational-excellence recommendations"
+    - "FinOps visibility with Python, Athena, Glue, S3"
+    - "Migration and adoption guidance across services"
   company_url: https://aws.amazon.com/
   reference_url: https://www.linkedin.com/in/mauricioobgo/
   reference_label: LinkedIn
 - role: Data Engineer Specialist
   company: Publicis Media
-  date: Feb 2023 - May 2024
+  date: "Feb 2023 — May 2024"
   location: Hybrid delivery
-  description: Designed and operated high-value data pipelines, dashboard architectures, and marketing analytics workflows for enterprise client programs.
+  description: "Designed and operated high-value data pipelines, dashboard architectures, and marketing analytics workflows for enterprise client programs."
   highlights:
-    - Built data ingestion and transformation pipelines for Stellantis programs on AWS and GCP.
-    - Created architecture patterns for Tableau and Looker-based insight delivery.
-    - Developed a classification model for marketing moments to purchase from Google Ads interaction data.
+    - "AWS + GCP ingestion pipelines for Stellantis programs"
+    - "Tableau and Looker insight delivery patterns"
+    - "Marketing-moment classification model from Google Ads data"
   company_url: https://www.publicismedia.com/
   reference_url: https://www.linkedin.com/in/mauricioobgo/
   reference_label: LinkedIn
