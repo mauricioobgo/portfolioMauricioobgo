@@ -51,7 +51,9 @@ WORKER_JS_HOOK_OLD = """        flet_js.documentUrl = documentUrl;
         }
         await self.pyodide.runPythonAsync(`
 """
-WORKER_JS_HOOK_NEW = "        flet_js.documentUrl = documentUrl;\n        await self.pyodide.runPythonAsync(`\n"
+WORKER_JS_HOOK_NEW = (
+    "        flet_js.documentUrl = documentUrl;\n        await self.pyodide.runPythonAsync(`\n"
+)
 WORKER_JS_HOOK_MARKER = 'self.pyodide.unpackArchive(archiveBuffer, "zip");'
 WORKER_ARCHIVE_BLOCK_OLD = """        if "script" in py_args:
             print("Saving script to a file")
