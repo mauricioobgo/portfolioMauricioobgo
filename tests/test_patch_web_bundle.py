@@ -202,3 +202,63 @@ def test_verify_web_build_rejects_wasm_bootstrap(tmp_path) -> None:
 
     with pytest.raises(RuntimeError, match="WASM startup path"):
         patch_web_bundle.verify_web_build(web_root)
+
+
+def test_copy_fonts_copies_custom_fonts(tmp_path, monkeypatch) -> None:
+    """copy_fonts pulls every .ttf/.otf from src/assets/fonts/ into the web root."""
+    source_dir = tmp_path / "src" / "assets" / "fonts"
+    source_dir.mkdir(parents=True)
+    (source_dir / "Poppins-Regular.ttf").write_bytes(b"poppins-data")
+    (source_dir / "IBMPlexMono-Medium.ttf").write_bytes(b"ibm-plex-data")
+    # Non-font files should be ignored.
+    (source_dir / "README.md").write_text("ignore me", encoding="utf-8")
+
+    web_root = tmp_path / "build" / "web"
+
+    monkeypatch.setattr(patch_web_bundle, "SOURCE_FONTS_DIR", source_dir)
+    copied = patch_web_bundle.copy_fonts(web_root)
+
+    assert copied == 2
+    target = web_root / "assets" / "fonts"
+    assert (target / "Poppins-Regular.ttf").read_bytes() == b"poppins-data"
+    assert (target / "IBMPlexMono-Medium.ttf").read_bytes() == b"ibm-plex-data"
+    assert not (target / "README.md").exists()
+
+
+def test_copy_fonts_is_idempotent(tmp_path, monkeypatch) -> None:
+    """Re-running copy_fonts with unchanged sources should copy zero new files."""
+    source_dir = tmp_path / "src" / "assets" / "fonts"
+    source_dir.mkdir(parents=True)
+    (source_dir / "Poppins-Bold.ttf").write_bytes(b"bold")
+
+    web_root = tmp_path / "build" / "web"
+
+    monkeypatch.setattr(patch_web_bundle, "SOURCE_FONTS_DIR", source_dir)
+    assert patch_web_bundle.copy_fonts(web_root) == 1
+    # Second run: file already present with same bytes → no copy.
+    assert patch_web_bundle.copy_fonts(web_root) == 0
+
+
+def test_copy_fonts_handles_missing_source_dir(tmp_path, monkeypatch) -> None:
+    """If the project has no custom fonts, copy_fonts is a no-op."""
+    web_root = tmp_path / "build" / "web"
+    monkeypatch.setattr(patch_web_bundle, "SOURCE_FONTS_DIR", tmp_path / "does-not-exist")
+    assert patch_web_bundle.copy_fonts(web_root) == 0
+
+
+def test_verify_fonts_flags_missing_fonts(tmp_path, monkeypatch) -> None:
+    """verify_fonts raises when a source font is absent from the built site."""
+    source_dir = tmp_path / "src" / "assets" / "fonts"
+    source_dir.mkdir(parents=True)
+    (source_dir / "Poppins-Regular.ttf").write_bytes(b"poppins")
+
+    web_root = tmp_path / "build" / "web"
+    web_root.mkdir(parents=True)
+    # Built site is missing the custom font.
+    empty_fonts = web_root / "assets" / "fonts"
+    empty_fonts.mkdir(parents=True)
+    (empty_fonts / "MaterialIcons-Regular.otf").write_bytes(b"default")
+
+    monkeypatch.setattr(patch_web_bundle, "SOURCE_FONTS_DIR", source_dir)
+    with pytest.raises(RuntimeError, match="Poppins-Regular.ttf"):
+        patch_web_bundle.verify_fonts(web_root)
