@@ -130,7 +130,7 @@ def test_patch_web_build_updates_worker_and_verifies_artifact(tmp_path, monkeypa
 
     _write_bundle(bundle_path, {"main.py": "print('app')\n"})
     worker_path.parent.mkdir(parents=True, exist_ok=True)
-    worker_path.write_text(_read_worker_fixture(), encoding="utf-8")
+    worker_path.write_text(_read_worker_fixture_broken(), encoding="utf-8")
     loader_path.write_text(
         "    } else {\n        console.log(`Python worker initialized: ${appId}`);\n    }\n",
         encoding="utf-8",
@@ -154,8 +154,12 @@ def test_patch_web_build_updates_worker_and_verifies_artifact(tmp_path, monkeypa
     assert summary.bootstrap_patched is True
 
     worker_content = worker_path.read_text(encoding="utf-8")
-    assert 'self.pyodide.unpackArchive(archiveBuffer, "zip");' in worker_content
-    assert "response.unpack_archive()" not in worker_content
+    # The JS-side hook from PR #42 should be gone — it raises EINVAL on
+    # Pyodide's MEMFS-backed file and keeps the site blank.
+    assert 'self.pyodide.unpackArchive(archiveBuffer, "zip");' not in worker_content
+    # The original Python-side unpack flow must be back so main.py is found.
+    assert "response.unpack_archive()" in worker_content
+    assert "from pyodide.http import pyfetch" in worker_content
 
     loader_content = loader_path.read_text(encoding="utf-8")
     assert "globalThis.removeSplashFromWeb();" in loader_content
@@ -170,7 +174,143 @@ def test_patch_web_build_updates_worker_and_verifies_artifact(tmp_path, monkeypa
     assert set(patch_web_bundle.REQUIRED_BUNDLE_ENTRIES) <= names
 
 
+def _read_worker_fixture_broken() -> str:
+    """Mirror of the PR #42 patched python-worker.js (with the broken JS hook)."""
+    return """self.pyodideUrl = null;
+self.appPackageUrl = null;
+self.micropipIncludePre = false;
+self.pythonModuleName = null;
+self.documentUrl = null;
+self.initialized = false;
+self.flet_js = {}; // namespace for Python global functions
+
+self.initPyodide = async function () {
+    try {
+        importScripts(self.pyodideUrl);
+        self.pyodide = await loadPyodide();
+        self.pyodide.registerJsModule("flet_js", flet_js);
+        self.pyodide.globals.set("app_package_url", self.appPackageUrl);
+        self.pyodide.globals.set("python_module_name", self.pythonModuleName);
+        self.pyodide.globals.set("micropip_include_pre", self.micropipIncludePre);
+        flet_js.documentUrl = documentUrl;
+        const pyArgs = self.flet_js.args || {};
+        if (!("script" in pyArgs)) {
+            const appPackageUrl = new URL(
+                pyArgs["app_package_url"] || self.appPackageUrl || "assets/app/app.zip",
+                self.documentUrl || self.location.href
+            ).toString();
+            console.log("Downloading app archive");
+            const archiveResponse = await fetch(appPackageUrl);
+            if (!archiveResponse.ok) {
+                throw new Error(`Unable to fetch app archive: ${archiveResponse.status} ${archiveResponse.statusText}`);
+            }
+            const archiveBuffer = await archiveResponse.arrayBuffer();
+            self.pyodide.unpackArchive(archiveBuffer, "zip");
+        }
+        await self.pyodide.runPythonAsync(`
+        import flet_js, os, runpy, sys, traceback
+        from pyodide.http import pyfetch
+
+        py_args = flet_js.args.to_py() if flet_js.args else {}
+
+        if "app_package_url" in py_args:
+            app_package_url = py_args["app_package_url"]
+
+        if app_package_url is None:
+            app_package_url = "assets/app/app.zip"
+
+        if "python_module_name" in py_args:
+            python_module_name = py_args["python_module_name"]
+
+        if python_module_name is None:
+            python_module_name = "main"
+
+        if "micropip_include_pre" in py_args:
+            micropip_include_pre = py_args["micropip_include_pre"]
+
+        if micropip_include_pre is None:
+            micropip_include_pre = False
+
+        print("python_module_name:", python_module_name)
+        print("micropip_include_pre:", micropip_include_pre)
+
+        if "script" in py_args:
+            print("Saving script to a file")
+            with open(f"{python_module_name}.py", "w") as f:
+                f.write(py_args["script"]);
+
+        pkgs_path = "__pypackages__"
+        if os.path.exists(pkgs_path):
+            print(f"Adding {pkgs_path} to sys.path")
+            sys.path.insert(0, pkgs_path)
+
+        async def ensure_micropip():
+            try:
+                import micropip
+            except ImportError:
+                import pyodide_js
+                await pyodide_js.loadPackage("micropip")
+                import micropip
+            return micropip
+
+        if os.path.exists("requirements.txt"):
+            with open("requirements.txt", "r") as f:
+                deps = []
+
+        if "dependencies" in py_args:
+            micropip = await ensure_micropip()
+            await micropip.install(py_args["dependencies"], pre=micropip_include_pre)
+
+        runpy.run_module(python_module_name, run_name="__main__")
+      `);
+        await self.flet_js.start_connection(self.receiveCallback);
+        self.postMessage("initialized");
+    } catch (error) {
+        self.postMessage(error.toString());
+    }
+};
+"""
+
+
 def test_verify_web_build_rejects_wasm_bootstrap(tmp_path) -> None:
+    web_root = tmp_path / "build" / "web"
+    bundle_path = web_root / "assets" / "app" / "app.zip"
+    worker_path = web_root / "python-worker.js"
+    loader_path = web_root / "python.js"
+    bootstrap_path = web_root / "flutter_bootstrap.js"
+
+    _write_bundle(
+        bundle_path,
+        {
+            "main.py": "print('app')\n",
+            "flet/__init__.py": "__all__ = []\n",
+            "flet_lottie/__init__.py": "__all__ = []\n",
+            "msgpack/__init__.py": "__all__ = []\n",
+            "repath.py": "def parse(path):\n    return path\n",
+            "six.py": "__version__ = '1.17.0'\n",
+        },
+    )
+    worker_path.parent.mkdir(parents=True, exist_ok=True)
+    worker_path.write_text(
+        # Stock Flet worker, post-patch (no JS-side unpack hook).
+        "        await self.pyodide.runPythonAsync(`\n"
+        "        response = await pyfetch(app_package_url)\n"
+        "        await response.unpack_archive()\n"
+        "`);\n",
+        encoding="utf-8",
+    )
+    loader_path.write_text("globalThis.removeSplashFromWeb();\n", encoding="utf-8")
+    bootstrap_path.write_text(
+        '_flutter.buildConfig = {"builds":[{"compileTarget":"dart2wasm","renderer":"skwasm","mainWasmPath":"main.dart.wasm"}]};\n',
+        encoding="utf-8",
+    )
+
+    with pytest.raises(RuntimeError, match="WASM startup path"):
+        patch_web_bundle.verify_web_build(web_root)
+
+
+def test_verify_web_build_rejects_broken_js_hook(tmp_path) -> None:
+    """If the PR #42 JS-side unpackArchive hook is present, verify raises."""
     web_root = tmp_path / "build" / "web"
     bundle_path = web_root / "assets" / "app" / "app.zip"
     worker_path = web_root / "python-worker.js"
@@ -196,11 +336,11 @@ def test_verify_web_build_rejects_wasm_bootstrap(tmp_path) -> None:
     )
     loader_path.write_text("globalThis.removeSplashFromWeb();\n", encoding="utf-8")
     bootstrap_path.write_text(
-        '_flutter.buildConfig = {"builds":[{"compileTarget":"dart2wasm","renderer":"skwasm","mainWasmPath":"main.dart.wasm"}]};\n',
+        '_flutter.buildConfig = {"builds":[{"compileTarget":"dart2js","mainJsPath":"main.dart.js"}]};\n',
         encoding="utf-8",
     )
 
-    with pytest.raises(RuntimeError, match="WASM startup path"):
+    with pytest.raises(RuntimeError, match="JS-side"):
         patch_web_bundle.verify_web_build(web_root)
 
 
