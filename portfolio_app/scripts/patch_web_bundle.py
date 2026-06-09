@@ -13,6 +13,8 @@ BUNDLE_RELATIVE_PATH = Path("assets/app/app.zip")
 PYTHON_WORKER_RELATIVE_PATH = Path("python-worker.js")
 PYTHON_LOADER_RELATIVE_PATH = Path("python.js")
 FLUTTER_BOOTSTRAP_RELATIVE_PATH = Path("flutter_bootstrap.js")
+FONTS_RELATIVE_PATH = Path("assets/fonts")
+SOURCE_FONTS_DIR = Path("src/assets/fonts")
 
 RUNTIME_MODULES = ("flet", "flet_lottie", "msgpack")
 RUNTIME_FILES = ("repath.py", "six.py")
@@ -87,6 +89,7 @@ class PatchSummary:
     worker_patched: bool
     python_loader_patched: bool
     bootstrap_patched: bool
+    fonts_copied: int
 
 
 def _module_root(module_name: str) -> Path:
@@ -235,6 +238,59 @@ def patch_flutter_bootstrap(bootstrap_path: Path) -> bool:
     raise RuntimeError("Unable to find _flutter.buildConfig in flutter_bootstrap.js.")
 
 
+def copy_fonts(web_root: Path) -> int:
+    """Copy the project custom fonts (Poppins / IBMPlexMono) into the built site.
+
+    Flet's `flet build web` only copies Flutter's default fonts into
+    ``build/web/assets/fonts/``. The deployed ``index.html`` exposes
+    ``fontFallbackBaseUrl: "assets/fonts/"`` and the running Flet app
+    references ``fonts/Poppins-Regular.ttf`` etc. via ``page.fonts`` —
+    those references 404 in production, which can cause Flet to render an
+    empty page on GitHub Pages.
+
+    Returns the number of font files copied.
+    """
+    source_dir = SOURCE_FONTS_DIR
+    target_dir = web_root / FONTS_RELATIVE_PATH
+    if not source_dir.is_dir():
+        # No custom fonts declared for this project — nothing to do.
+        return 0
+
+    target_dir.mkdir(parents=True, exist_ok=True)
+    copied = 0
+    for source in sorted(source_dir.iterdir()):
+        if not source.is_file():
+            continue
+        if source.suffix.lower() not in {".ttf", ".otf"}:
+            continue
+        destination = target_dir / source.name
+        if destination.exists() and destination.read_bytes() == source.read_bytes():
+            continue
+        destination.write_bytes(source.read_bytes())
+        copied += 1
+    return copied
+
+
+def verify_fonts(web_root: Path) -> None:
+    """Ensure every source font ends up in the built site."""
+    source_dir = SOURCE_FONTS_DIR
+    if not source_dir.is_dir():
+        return
+    target_dir = web_root / FONTS_RELATIVE_PATH
+    missing = [
+        source.name
+        for source in sorted(source_dir.iterdir())
+        if source.is_file()
+        and source.suffix.lower() in {".ttf", ".otf"}
+        and not (target_dir / source.name).is_file()
+    ]
+    if missing:
+        raise RuntimeError(
+            f"Built web bundle is missing custom fonts: {missing}. "
+            "patch_web_bundle.copy_fonts should have copied them."
+        )
+
+
 def verify_bundle(bundle_path: Path) -> None:
     if not bundle_path.exists():
         raise FileNotFoundError(f"Bundle not found: {bundle_path}")
@@ -287,6 +343,7 @@ def verify_web_build(web_root: Path) -> None:
     verify_python_worker(web_root / PYTHON_WORKER_RELATIVE_PATH)
     verify_python_loader(web_root / PYTHON_LOADER_RELATIVE_PATH)
     verify_flutter_bootstrap(web_root / FLUTTER_BOOTSTRAP_RELATIVE_PATH)
+    verify_fonts(web_root)
 
 
 def patch_web_build(web_root: Path) -> PatchSummary:
@@ -299,12 +356,14 @@ def patch_web_build(web_root: Path) -> PatchSummary:
     worker_patched = patch_python_worker(worker_path)
     python_loader_patched = patch_python_loader(loader_path)
     bootstrap_patched = patch_flutter_bootstrap(bootstrap_path)
+    fonts_copied = copy_fonts(web_root)
     verify_web_build(web_root)
     return PatchSummary(
         bundle_entries_added=bundle_entries_added,
         worker_patched=worker_patched,
         python_loader_patched=python_loader_patched,
         bootstrap_patched=bootstrap_patched,
+        fonts_copied=fonts_copied,
     )
 
 
@@ -329,7 +388,8 @@ def main() -> None:
         f"Patched {web_root} with {summary.bundle_entries_added} runtime files; "
         f"python-worker.js updated={summary.worker_patched}; "
         f"python.js updated={summary.python_loader_patched}; "
-        f"flutter_bootstrap.js updated={summary.bootstrap_patched}."
+        f"flutter_bootstrap.js updated={summary.bootstrap_patched}; "
+        f"{summary.fonts_copied} custom font(s) copied."
     )
 
 
