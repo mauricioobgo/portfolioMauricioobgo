@@ -27,16 +27,14 @@ REQUIRED_BUNDLE_ENTRIES = (
     "six.py",
 )
 
-WORKER_IMPORT_OLD = (
-    "        import flet_js, os, runpy, sys, traceback\n        from pyodide.http import pyfetch\n"
-)
-WORKER_IMPORT_NEW = "        import flet_js, os, runpy, sys, traceback\n"
-WORKER_PY_ARGS_OLD = "        py_args = flet_js.args.to_py() if flet_js.args else None\n"
-WORKER_PY_ARGS_NEW = "        py_args = flet_js.args.to_py() if flet_js.args else {}\n"
-WORKER_HOOK_OLD = (
-    "        flet_js.documentUrl = documentUrl;\n        await self.pyodide.runPythonAsync(`\n"
-)
-WORKER_HOOK_NEW = """        flet_js.documentUrl = documentUrl;
+# Flet's stock python-worker.js has the JS fetch+unpackArchive hook in the
+# top-level ``self.initPyodide`` body. PR #42 used to remove that hook and
+# replace the Python-side archive download with a no-op (relying on the JS
+# side to do the unpack). The JS-side path is broken on Pyodide's MEMFS
+# (``shutil.unpack_archive`` falls over on a JS-supplied ``ArrayBuffer``),
+# so we now keep the stock JS hook and ensure the original Python-side
+# ``pyfetch(...).unpack_archive()`` flow runs.
+WORKER_JS_HOOK_OLD = """        flet_js.documentUrl = documentUrl;
         const pyArgs = self.flet_js.args || {};
         if (!("script" in pyArgs)) {
             const appPackageUrl = new URL(
@@ -53,7 +51,14 @@ WORKER_HOOK_NEW = """        flet_js.documentUrl = documentUrl;
         }
         await self.pyodide.runPythonAsync(`
 """
-WORKER_ARCHIVE_BLOCK_OLD = """        if "script" not in py_args:
+WORKER_JS_HOOK_NEW = "        flet_js.documentUrl = documentUrl;\n        await self.pyodide.runPythonAsync(`\n"
+WORKER_JS_HOOK_MARKER = 'self.pyodide.unpackArchive(archiveBuffer, "zip");'
+WORKER_ARCHIVE_BLOCK_OLD = """        if "script" in py_args:
+            print("Saving script to a file")
+            with open(f"{python_module_name}.py", "w") as f:
+                f.write(py_args["script"]);
+"""
+WORKER_ARCHIVE_BLOCK_NEW = """        if "script" not in py_args:
             print("Downloading app archive")
             response = await pyfetch(app_package_url)
             await response.unpack_archive()
@@ -62,12 +67,6 @@ WORKER_ARCHIVE_BLOCK_OLD = """        if "script" not in py_args:
             with open(f"{python_module_name}.py", "w") as f:
                 f.write(py_args["script"]);
 """
-WORKER_ARCHIVE_BLOCK_NEW = """        if "script" in py_args:
-            print("Saving script to a file")
-            with open(f"{python_module_name}.py", "w") as f:
-                f.write(py_args["script"]);
-"""
-WORKER_PATCH_MARKER = 'self.pyodide.unpackArchive(archiveBuffer, "zip");'
 PYTHON_LOADER_READY_OLD = """    } else {
         console.log(`Python worker initialized: ${appId}`);
     }
@@ -163,25 +162,34 @@ def patch_python_worker(worker_path: Path) -> bool:
     content = worker_path.read_text(encoding="utf-8")
     original = content
 
-    content, _ = _replace_once(content, WORKER_IMPORT_OLD, WORKER_IMPORT_NEW, label="worker import")
-    content, _ = _replace_once(content, WORKER_PY_ARGS_OLD, WORKER_PY_ARGS_NEW, label="worker args")
+    # Drop the JS-side ``fetch + unpackArchive`` block that PR #42 added. The
+    # MEMFS-backed Pyodide that Flet ships cannot seek inside the temp file
+    # produced from a JS ``ArrayBuffer``; the unpack raises EINVAL and the
+    # site stays blank. Restoring the original 2-line ``documentUrl`` /
+    # ``runPythonAsync`` opener lets the Python-side ``pyfetch`` flow below
+    # do the unpacking instead.
+    content, js_hook_changed = _replace_once(
+        content,
+        WORKER_JS_HOOK_OLD,
+        WORKER_JS_HOOK_NEW,
+        label="worker JS archive hook",
+    )
+
+    # Restore the Python-side archive download. PR #42 reduced this branch
+    # to a script-only no-op because it expected the JS hook above to have
+    # already unpacked ``app.zip``. Without the JS hook, ``main.py`` is
+    # never extracted from ``app.zip`` and ``runpy`` fails.
     content, archive_block_changed = _replace_once(
         content,
         WORKER_ARCHIVE_BLOCK_OLD,
         WORKER_ARCHIVE_BLOCK_NEW,
         label="worker archive block",
     )
-    content, hook_changed = _replace_once(
-        content,
-        WORKER_HOOK_OLD,
-        WORKER_HOOK_NEW,
-        label="worker JS archive hook",
-    )
 
     if content != original:
         worker_path.write_text(content, encoding="utf-8")
 
-    return archive_block_changed or hook_changed
+    return js_hook_changed or archive_block_changed
 
 
 def patch_python_loader(loader_path: Path) -> bool:
@@ -308,10 +316,18 @@ def verify_python_worker(worker_path: Path) -> None:
         raise FileNotFoundError(f"Python worker not found: {worker_path}")
 
     content = worker_path.read_text(encoding="utf-8")
-    if "response.unpack_archive()" in content:
-        raise RuntimeError("python-worker.js still uses response.unpack_archive().")
-    if WORKER_PATCH_MARKER not in content:
-        raise RuntimeError("python-worker.js is missing the JS-side app.zip unpack patch.")
+    if WORKER_JS_HOOK_MARKER in content:
+        raise RuntimeError(
+            "python-worker.js still uses the broken JS-side "
+            f"{WORKER_JS_HOOK_MARKER!r} hook. The JS-side unpack path is "
+            "broken on Pyodide's MEMFS and was removed in the PR #42 revert."
+        )
+    if "response.unpack_archive()" not in content:
+        raise RuntimeError(
+            "python-worker.js is missing the Python-side "
+            "`response.unpack_archive()` flow that extracts app.zip. Without "
+            "it, runpy cannot find main.py and the site stays blank."
+        )
 
 
 def verify_python_loader(loader_path: Path) -> None:
