@@ -5,15 +5,15 @@ import flet as ft
 from portfolio.responsive import content_gutter, content_width
 
 
-BACKGROUND = "#020617"
-PANEL = "#0F172A"
-CARD = "#111827"
-BORDER = "#1E293B"
-PRIMARY = "#38BDF8"
-SECONDARY = "#22C55E"
-PURPLE = "#A855F7"
-WARNING = "#F59E0B"
-ROSE = "#FB7185"
+BACKGROUND = "#050712"
+PANEL = "#07162E"
+CARD = "#081B3D"
+BORDER = "#163B8F"
+PRIMARY = "#00E5FF"
+SECONDARY = "#35FF7A"
+PURPLE = "#FF4FD8"
+WARNING = "#FFD21F"
+ROSE = "#FF4D6D"
 TEXT = "#F8FAFC"
 MUTED = "#94A3B8"
 TERMINAL = "#22C55E"
@@ -113,40 +113,24 @@ def background_glow() -> ft.Control:
                 gradient=ft.LinearGradient(
                     begin=ft.Alignment(-1, -1),
                     end=ft.Alignment(1, 1),
-                    colors=[BACKGROUND, "#06101B", "#081322"],
+                    colors=[BACKGROUND, "#06172F", "#090B22"],
                 ),
             ),
             ft.Container(
                 expand=True,
                 image=ft.DecorationImage(
-                    src=_dot_grid_svg(),
+                    src=_maze_grid_svg(),
                     repeat=ft.ImageRepeat.REPEAT,
-                    opacity=0.28,
+                    opacity=0.22,
                 ),
             ),
             ft.Container(
-                left=-180,
-                top=-120,
-                width=520,
-                height=520,
-                border_radius=260,
-                bgcolor=alpha(PRIMARY, 0.12),
-            ),
-            ft.Container(
-                right=-200,
-                top=180,
-                width=620,
-                height=620,
-                border_radius=310,
-                bgcolor=alpha(PURPLE, 0.12),
-            ),
-            ft.Container(
-                left=180,
-                bottom=-180,
-                width=420,
-                height=420,
-                border_radius=210,
-                bgcolor=alpha(WARNING, 0.08),
+                expand=True,
+                image=ft.DecorationImage(
+                    src=_pellet_grid_svg(),
+                    repeat=ft.ImageRepeat.REPEAT,
+                    opacity=0.26,
+                ),
             ),
             *_grid_overlay(),
             *_scanline_overlay(),
@@ -161,7 +145,7 @@ def _grid_overlay() -> list[ft.Control]:
             top=0,
             bottom=0,
             width=1,
-            bgcolor=alpha(PRIMARY, 0.055 if column % 2 == 0 else 0.028),
+            bgcolor=alpha(PRIMARY, 0.06 if column % 2 == 0 else 0.025),
         )
         for column in range(13)
     ]
@@ -171,7 +155,7 @@ def _grid_overlay() -> list[ft.Control]:
             right=0,
             top=40 + row * 92,
             height=1,
-            bgcolor=alpha(PRIMARY, 0.04 if row % 2 == 0 else 0.02),
+            bgcolor=alpha(BORDER, 0.11 if row % 2 == 0 else 0.045),
         )
         for row in range(10)
     ]
@@ -185,16 +169,27 @@ def _scanline_overlay() -> list[ft.Control]:
             right=0,
             top=4 + stripe * 8,
             height=1,
-            bgcolor=alpha(PRIMARY, 0.022),
+            bgcolor=alpha(PRIMARY, 0.018),
         )
         for stripe in range(120)
     ]
 
 
-def _dot_grid_svg() -> str:
+def _maze_grid_svg() -> str:
     return (
         "data:image/svg+xml;utf8,"
-        "<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'>"
-        "<circle cx='1.5' cy='1.5' r='1.2' fill='%2338BDF8' fill-opacity='0.22' />"
+        "<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'>"
+        "<path d='M8 8H88V24H24V40H88V56H8V72H72V88H8Z' "
+        "fill='none' stroke='%2300E5FF' stroke-width='2' stroke-opacity='0.24' "
+        "stroke-linejoin='round'/>"
+        "</svg>"
+    )
+
+
+def _pellet_grid_svg() -> str:
+    return (
+        "data:image/svg+xml;utf8,"
+        "<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'>"
+        "<circle cx='6' cy='6' r='2.2' fill='%23FFD21F' fill-opacity='0.44' />"
         "</svg>"
     )

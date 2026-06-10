@@ -77,6 +77,12 @@ def test_view_exposes_bound_links_and_interactive_controls() -> None:
         if isinstance(getattr(control, "data", None), dict)
         and control.data.get("kind") == "border_pacman"
     ]
+    hero_arcade = [
+        control.data
+        for control in controls
+        if isinstance(getattr(control, "data", None), dict)
+        and control.data.get("kind") == "hero_arcade_maze"
+    ]
 
     required_external_labels = {"GitHub", "LinkedIn", "Download Resume", "Email"}
     found_labels = {item["label"] for item in external_links if item.get("valid")}
@@ -87,6 +93,7 @@ def test_view_exposes_bound_links_and_interactive_controls() -> None:
     assert terminal_shells
     assert assistant_prompts
     assert border_pacman
+    assert hero_arcade
 
     ordered_keys = [
         getattr(control, "key", None) for control in controls if getattr(control, "key", None)
