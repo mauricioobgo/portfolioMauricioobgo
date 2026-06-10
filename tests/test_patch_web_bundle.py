@@ -15,7 +15,7 @@ def _write_bundle(path: Path, entries: dict[str, str]) -> None:
             archive.writestr(name, content)
 
 
-def _read_worker_fixture() -> str:
+def _read_worker_fixture_broken() -> str:
     return """self.pyodideUrl = null;
 self.appPackageUrl = null;
 self.micropipIncludePre = false;
@@ -102,80 +102,7 @@ self.initPyodide = async function () {
 """
 
 
-def _write_runtime_files(tmp_path: Path) -> list[tuple[Path, str]]:
-    runtime_dir = tmp_path / "runtime"
-    files = {
-        "main.py": "print('hello')\n",
-        "flet/__init__.py": "__all__ = []\n",
-        "flet_lottie/__init__.py": "__all__ = []\n",
-        "msgpack/__init__.py": "__all__ = []\n",
-        "repath.py": "def parse(path):\n    return path\n",
-        "six.py": "__version__ = '1.17.0'\n",
-    }
-    sources: list[tuple[Path, str]] = []
-    for arcname, content in files.items():
-        source_path = runtime_dir / arcname
-        source_path.parent.mkdir(parents=True, exist_ok=True)
-        source_path.write_text(content, encoding="utf-8")
-        sources.append((source_path, arcname))
-    return sources
-
-
-def test_patch_web_build_updates_worker_and_verifies_artifact(tmp_path, monkeypatch) -> None:
-    web_root = tmp_path / "build" / "web"
-    bundle_path = web_root / "assets" / "app" / "app.zip"
-    worker_path = web_root / "python-worker.js"
-    loader_path = web_root / "python.js"
-    bootstrap_path = web_root / "flutter_bootstrap.js"
-
-    _write_bundle(bundle_path, {"main.py": "print('app')\n"})
-    worker_path.parent.mkdir(parents=True, exist_ok=True)
-    worker_path.write_text(_read_worker_fixture_broken(), encoding="utf-8")
-    loader_path.write_text(
-        "    } else {\n        console.log(`Python worker initialized: ${appId}`);\n    }\n",
-        encoding="utf-8",
-    )
-    bootstrap_path.write_text(
-        '_flutter.buildConfig = {"engineRevision":"demo","builds":[{"compileTarget":"dart2wasm","renderer":"skwasm","mainWasmPath":"main.dart.wasm","jsSupportRuntimePath":"main.dart.mjs"},{"compileTarget":"dart2js","renderer":"canvaskit","mainJsPath":"main.dart.js"}]};\n',
-        encoding="utf-8",
-    )
-
-    monkeypatch.setattr(
-        patch_web_bundle,
-        "_iter_runtime_sources",
-        lambda: _write_runtime_files(tmp_path),
-    )
-
-    summary = patch_web_bundle.patch_web_build(web_root)
-
-    assert summary.bundle_entries_added == 5
-    assert summary.worker_patched is True
-    assert summary.python_loader_patched is True
-    assert summary.bootstrap_patched is True
-
-    worker_content = worker_path.read_text(encoding="utf-8")
-    # The JS-side hook from PR #42 should be gone — it raises EINVAL on
-    # Pyodide's MEMFS-backed file and keeps the site blank.
-    assert 'self.pyodide.unpackArchive(archiveBuffer, "zip");' not in worker_content
-    # The original Python-side unpack flow must be back so main.py is found.
-    assert "response.unpack_archive()" in worker_content
-    assert "from pyodide.http import pyfetch" in worker_content
-
-    loader_content = loader_path.read_text(encoding="utf-8")
-    assert "globalThis.removeSplashFromWeb();" in loader_content
-
-    bootstrap_content = bootstrap_path.read_text(encoding="utf-8")
-    assert '"compileTarget":"dart2wasm"' not in bootstrap_content
-    assert '"mainJsPath":"main.dart.js"' in bootstrap_content
-
-    with ZipFile(bundle_path) as archive:
-        names = set(archive.namelist())
-
-    assert set(patch_web_bundle.REQUIRED_BUNDLE_ENTRIES) <= names
-
-
-def _read_worker_fixture_broken() -> str:
-    """Mirror of the PR #42 patched python-worker.js (with the broken JS hook)."""
+def _read_worker_fixture_fixed() -> str:
     return """self.pyodideUrl = null;
 self.appPackageUrl = null;
 self.micropipIncludePre = false;
@@ -209,7 +136,6 @@ self.initPyodide = async function () {
         }
         await self.pyodide.runPythonAsync(`
         import flet_js, os, runpy, sys, traceback
-        from pyodide.http import pyfetch
 
         py_args = flet_js.args.to_py() if flet_js.args else {}
 
@@ -272,7 +198,90 @@ self.initPyodide = async function () {
 """
 
 
-def test_verify_web_build_rejects_wasm_bootstrap(tmp_path) -> None:
+def _write_runtime_files(tmp_path: Path) -> list[tuple[Path, str]]:
+    runtime_dir = tmp_path / "runtime"
+    files = {
+        "main.py": "print('hello')\n",
+        "flet/__init__.py": "__all__ = []\n",
+        "flet_lottie/__init__.py": "__all__ = []\n",
+        "msgpack/__init__.py": "__all__ = []\n",
+        "repath.py": "def parse(path):\n    return path\n",
+        "six.py": "__version__ = '1.17.0'\n",
+    }
+    sources: list[tuple[Path, str]] = []
+    for arcname, content in files.items():
+        source_path = runtime_dir / arcname
+        source_path.parent.mkdir(parents=True, exist_ok=True)
+        source_path.write_text(content, encoding="utf-8")
+        sources.append((source_path, arcname))
+    return sources
+
+
+def _write_font_sources(tmp_path: Path) -> Path:
+    source_dir = tmp_path / "src" / "assets" / "fonts"
+    source_dir.mkdir(parents=True, exist_ok=True)
+    (source_dir / "Poppins-Regular.ttf").write_bytes(b"poppins-data")
+    (source_dir / "IBMPlexMono-Medium.ttf").write_bytes(b"ibm-plex-data")
+    return source_dir
+
+
+def test_patch_web_build_updates_worker_and_verifies_artifact(tmp_path, monkeypatch) -> None:
+    web_root = tmp_path / "build" / "web"
+    bundle_path = web_root / "assets" / "app" / "app.zip"
+    worker_path = web_root / "python-worker.js"
+    loader_path = web_root / "python.js"
+    bootstrap_path = web_root / "flutter_bootstrap.js"
+
+    _write_bundle(bundle_path, {"main.py": "print('app')\n"})
+    worker_path.parent.mkdir(parents=True, exist_ok=True)
+    worker_path.write_text(_read_worker_fixture_broken(), encoding="utf-8")
+    loader_path.write_text(
+        "    } else {\n        console.log(`Python worker initialized: ${appId}`);\n    }\n",
+        encoding="utf-8",
+    )
+    bootstrap_path.write_text(
+        '_flutter.buildConfig = {"engineRevision":"demo","builds":[{"compileTarget":"dart2wasm","renderer":"skwasm","mainWasmPath":"main.dart.wasm","jsSupportRuntimePath":"main.dart.mjs"},{"compileTarget":"dart2js","renderer":"canvaskit","mainJsPath":"main.dart.js"}]};\n',
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(
+        patch_web_bundle,
+        "_iter_runtime_sources",
+        lambda: _write_runtime_files(tmp_path),
+    )
+    monkeypatch.setattr(patch_web_bundle, "SOURCE_FONTS_DIR", _write_font_sources(tmp_path))
+
+    summary = patch_web_bundle.patch_web_build(web_root)
+
+    assert summary.bundle_entries_added == 5
+    assert summary.worker_patched is True
+    assert summary.python_loader_patched is True
+    assert summary.bootstrap_patched is True
+    assert summary.fonts_copied == 2
+
+    worker_content = worker_path.read_text(encoding="utf-8")
+    assert 'self.pyodide.unpackArchive(archiveBuffer, "zip");' in worker_content
+    assert "response.unpack_archive()" not in worker_content
+    assert "from pyodide.http import pyfetch" not in worker_content
+
+    loader_content = loader_path.read_text(encoding="utf-8")
+    assert "globalThis.removeSplashFromWeb();" in loader_content
+
+    bootstrap_content = bootstrap_path.read_text(encoding="utf-8")
+    assert '"compileTarget":"dart2wasm"' not in bootstrap_content
+    assert '"mainJsPath":"main.dart.js"' in bootstrap_content
+
+    target_fonts = web_root / "assets" / "fonts"
+    assert (target_fonts / "Poppins-Regular.ttf").read_bytes() == b"poppins-data"
+    assert (target_fonts / "IBMPlexMono-Medium.ttf").read_bytes() == b"ibm-plex-data"
+
+    with ZipFile(bundle_path) as archive:
+        names = set(archive.namelist())
+
+    assert set(patch_web_bundle.REQUIRED_BUNDLE_ENTRIES) <= names
+
+
+def test_verify_web_build_rejects_wasm_bootstrap(tmp_path, monkeypatch) -> None:
     web_root = tmp_path / "build" / "web"
     bundle_path = web_root / "assets" / "app" / "app.zip"
     worker_path = web_root / "python-worker.js"
@@ -291,26 +300,19 @@ def test_verify_web_build_rejects_wasm_bootstrap(tmp_path) -> None:
         },
     )
     worker_path.parent.mkdir(parents=True, exist_ok=True)
-    worker_path.write_text(
-        # Stock Flet worker, post-patch (no JS-side unpack hook).
-        "        await self.pyodide.runPythonAsync(`\n"
-        "        response = await pyfetch(app_package_url)\n"
-        "        await response.unpack_archive()\n"
-        "`);\n",
-        encoding="utf-8",
-    )
+    worker_path.write_text(_read_worker_fixture_fixed(), encoding="utf-8")
     loader_path.write_text("globalThis.removeSplashFromWeb();\n", encoding="utf-8")
     bootstrap_path.write_text(
         '_flutter.buildConfig = {"builds":[{"compileTarget":"dart2wasm","renderer":"skwasm","mainWasmPath":"main.dart.wasm"}]};\n',
         encoding="utf-8",
     )
 
+    monkeypatch.setattr(patch_web_bundle, "SOURCE_FONTS_DIR", tmp_path / "does-not-exist")
     with pytest.raises(RuntimeError, match="WASM startup path"):
         patch_web_bundle.verify_web_build(web_root)
 
 
-def test_verify_web_build_rejects_broken_js_hook(tmp_path) -> None:
-    """If the PR #42 JS-side unpackArchive hook is present, verify raises."""
+def test_verify_web_build_rejects_python_side_unpack(tmp_path, monkeypatch) -> None:
     web_root = tmp_path / "build" / "web"
     bundle_path = web_root / "assets" / "app" / "app.zip"
     worker_path = web_root / "python-worker.js"
@@ -329,28 +331,52 @@ def test_verify_web_build_rejects_broken_js_hook(tmp_path) -> None:
         },
     )
     worker_path.parent.mkdir(parents=True, exist_ok=True)
-    worker_path.write_text(
-        "const archiveBuffer = await archiveResponse.arrayBuffer();\n"
-        'self.pyodide.unpackArchive(archiveBuffer, "zip");\n',
-        encoding="utf-8",
-    )
+    worker_path.write_text(_read_worker_fixture_broken(), encoding="utf-8")
     loader_path.write_text("globalThis.removeSplashFromWeb();\n", encoding="utf-8")
     bootstrap_path.write_text(
         '_flutter.buildConfig = {"builds":[{"compileTarget":"dart2js","mainJsPath":"main.dart.js"}]};\n',
         encoding="utf-8",
     )
 
-    with pytest.raises(RuntimeError, match="JS-side"):
+    monkeypatch.setattr(patch_web_bundle, "SOURCE_FONTS_DIR", tmp_path / "does-not-exist")
+    with pytest.raises(RuntimeError, match="pyfetch|response\\.unpack_archive"):
+        patch_web_bundle.verify_web_build(web_root)
+
+
+def test_verify_web_build_rejects_missing_js_unpack_patch(tmp_path, monkeypatch) -> None:
+    web_root = tmp_path / "build" / "web"
+    bundle_path = web_root / "assets" / "app" / "app.zip"
+    worker_path = web_root / "python-worker.js"
+    loader_path = web_root / "python.js"
+    bootstrap_path = web_root / "flutter_bootstrap.js"
+
+    _write_bundle(
+        bundle_path,
+        {
+            "main.py": "print('app')\n",
+            "flet/__init__.py": "__all__ = []\n",
+            "flet_lottie/__init__.py": "__all__ = []\n",
+            "msgpack/__init__.py": "__all__ = []\n",
+            "repath.py": "def parse(path):\n    return path\n",
+            "six.py": "__version__ = '1.17.0'\n",
+        },
+    )
+    worker_path.parent.mkdir(parents=True, exist_ok=True)
+    worker_path.write_text("await self.pyodide.runPythonAsync(`\\n`);\n", encoding="utf-8")
+    loader_path.write_text("globalThis.removeSplashFromWeb();\n", encoding="utf-8")
+    bootstrap_path.write_text(
+        '_flutter.buildConfig = {"builds":[{"compileTarget":"dart2js","mainJsPath":"main.dart.js"}]};\n',
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(patch_web_bundle, "SOURCE_FONTS_DIR", tmp_path / "does-not-exist")
+    with pytest.raises(RuntimeError, match="missing the JS-side app.zip unpack patch"):
         patch_web_bundle.verify_web_build(web_root)
 
 
 def test_copy_fonts_copies_custom_fonts(tmp_path, monkeypatch) -> None:
     """copy_fonts pulls every .ttf/.otf from src/assets/fonts/ into the web root."""
-    source_dir = tmp_path / "src" / "assets" / "fonts"
-    source_dir.mkdir(parents=True)
-    (source_dir / "Poppins-Regular.ttf").write_bytes(b"poppins-data")
-    (source_dir / "IBMPlexMono-Medium.ttf").write_bytes(b"ibm-plex-data")
-    # Non-font files should be ignored.
+    source_dir = _write_font_sources(tmp_path)
     (source_dir / "README.md").write_text("ignore me", encoding="utf-8")
 
     web_root = tmp_path / "build" / "web"
@@ -375,7 +401,7 @@ def test_copy_fonts_is_idempotent(tmp_path, monkeypatch) -> None:
 
     monkeypatch.setattr(patch_web_bundle, "SOURCE_FONTS_DIR", source_dir)
     assert patch_web_bundle.copy_fonts(web_root) == 1
-    # Second run: file already present with same bytes → no copy.
+    # Second run: file already present with same bytes - no copy.
     assert patch_web_bundle.copy_fonts(web_root) == 0
 
 
@@ -394,7 +420,6 @@ def test_verify_fonts_flags_missing_fonts(tmp_path, monkeypatch) -> None:
 
     web_root = tmp_path / "build" / "web"
     web_root.mkdir(parents=True)
-    # Built site is missing the custom font.
     empty_fonts = web_root / "assets" / "fonts"
     empty_fonts.mkdir(parents=True)
     (empty_fonts / "MaterialIcons-Regular.otf").write_bytes(b"default")
