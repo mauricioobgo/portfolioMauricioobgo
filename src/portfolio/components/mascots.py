@@ -27,6 +27,9 @@ class PacmanBorderOverlay(ft.Container):
         self._runner_ref = ft.Ref[ft.Container]()
         self._mouth_ref = ft.Ref[ft.Container]()
         self._eye_ref = ft.Ref[ft.Container]()
+        self._pellet_refs: list[ft.Ref[ft.Container]] = []
+        self._pellet_distances: list[float] = []
+        self._last_eaten_count = -1
         self._direction = "east"
         self._width = 0
         self._height = 0
@@ -73,8 +76,8 @@ class PacmanBorderOverlay(ft.Container):
             "spacing": round(38 * scale),
             "dot": 5 * scale,
             "power": 9 * scale,
-            "pac": 24 * scale,
-            "glow": 36 * scale,
+            "pac": 26 * scale,
+            "glow": 40 * scale,
         }
 
     def _rebuild(self) -> None:
@@ -83,6 +86,9 @@ class PacmanBorderOverlay(ft.Container):
         metrics = self._metrics()
         controls: list[ft.Control] = []
         inset = metrics["inset"]
+        self._pellet_refs = []
+        self._pellet_distances = []
+        self._last_eaten_count = -1
 
         controls.extend(
             [
@@ -119,17 +125,22 @@ class PacmanBorderOverlay(ft.Container):
 
         points = self._perimeter_points(metrics)
         power_indexes = {0, len(points) // 4, len(points) // 2, (len(points) * 3) // 4}
-        for index, (x, y) in enumerate(points):
+        for index, (x, y, distance) in enumerate(points):
             power = index in power_indexes
             size = metrics["power"] if power else metrics["dot"]
+            pellet_ref = ft.Ref[ft.Container]()
+            self._pellet_refs.append(pellet_ref)
+            self._pellet_distances.append(distance)
             controls.append(
                 ft.Container(
+                    ref=pellet_ref,
                     left=x - size / 2,
                     top=y - size / 2,
                     width=size,
                     height=size,
                     border_radius=999,
                     bgcolor=alpha(WARNING, 0.9 if power else 0.72),
+                    animate_opacity=ft.Animation(120, ft.AnimationCurve.EASE_OUT),
                     shadow=(
                         [ft.BoxShadow(blur_radius=14, color=alpha(WARNING, 0.22))]
                         if power
@@ -138,48 +149,53 @@ class PacmanBorderOverlay(ft.Container):
                 )
             )
 
+        pac = metrics["pac"]
+        mouth = max(9, pac * 0.64)
+        eye = max(3.5, pac * 0.16)
         controls.append(
             ft.Container(
                 ref=self._runner_ref,
-                width=metrics["pac"],
-                height=metrics["pac"],
-                animate_position=ft.Animation(260, ft.AnimationCurve.LINEAR),
+                width=pac,
+                height=pac,
+                animate_position=ft.Animation(150, ft.AnimationCurve.LINEAR),
+                animate_rotation=ft.Animation(120, ft.AnimationCurve.LINEAR),
                 content=ft.Stack(
-                    width=metrics["pac"],
-                    height=metrics["pac"],
+                    width=pac,
+                    height=pac,
+                    clip_behavior=ft.ClipBehavior.NONE,
                     controls=[
                         ft.Container(
                             width=metrics["glow"],
                             height=metrics["glow"],
-                            left=-(metrics["glow"] - metrics["pac"]) / 2,
-                            top=-(metrics["glow"] - metrics["pac"]) / 2,
+                            left=-(metrics["glow"] - pac) / 2,
+                            top=-(metrics["glow"] - pac) / 2,
                             border_radius=999,
                             bgcolor=alpha(WARNING, 0.14),
                         ),
                         ft.Container(
-                            width=metrics["pac"],
-                            height=metrics["pac"],
+                            width=pac,
+                            height=pac,
                             bgcolor=WARNING,
                             border_radius=999,
                             shadow=[ft.BoxShadow(blur_radius=22, color=alpha(WARNING, 0.28))],
                         ),
                         ft.Container(
                             ref=self._eye_ref,
-                            left=8,
-                            top=6,
-                            width=4,
-                            height=4,
+                            left=pac * 0.56,
+                            top=pac * 0.22,
+                            width=eye,
+                            height=eye,
                             bgcolor=BACKGROUND,
                             border_radius=999,
                         ),
                         ft.Container(
                             ref=self._mouth_ref,
-                            right=-1,
-                            top=7,
-                            width=10,
-                            height=11,
+                            left=pac * 0.66,
+                            top=(pac - mouth) / 2,
+                            width=mouth,
+                            height=mouth,
+                            rotate=ft.Rotate(0.7853981634),
                             bgcolor=BACKGROUND,
-                            border_radius=999,
                         ),
                     ],
                 ),
@@ -189,30 +205,30 @@ class PacmanBorderOverlay(ft.Container):
         if self.parent is not None:
             self._stack_ref.current.update()
 
-    def _perimeter_points(self, metrics: dict[str, float]) -> list[tuple[float, float]]:
+    def _perimeter_points(self, metrics: dict[str, float]) -> list[tuple[float, float, float]]:
         inset = metrics["inset"]
         spacing = metrics["spacing"]
         width = self._width - inset * 2
         height = self._height - inset * 2
-        points: list[tuple[float, float]] = []
+        perimeter = max(1, (width * 2) + (height * 2))
+        count = max(24, int(perimeter // spacing))
+        step = perimeter / count
+        return [
+            self._point_at_distance(index * step, width, height, inset) for index in range(count)
+        ]
 
-        top_count = max(8, int(width // spacing))
-        side_count = max(8, int(height // spacing))
-        step_x = width / top_count
-        step_y = height / side_count
-
-        points.extend((inset + step_x * index, inset) for index in range(1, top_count))
-        points.extend(
-            (self._width - inset, inset + step_y * index) for index in range(1, side_count)
-        )
-        points.extend(
-            (self._width - inset - step_x * index, self._height - inset)
-            for index in range(1, top_count)
-        )
-        points.extend(
-            (inset, self._height - inset - step_y * index) for index in range(1, side_count)
-        )
-        return points
+    def _point_at_distance(
+        self, distance: float, width: float, height: float, inset: float
+    ) -> tuple[float, float, float]:
+        perimeter = (width * 2) + (height * 2)
+        distance = distance % perimeter
+        if distance <= width:
+            return inset + distance, inset, distance
+        if distance <= width + height:
+            return self._width - inset, inset + (distance - width), distance
+        if distance <= (width * 2) + height:
+            return self._width - inset - (distance - width - height), self._height - inset, distance
+        return inset, self._height - inset - (distance - (width * 2) - height), distance
 
     def _position_runner(self, progress: float) -> None:
         if not self._runner_ref.current:
@@ -223,82 +239,72 @@ class PacmanBorderOverlay(ft.Container):
         height = self._height - inset * 2
         perimeter = (width * 2) + (height * 2)
         distance = perimeter * progress
+        x, y, _ = self._point_at_distance(distance, width, height, inset)
         pac_half = metrics["pac"] / 2
 
         if distance <= width:
-            x = inset + distance
-            y = inset
             direction = "east"
         elif distance <= width + height:
-            x = self._width - inset
-            y = inset + (distance - width)
             direction = "south"
         elif distance <= (width * 2) + height:
-            x = self._width - inset - (distance - width - height)
-            y = self._height - inset
             direction = "west"
         else:
-            x = inset
-            y = self._height - inset - (distance - (width * 2) - height)
             direction = "north"
 
         runner = self._runner_ref.current
         runner.left = x - pac_half
         runner.top = y - pac_half
-        if self.parent is not None:
-            runner.update()
         self._direction = direction
         self._apply_direction()
+        self._sync_pellets(distance)
+        if self.parent is not None:
+            runner.update()
+
+    def _sync_pellets(self, distance: float) -> None:
+        eaten_count = sum(
+            1 for pellet_distance in self._pellet_distances if pellet_distance < distance
+        )
+        if eaten_count == self._last_eaten_count:
+            return
+        self._last_eaten_count = eaten_count
+        for index, pellet_ref in enumerate(self._pellet_refs):
+            pellet = pellet_ref.current
+            if not pellet:
+                continue
+            pellet.opacity = 0.16 if index < eaten_count else 1
+            if self.parent is not None:
+                pellet.update()
 
     def _apply_direction(self) -> None:
-        mouth = self._mouth_ref.current
-        eye = self._eye_ref.current
-        if not mouth or not eye:
+        runner = self._runner_ref.current
+        if not runner:
             return
-
-        mouth.left = None
-        mouth.right = None
-        mouth.top = None
-        mouth.bottom = None
-
-        if self._direction == "east":
-            eye.left, eye.top = 8, 6
-            mouth.right, mouth.top = -1, 7
-            mouth.width, mouth.height = 10, 11
-        elif self._direction == "west":
-            eye.left, eye.top = 12, 6
-            mouth.left, mouth.top = -1, 7
-            mouth.width, mouth.height = 10, 11
-        elif self._direction == "south":
-            eye.left, eye.top = 12, 8
-            mouth.left, mouth.bottom = 7, -1
-            mouth.width, mouth.height = 11, 10
-        else:
-            eye.left, eye.top = 12, 12
-            mouth.left, mouth.top = 7, -1
-            mouth.width, mouth.height = 11, 10
-        if self.parent is not None:
-            eye.update()
-            mouth.update()
+        rotations = {
+            "east": 0,
+            "south": 1.5707963268,
+            "west": 3.1415926536,
+            "north": -1.5707963268,
+        }
+        runner.rotate = ft.Rotate(rotations.get(self._direction, 0))
 
     async def _animate_chomp(self) -> None:
-        open_close = [(10, 11), (3, 4), (8, 9), (4, 5)]
+        openness = (0.68, 0.2, 0.52, 0.28)
         while self._running:
             mouth = self._mouth_ref.current
             if not mouth:
                 await asyncio.sleep(0.1)
                 continue
-            for width, height in open_close:
+            pac = self._metrics()["pac"]
+            for factor in openness:
                 if not self._running or not self._mouth_ref.current:
                     return
-                if self._direction in {"east", "west"}:
-                    mouth.width = width
-                    mouth.height = max(height, 9)
-                else:
-                    mouth.height = width
-                    mouth.width = max(height, 9)
+                size = max(5, pac * factor)
+                mouth.width = size
+                mouth.height = size
+                mouth.left = pac * (0.74 if factor < 0.3 else 0.66)
+                mouth.top = (pac - size) / 2
                 mouth.update()
-                await asyncio.sleep(0.12)
+                await asyncio.sleep(0.11)
 
 
 class RetroDroidRunway(ft.Container):
