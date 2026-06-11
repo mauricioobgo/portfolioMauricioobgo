@@ -153,6 +153,7 @@ def _execute_terminal_command(
     head = parts[0].lower() if parts else ""
     arg = " ".join(parts[1:])
     profile = content.get("profile", {})
+    profile_links = profile.get("links", {})
     projects = content.get("featured_projects", [])
     certifications = content.get("certifications", [])
     stack = content.get("technical_stack", [])
@@ -178,7 +179,8 @@ def _execute_terminal_command(
             "  stack               tooling i reach for",
             "  ai                  llm / agent work",
             "  github              github profile + repos",
-            "  resume / cv         open the resume",
+            "  resume / cv         open the resume link",
+            "  open <target>       github | linkedin | resume",
             "  date                current date",
             "  echo <text>         echo arguments",
             "  history             command history",
@@ -206,8 +208,8 @@ def _execute_terminal_command(
             "BEGIN:VCARD",
             f"FN:{profile.get('name', 'Mauricio Obando')}",
             f"EMAIL:{profile.get('email', 'mauricioobgo@gmail.com')}",
-            f"URL:{profile.get('linkedin_url', profile.get('linkedin', ''))}",
-            f"URL:{profile.get('github_url', github.get('profile', {}).get('html_url', ''))}",
+            f"URL:{profile.get('linkedin_url', profile_links.get('linkedin', profile.get('linkedin', '')))}",
+            f"URL:{profile.get('github_url', profile_links.get('github', github.get('profile', {}).get('html_url', '')))}",
             "END:VCARD",
         ], None
     if head == "cat":
@@ -256,11 +258,34 @@ def _execute_terminal_command(
             f"public repos: {summary.get('repo_count', 0)}",
         ], None
     if head in {"resume", "cv"}:
-        return [profile.get("resume_link", "Resume link unavailable.")], None
+        resume_link = profile.get("resume_link", "")
+        if resume_link:
+            return [f"opening resume: {resume_link}"], f"open:{resume_link}"
+        return ["Resume link unavailable."], None
+    if head == "open":
+        targets = {
+            "github": profile.get(
+                "github_url",
+                profile_links.get("github", github.get("profile", {}).get("html_url", "")),
+            ),
+            "linkedin": profile.get(
+                "linkedin_url", profile_links.get("linkedin", profile.get("linkedin", ""))
+            ),
+            "resume": profile.get("resume_link", ""),
+            "cv": profile.get("resume_link", ""),
+        }
+        target = arg.lower()
+        url = targets.get(target, arg if arg.startswith(("https://", "http://")) else "")
+        if url:
+            return [f"opening {target or 'url'}: {url}"], f"open:{url}"
+        return ["open: expected github, linkedin, resume, or https:// URL"], None
     if head == "contact":
         return [
             profile.get("email", "mauricioobgo@gmail.com"),
-            profile.get("github_url", "https://github.com/mauricioobgo"),
+            profile.get(
+                "github_url", profile_links.get("github", "https://github.com/mauricioobgo")
+            ),
+            profile.get("linkedin_url", profile_links.get("linkedin", profile.get("linkedin", ""))),
         ], None
     if head == "experience":
         return _latest_role_lines(content), None
@@ -289,13 +314,46 @@ def _execute_terminal_command(
 
 
 def _terminal_line(text: str, role: str) -> ft.Control:
+    if not text:
+        return ft.Container(height=6)
     prefixes = {"system": "#", "assistant": ">", "user": "$"}
     colors = {"system": SECONDARY, "assistant": TEXT, "user": PRIMARY}
-    return ft.Text(
-        f"{prefixes.get(role, '>')} {text}",
-        color=colors.get(role, TEXT),
-        size=13,
-        font_family="Mono",
+    accent = colors.get(role, TEXT)
+    return ft.Container(
+        padding=ft.Padding.symmetric(horizontal=10, vertical=6),
+        border_radius=10,
+        bgcolor=alpha(accent, 0.055 if role != "user" else 0.09),
+        content=ft.Row(
+            spacing=8,
+            vertical_alignment=ft.CrossAxisAlignment.START,
+            controls=[
+                ft.Text(
+                    prefixes.get(role, ">"),
+                    color=accent,
+                    size=13,
+                    font_family="Mono",
+                    weight=ft.FontWeight.W_700,
+                ),
+                ft.Text(
+                    text,
+                    color=colors.get(role, TEXT),
+                    size=13,
+                    font_family="Mono",
+                    selectable=True,
+                    expand=True,
+                ),
+            ],
+        ),
+    )
+
+
+def _terminal_chip(label: str, color: str) -> ft.Control:
+    return ft.Container(
+        padding=ft.Padding.symmetric(horizontal=10, vertical=5),
+        border_radius=999,
+        bgcolor=alpha(color, 0.11),
+        border=ft.Border.all(1, alpha(color, 0.28)),
+        content=ft.Text(label, color=color, size=11, font_family="Mono"),
     )
 
 
@@ -328,14 +386,70 @@ class PortfolioTerminalShell(ft.Container):
         return 440
 
     def _build(self) -> ft.Control:
+        quick_commands = ["help", "projects", "stack", "github", "resume"]
+        input_bar = ft.Container(
+            padding=ft.Padding.symmetric(horizontal=12, vertical=4),
+            border_radius=14,
+            bgcolor=alpha("#020617", 0.78),
+            border=ft.Border.all(1, alpha(PRIMARY, 0.22)),
+            content=ft.Row(
+                spacing=10,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                controls=[
+                    ft.Text(
+                        "mauricio@cloud",
+                        color=SECONDARY,
+                        size=13,
+                        font_family="Mono",
+                        weight=ft.FontWeight.W_700,
+                    ),
+                    ft.Text(":~$", color=PRIMARY, size=13, font_family="Mono"),
+                    ft.TextField(
+                        ref=self._input_ref,
+                        expand=True,
+                        hint_text="Try help, projects redshift, open github, matrix...",
+                        filled=False,
+                        border=ft.InputBorder.NONE,
+                        color=TEXT,
+                        cursor_color=PRIMARY,
+                        hint_style=ft.TextStyle(color=MUTED, size=13),
+                        text_style=ft.TextStyle(color=TEXT, size=14, font_family="Mono"),
+                        on_submit=self._handle_submit,
+                        autofocus=True,
+                    ),
+                ],
+            ),
+        )
         terminal_body = ft.Container(
             border_radius=20,
-            border=ft.Border.all(1, alpha(PRIMARY, 0.18)),
-            bgcolor=alpha("#08111E", 0.88),
+            border=ft.Border.all(1, alpha(PRIMARY, 0.22)),
+            bgcolor=alpha("#08111E", 0.92),
             padding=ft.Padding.all(18),
             content=ft.Column(
                 spacing=14,
                 controls=[
+                    ft.Row(
+                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                        vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                        wrap=True,
+                        controls=[
+                            ft.Row(
+                                spacing=8,
+                                wrap=True,
+                                controls=[
+                                    _terminal_chip("STATIC-SAFE", SECONDARY),
+                                    _terminal_chip("LOCAL CONTEXT", PRIMARY),
+                                    _terminal_chip("NO API KEY", WARNING),
+                                ],
+                            ),
+                            ft.Text(
+                                "enter runs command • links open in a new tab",
+                                color=MUTED,
+                                size=12,
+                                font_family="Mono",
+                            ),
+                        ],
+                    ),
                     ft.ListView(
                         ref=self._log_ref,
                         height=self._log_height(),
@@ -348,40 +462,24 @@ class PortfolioTerminalShell(ft.Container):
                         visible=False,
                         spacing=4,
                         controls=[
+                            ft.ProgressRing(width=14, height=14, stroke_width=2, color=PRIMARY),
                             ft.Text("working", color=PRIMARY, size=13, font_family="Mono"),
-                            ft.Text(".", color=PRIMARY, size=13, font_family="Mono"),
-                            ft.Text(".", color=PRIMARY, size=13, font_family="Mono"),
-                            ft.Text(".", color=PRIMARY, size=13, font_family="Mono"),
                         ],
                     ),
                     ft.Row(
-                        spacing=10,
-                        vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                        spacing=8,
+                        wrap=True,
                         controls=[
-                            ft.Text(
-                                "mauricio@cloud",
-                                color=SECONDARY,
-                                size=13,
-                                font_family="Mono",
-                            ),
-                            ft.Text(":", color=MUTED, size=13, font_family="Mono"),
-                            ft.Text("~", color=PRIMARY, size=13, font_family="Mono"),
-                            ft.Text("$", color=TEXT, size=13, font_family="Mono"),
-                            ft.TextField(
-                                ref=self._input_ref,
-                                expand=True,
-                                hint_text="Try whoami, ls, cat about.md, projects, or matrix",
-                                filled=False,
-                                border=ft.InputBorder.NONE,
-                                color=TEXT,
-                                cursor_color=PRIMARY,
-                                hint_style=ft.TextStyle(color=MUTED, size=13),
-                                text_style=ft.TextStyle(color=TEXT, size=14, font_family="Mono"),
-                                on_submit=self._handle_submit,
-                                autofocus=True,
-                            ),
+                            ft.TextButton(
+                                content=command,
+                                icon=ft.Icons.TERMINAL,
+                                style=ft.ButtonStyle(color=PRIMARY),
+                                on_click=lambda _, value=command: self._submit_command(value),
+                            )
+                            for command in quick_commands
                         ],
                     ),
+                    input_bar,
                 ],
             ),
         )
@@ -389,13 +487,14 @@ class PortfolioTerminalShell(ft.Container):
             ref=self._matrix_ref,
             visible=False,
             border_radius=20,
-            bgcolor=alpha("#03140B", 0.84),
+            bgcolor=alpha("#03140B", 0.88),
             padding=ft.Padding.all(24),
             content=ft.Column(
                 alignment=ft.MainAxisAlignment.CENTER,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 spacing=8,
                 controls=[
+                    ft.Icon(ft.Icons.CODE, color=SECONDARY, size=42),
                     ft.Text(
                         "Wake up, Neo ...",
                         color=SECONDARY,
@@ -424,7 +523,7 @@ class PortfolioTerminalShell(ft.Container):
                         wrap=True,
                         controls=[
                             ft.Text(
-                                "Terminal ready. AI cards route prompt text here.",
+                                "Terminal ready. Quick commands, AI cards, and shell input share one router.",
                                 ref=self._status_ref,
                                 color=MUTED,
                                 size=12,
@@ -434,6 +533,7 @@ class PortfolioTerminalShell(ft.Container):
                                 color=PRIMARY,
                                 size=12,
                                 font_family="Mono",
+                                selectable=True,
                             ),
                         ],
                     ),
@@ -469,6 +569,16 @@ class PortfolioTerminalShell(ft.Container):
             self._log_ref.current.controls = []
             self._log_ref.current.update()
 
+    def _submit_command(self, command: str) -> None:
+        question = command.strip()
+        if not question or self._busy:
+            return
+        if self._input_ref.current:
+            self._input_ref.current.value = ""
+            self._input_ref.current.update()
+        if self.page:
+            self.page.run_task(self._emit_response, question)
+
     def _handle_submit(self, event: ft.ControlEvent) -> None:
         question = (event.control.value or "").strip()
         if not question or self._busy:
@@ -476,8 +586,7 @@ class PortfolioTerminalShell(ft.Container):
 
         event.control.value = ""
         event.control.update()
-        if self.page:
-            self.page.run_task(self._emit_response, question)
+        self._submit_command(question)
 
     async def _emit_response(self, question: str) -> None:
         self._busy = True
@@ -509,6 +618,8 @@ class PortfolioTerminalShell(ft.Container):
             await asyncio.sleep(1.8)
             self._matrix_ref.current.visible = False
             self._matrix_ref.current.update()
+        elif action and action.startswith("open:") and self.page:
+            self.page.launch_url(action.removeprefix("open:"))
 
         if self._status_ref.current:
             self._status_ref.current.value = "Response emitted from local portfolio context."
