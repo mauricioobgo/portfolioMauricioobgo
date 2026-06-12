@@ -4,9 +4,9 @@ import asyncio
 
 import flet as ft
 
+from portfolio.components.ambient import ConsoleSweep
 from portfolio.components.cards import ConsolePanel
-from portfolio.components.mascots import ConsoleSweep
-from portfolio.theme import MUTED, SECONDARY, TEXT
+from portfolio.theme import MUTED, PANEL, SECONDARY, TEXT, alpha
 
 
 class TerminalBlock(ft.Container):
@@ -46,7 +46,7 @@ class TerminalBlock(ft.Container):
             ),
             title=title,
             padding=ft.Padding.all(18),
-            bgcolor="#0B1120",
+            bgcolor=alpha(PANEL, 0.95),
         )
 
     def did_mount(self) -> None:

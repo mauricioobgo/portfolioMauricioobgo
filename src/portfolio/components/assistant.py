@@ -8,8 +8,8 @@ from typing import Any
 
 import flet as ft
 
+from portfolio.components.ambient import ConsoleSweep
 from portfolio.components.cards import ConsolePanel
-from portfolio.components.mascots import ConsoleSweep
 from portfolio.interaction import attach_hover_lift
 from portfolio.responsive import is_mobile, is_tablet
 from portfolio.theme import MUTED, PRIMARY, PURPLE, SECONDARY, TEXT, WARNING, alpha
@@ -390,7 +390,7 @@ class PortfolioTerminalShell(ft.Container):
         input_bar = ft.Container(
             padding=ft.Padding.symmetric(horizontal=12, vertical=4),
             border_radius=14,
-            bgcolor=alpha("#020617", 0.78),
+            bgcolor=alpha("#04070F", 0.85),
             border=ft.Border.all(1, alpha(PRIMARY, 0.22)),
             content=ft.Row(
                 spacing=10,
@@ -423,7 +423,7 @@ class PortfolioTerminalShell(ft.Container):
         terminal_body = ft.Container(
             border_radius=20,
             border=ft.Border.all(1, alpha(PRIMARY, 0.22)),
-            bgcolor=alpha("#08111E", 0.92),
+            bgcolor=alpha("#060B16", 0.95),
             padding=ft.Padding.all(18),
             content=ft.Column(
                 spacing=14,
@@ -540,7 +540,6 @@ class PortfolioTerminalShell(ft.Container):
                 ],
             ),
             title="MauricioOS /dev/tty1",
-            bgcolor=alpha("#0B1120", 0.95),
             glow=True,
         )
 
@@ -643,7 +642,6 @@ def _ai_prompt_card(prompt: str, on_prompt: Callable[[str], None]) -> ft.Control
                     ],
                 ),
                 padding=ft.Padding.all(18),
-                bgcolor=alpha("#0B1120", 0.95),
             ),
         ),
         scale=1.02,

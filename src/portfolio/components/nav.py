@@ -4,7 +4,7 @@ import flet as ft
 
 from portfolio.interaction import scroll_to, section_link_data
 from portfolio.responsive import content_width
-from portfolio.theme import PANEL, PRIMARY, TEXT, alpha
+from portfolio.theme import BORDER, MUTED, PANEL, PRIMARY, TEXT, alpha
 
 
 class ConsoleTopbar(ft.Container):
@@ -31,9 +31,16 @@ class ConsoleTopbar(ft.Container):
             ref=self._shell_ref,
             width=content_width(self._page),
             padding=ft.Padding.symmetric(horizontal=20, vertical=12),
-            border_radius=22,
-            bgcolor=alpha(PANEL, 0.82),
-            border=ft.Border.all(1, alpha(PRIMARY, 0.18)),
+            border_radius=18,
+            bgcolor=alpha(PANEL, 0.92),
+            border=ft.Border.all(1, alpha(BORDER, 0.6)),
+            shadow=[
+                ft.BoxShadow(
+                    blur_radius=24,
+                    color="#0008",
+                    offset=ft.Offset(0, 8),
+                )
+            ],
             content=ft.Row(
                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                 vertical_alignment=ft.CrossAxisAlignment.CENTER,
@@ -45,7 +52,7 @@ class ConsoleTopbar(ft.Container):
                         spacing=2,
                         controls=[
                             ft.Text(
-                                "MAURICIO CLOUD CONSOLE",
+                                "BACKEND · DATA · CLOUD · AI",
                                 color=PRIMARY,
                                 size=10,
                                 font_family="Mono",
@@ -87,13 +94,13 @@ class ConsoleTopbar(ft.Container):
         return ft.Container(
             padding=ft.Padding.symmetric(horizontal=14, vertical=8),
             border_radius=999,
-            bgcolor=alpha(PRIMARY, 0.04) if active else None,
-            border=ft.Border.all(1, alpha(PRIMARY, 0.75)) if active else None,
+            bgcolor=alpha(PRIMARY, 0.12) if active else None,
+            border=ft.Border.all(1, alpha(PRIMARY, 0.45)) if active else None,
             shadow=(
                 [
                     ft.BoxShadow(
-                        blur_radius=18,
-                        color=alpha(PRIMARY, 0.18),
+                        blur_radius=16,
+                        color=alpha(PRIMARY, 0.2),
                         offset=ft.Offset(0, 0),
                     )
                 ]
@@ -102,9 +109,10 @@ class ConsoleTopbar(ft.Container):
             ),
             content=ft.Text(
                 label,
-                color=TEXT if active else alpha(TEXT, 0.78),
+                color=PRIMARY if active else MUTED,
                 size=12,
                 font_family="Mono",
+                weight=ft.FontWeight.W_700 if active else ft.FontWeight.W_400,
             ),
         )
 

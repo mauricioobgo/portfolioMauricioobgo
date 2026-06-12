@@ -25,6 +25,7 @@ portfolio_mauricio.egg-info/top_level.txt
 tests/test_build_content.py
 tests/test_flet_app.py
 tests/test_flet_components.py
+tests/test_patch_web_bundle.py
 tests/test_sync_data.py
 tests/test_sync_github.py
 tests/test_sync_resume.py

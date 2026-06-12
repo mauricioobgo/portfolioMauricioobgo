@@ -6,7 +6,7 @@ import flet as ft
 
 from portfolio.components.cards import BentoGrid, ConsolePanel, SkillPill
 from portfolio.interaction import attach_hover_lift
-from portfolio.theme import MUTED, PRIMARY, SECONDARY, TEXT, alpha
+from portfolio.theme import MUTED, PRIMARY, PURPLE, SECONDARY, TEXT, WARNING, alpha
 
 
 def _focus_card(item: dict[str, Any], accent: str) -> ft.Control:
@@ -38,14 +38,13 @@ def _focus_card(item: dict[str, Any], accent: str) -> ft.Control:
                     ft.Container(height=1, bgcolor=alpha(accent, 0.4)),
                 ],
             ),
-            bgcolor="#111827",
         ),
         scale=1.025,
     )
 
 
 def FocusGrid(items: list[dict[str, Any]]) -> ft.Control:
-    accents = [PRIMARY, SECONDARY, "#A855F7", "#F59E0B"]
+    accents = [PRIMARY, SECONDARY, PURPLE, WARNING]
     return BentoGrid(
         [
             ft.Container(
@@ -88,7 +87,6 @@ def TechnicalStackGrid(groups: list[dict[str, Any]]) -> ft.Control:
                                 ),
                             ],
                         ),
-                        bgcolor="#111827",
                     ),
                     scale=1.02,
                 ),

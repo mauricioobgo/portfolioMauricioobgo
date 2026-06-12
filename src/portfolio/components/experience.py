@@ -85,7 +85,6 @@ def _experience_card(item: dict[str, Any]) -> ft.Control:
             ],
         ),
         padding=ft.Padding.all(22),
-        bgcolor="#111827",
     )
 
 

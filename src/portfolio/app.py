@@ -5,8 +5,8 @@ from typing import Any
 
 import flet as ft
 
+from portfolio.components.ambient import ScrollProgressOverlay
 from portfolio.components.assistant import PortfolioTerminalShell, build_terminal_shell
-from portfolio.components.mascots import PacmanBorderOverlay
 from portfolio.components.nav import NavigationBar
 from portfolio.data_loader import load_portfolio_content
 from portfolio.interaction import scroll_to
@@ -27,7 +27,7 @@ from portfolio.theme import MUTED, PRIMARY, TEXT, app_shell, apply_theme, panel
 def _loading_view() -> ft.Control:
     return ft.Container(
         expand=True,
-        bgcolor="#020617",
+        bgcolor="#04070F",
         alignment=ft.Alignment(0, 0),
         content=ft.Column(
             alignment=ft.MainAxisAlignment.CENTER,
@@ -36,7 +36,7 @@ def _loading_view() -> ft.Control:
             controls=[
                 ft.ProgressRing(color=PRIMARY),
                 ft.Text(
-                    "loading mauricio cloud console...",
+                    "$ booting portfolio ...",
                     color=PRIMARY,
                     font_family="Mono",
                     size=13,
@@ -49,7 +49,7 @@ def _loading_view() -> ft.Control:
 def _error_view(message: str) -> ft.Control:
     return ft.Container(
         expand=True,
-        bgcolor="#020617",
+        bgcolor="#04070F",
         alignment=ft.Alignment(0, 0),
         content=panel(
             ft.Column(
@@ -76,7 +76,7 @@ class PortfolioView(ft.Container):
         self._revealing = False
         self._layout_ref = ft.Ref[ft.Container]()
         self._content_ref = ft.Ref[ft.Container]()
-        self._border_overlay = PacmanBorderOverlay()
+        self._progress_overlay = ScrollProgressOverlay()
         self._desktop_topbar = NavigationBar(page)
         self._inline_topbar = NavigationBar(page)
         self._desktop_topbar_host = ft.Container(
@@ -132,7 +132,7 @@ class PortfolioView(ft.Container):
                     ],
                 ),
                 overlays=[
-                    self._border_overlay,
+                    self._progress_overlay,
                     self._desktop_topbar_host,
                 ],
                 page_width=getattr(page, "width", 0),
@@ -241,7 +241,7 @@ class PortfolioView(ft.Container):
             return
         width = float(getattr(self.page, "width", 0) or 0)
         height = float(getattr(self.page, "height", 0) or 0)
-        self._border_overlay.sync(
+        self._progress_overlay.sync(
             pixels=pixels,
             max_scroll=max_scroll,
             width=width,
