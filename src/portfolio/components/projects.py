@@ -124,7 +124,6 @@ def ProjectCard(project: dict[str, Any]) -> ft.Control:
                     ),
                 ],
             ),
-            bgcolor="#111827",
             padding=ft.Padding.all(22),
         ),
         scale=1.01,

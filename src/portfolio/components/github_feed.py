@@ -30,7 +30,7 @@ def _activity_cells(seed: int) -> list[int]:
 
 def _activity_color(level: int) -> str:
     shades = [
-        alpha("#0F172A", 0.0),
+        alpha(SECONDARY, 0.04),
         alpha(SECONDARY, 0.2),
         alpha(SECONDARY, 0.45),
         alpha(SECONDARY, 0.7),
@@ -42,7 +42,7 @@ def _activity_color(level: int) -> str:
 def _int_value(value: Any, default: int = 0) -> int:
     try:
         return int(value)
-    except TypeError, ValueError:
+    except (TypeError, ValueError):
         return default
 
 
@@ -92,7 +92,6 @@ def GitHubSummaryCard(summary: dict[str, Any], profile: dict[str, Any]) -> ft.Co
         ),
         title="contributions @ mauricioobgo",
         padding=ft.Padding.all(20),
-        bgcolor="#0F172A",
     )
 
 
@@ -129,7 +128,6 @@ def _repo_link_card(repo: dict[str, Any]) -> ft.Control:
             style=ft.ButtonStyle(padding=0),
         ),
         padding=ft.Padding.all(16),
-        bgcolor="#111827",
     )
 
 

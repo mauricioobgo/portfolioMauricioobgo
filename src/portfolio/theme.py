@@ -5,28 +5,28 @@ import flet as ft
 from portfolio.responsive import content_gutter, content_width
 
 
-BACKGROUND = "#050712"
-PANEL = "#07162E"
-CARD = "#081B3D"
-BORDER = "#163B8F"
-PRIMARY = "#00E5FF"
-SECONDARY = "#35FF7A"
-PURPLE = "#FF4FD8"
-WARNING = "#FFD21F"
-ROSE = "#FF4D6D"
-TEXT = "#F8FAFC"
-MUTED = "#94A3B8"
+BACKGROUND = "#04070F"
+PANEL = "#0A1322"
+CARD = "#0D1830"
+BORDER = "#1E3A5F"
+PRIMARY = "#22D3EE"
+SECONDARY = "#34D399"
+PURPLE = "#A78BFA"
+WARNING = "#FBBF24"
+ROSE = "#FB7185"
+TEXT = "#F1F5F9"
+MUTED = "#8FA3BF"
 TERMINAL = "#22C55E"
 ERROR = ROSE
 
 SECTION_WIDTH = 1240
-CARD_RADIUS = 22
+CARD_RADIUS = 20
 CARD_SHADOW = [
     ft.BoxShadow(
         spread_radius=0,
-        blur_radius=14,
-        color="#000000",
-        offset=ft.Offset(0, 8),
+        blur_radius=18,
+        color="#0009",
+        offset=ft.Offset(0, 10),
     )
 ]
 
@@ -36,7 +36,7 @@ def alpha(color: str, opacity: float) -> str:
 
 
 def apply_theme(page: ft.Page) -> None:
-    page.title = "Mauricio Cloud Console"
+    page.title = "Mauricio Obando | Backend, Data, Cloud & AI Engineer"
     page.bgcolor = BACKGROUND
     page.padding = 0
     page.spacing = 0
@@ -98,9 +98,40 @@ def panel(
         padding=padding or ft.Padding.all(24),
         bgcolor=bgcolor,
         gradient=gradient,
-        border=ft.Border.all(1, alpha(BORDER, 0.96)),
+        border=ft.Border.all(1, alpha(BORDER, 0.55)),
         border_radius=CARD_RADIUS,
         shadow=CARD_SHADOW,
+    )
+
+
+def gradient_text(value: str, *, size: int, colors: list[str] | None = None) -> ft.Control:
+    return ft.ShaderMask(
+        blend_mode=ft.BlendMode.SRC_IN,
+        shader=ft.LinearGradient(
+            begin=ft.Alignment(-1, 0),
+            end=ft.Alignment(1, 0),
+            colors=colors or [PRIMARY, PURPLE],
+        ),
+        content=ft.Text(
+            value,
+            size=size,
+            color=TEXT,
+            font_family="DisplayBold",
+            weight=ft.FontWeight.W_700,
+        ),
+    )
+
+
+def accent_rule(accent: str = PRIMARY, *, width: int = 64) -> ft.Control:
+    return ft.Container(
+        width=width,
+        height=3,
+        border_radius=999,
+        gradient=ft.LinearGradient(
+            begin=ft.Alignment(-1, 0),
+            end=ft.Alignment(1, 0),
+            colors=[accent, alpha(accent, 0.0)],
+        ),
     )
 
 
@@ -113,83 +144,57 @@ def background_glow() -> ft.Control:
                 gradient=ft.LinearGradient(
                     begin=ft.Alignment(-1, -1),
                     end=ft.Alignment(1, 1),
-                    colors=[BACKGROUND, "#06172F", "#090B22"],
+                    colors=[BACKGROUND, "#071226", "#070A1C"],
+                ),
+            ),
+            ft.Container(
+                left=-160,
+                top=-120,
+                width=560,
+                height=560,
+                border_radius=999,
+                gradient=ft.RadialGradient(
+                    colors=[alpha(PRIMARY, 0.10), alpha(PRIMARY, 0.0)],
+                ),
+            ),
+            ft.Container(
+                right=-200,
+                top=240,
+                width=640,
+                height=640,
+                border_radius=999,
+                gradient=ft.RadialGradient(
+                    colors=[alpha(PURPLE, 0.08), alpha(PURPLE, 0.0)],
+                ),
+            ),
+            ft.Container(
+                left=120,
+                bottom=-260,
+                width=620,
+                height=620,
+                border_radius=999,
+                gradient=ft.RadialGradient(
+                    colors=[alpha(SECONDARY, 0.05), alpha(SECONDARY, 0.0)],
                 ),
             ),
             ft.Container(
                 expand=True,
                 image=ft.DecorationImage(
-                    src=_maze_grid_svg(),
+                    src=_grid_svg(),
                     repeat=ft.ImageRepeat.REPEAT,
-                    opacity=0.22,
+                    opacity=0.5,
                 ),
             ),
-            ft.Container(
-                expand=True,
-                image=ft.DecorationImage(
-                    src=_pellet_grid_svg(),
-                    repeat=ft.ImageRepeat.REPEAT,
-                    opacity=0.26,
-                ),
-            ),
-            *_grid_overlay(),
-            *_scanline_overlay(),
         ],
     )
 
 
-def _grid_overlay() -> list[ft.Control]:
-    verticals = [
-        ft.Container(
-            left=24 + column * 96,
-            top=0,
-            bottom=0,
-            width=1,
-            bgcolor=alpha(PRIMARY, 0.06 if column % 2 == 0 else 0.025),
-        )
-        for column in range(13)
-    ]
-    horizontals = [
-        ft.Container(
-            left=0,
-            right=0,
-            top=40 + row * 92,
-            height=1,
-            bgcolor=alpha(BORDER, 0.11 if row % 2 == 0 else 0.045),
-        )
-        for row in range(10)
-    ]
-    return [*verticals, *horizontals]
-
-
-def _scanline_overlay() -> list[ft.Control]:
-    return [
-        ft.Container(
-            left=0,
-            right=0,
-            top=4 + stripe * 8,
-            height=1,
-            bgcolor=alpha(PRIMARY, 0.018),
-        )
-        for stripe in range(120)
-    ]
-
-
-def _maze_grid_svg() -> str:
+def _grid_svg() -> str:
     return (
         "data:image/svg+xml;utf8,"
-        "<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'>"
-        "<path d='M8 8H88V24H24V40H88V56H8V72H72V88H8Z' "
-        "fill='none' stroke='%2300E5FF' stroke-width='2' stroke-opacity='0.24' "
-        "stroke-linejoin='round'/>"
-        "</svg>"
-    )
-
-
-def _pellet_grid_svg() -> str:
-    return (
-        "data:image/svg+xml;utf8,"
-        "<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'>"
-        "<circle cx='6' cy='6' r='2.2' fill='%23FFD21F' fill-opacity='0.44' />"
+        "<svg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'>"
+        "<path d='M72 0H0V72' fill='none' stroke='%2322D3EE' stroke-opacity='0.05' "
+        "stroke-width='1'/>"
+        "<circle cx='0' cy='0' r='1' fill='%2322D3EE' fill-opacity='0.10'/>"
         "</svg>"
     )

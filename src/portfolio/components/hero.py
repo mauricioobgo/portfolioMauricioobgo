@@ -5,7 +5,7 @@ from typing import Any
 
 import flet as ft
 
-from portfolio.components.cards import ConsolePanel
+from portfolio.components.cards import ConsolePanel, SkillPill
 from portfolio.components.terminal import TerminalBlock
 from portfolio.interaction import (
     attach_hover_lift,
@@ -16,17 +16,144 @@ from portfolio.interaction import (
 )
 from portfolio.responsive import hero_title_size, is_mobile
 from portfolio.theme import (
-    BACKGROUND,
-    BORDER,
     MUTED,
     PRIMARY,
     PURPLE,
-    ROSE,
     SECONDARY,
     TEXT,
     WARNING,
     alpha,
+    gradient_text,
 )
+
+
+class RoleTyper(ft.Container):
+    """Types and erases rotating role names with a blinking caret."""
+
+    def __init__(self, roles: list[str], *, size: int = 22) -> None:
+        self._roles = [role for role in roles if role] or ["Software Engineer"]
+        self._text_ref = ft.Ref[ft.Text]()
+        self._caret_ref = ft.Ref[ft.Container]()
+        self._running = False
+        super().__init__(
+            data={"kind": "role_typer"},
+            content=ft.Row(
+                spacing=10,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                controls=[
+                    ft.Text(">", color=SECONDARY, size=size, font_family="Mono"),
+                    ft.Text(
+                        self._roles[0],
+                        ref=self._text_ref,
+                        color=PRIMARY,
+                        size=size,
+                        font_family="Mono",
+                        weight=ft.FontWeight.W_600,
+                    ),
+                    ft.Container(
+                        ref=self._caret_ref,
+                        width=11,
+                        height=size + 4,
+                        bgcolor=PRIMARY,
+                        border_radius=2,
+                        animate_opacity=ft.Animation(240, ft.AnimationCurve.EASE_OUT),
+                    ),
+                ],
+            ),
+        )
+
+    def did_mount(self) -> None:
+        self._running = True
+        if self.page:
+            self.page.run_task(self._animate)
+
+    def will_unmount(self) -> None:
+        self._running = False
+
+    def _set_value(self, value: str) -> None:
+        text = self._text_ref.current
+        if text is not None:
+            text.value = value
+            text.update()
+
+    async def _animate(self) -> None:
+        index = 0
+        while self._running and self._text_ref.current:
+            role = self._roles[index % len(self._roles)]
+            for cursor in range(1, len(role) + 1):
+                if not self._running:
+                    return
+                self._set_value(role[:cursor])
+                await asyncio.sleep(0.045)
+
+            for _ in range(3):
+                if not self._running:
+                    return
+                caret = self._caret_ref.current
+                if caret is not None:
+                    caret.opacity = 0.1
+                    caret.update()
+                    await asyncio.sleep(0.4)
+                    caret.opacity = 1
+                    caret.update()
+                await asyncio.sleep(0.4)
+
+            for cursor in range(len(role), 0, -1):
+                if not self._running:
+                    return
+                self._set_value(role[: cursor - 1])
+                await asyncio.sleep(0.022)
+            index += 1
+
+
+class MetricCounter(ft.Container):
+    """A stat card that counts up to its value when it enters the page."""
+
+    def __init__(self, value: int, label: str, caption: str, accent: str = PRIMARY) -> None:
+        self._target = max(int(value), 0)
+        self._value_ref = ft.Ref[ft.Text]()
+        super().__init__(
+            data={"kind": "hero_metric", "value": self._target},
+            content=ConsolePanel(
+                ft.Column(
+                    spacing=6,
+                    controls=[
+                        ft.Text(
+                            label.upper(),
+                            color=accent,
+                            size=11,
+                            font_family="Mono",
+                            weight=ft.FontWeight.W_700,
+                        ),
+                        ft.Text(
+                            "0",
+                            ref=self._value_ref,
+                            color=TEXT,
+                            size=34,
+                            font_family="DisplayBold",
+                            weight=ft.FontWeight.W_700,
+                        ),
+                        ft.Text(caption, color=MUTED, size=12),
+                    ],
+                ),
+                padding=ft.Padding.all(18),
+            ),
+        )
+
+    def did_mount(self) -> None:
+        if self.page:
+            self.page.run_task(self._count_up)
+
+    async def _count_up(self) -> None:
+        steps = 26
+        for step in range(1, steps + 1):
+            value_text = self._value_ref.current
+            if value_text is None:
+                return
+            progress = 1 - (1 - step / steps) ** 3
+            value_text.value = str(round(self._target * progress))
+            value_text.update()
+            await asyncio.sleep(0.035)
 
 
 class SignalGrid(ft.Container):
@@ -61,7 +188,7 @@ class SignalGrid(ft.Container):
                                 end=ft.Alignment(0, -1),
                                 colors=[PRIMARY, PURPLE],
                             ),
-                            opacity=0.84,
+                            opacity=0.8,
                             animate=ft.Animation(420, ft.AnimationCurve.EASE_IN_OUT),
                         ),
                     )
@@ -90,417 +217,252 @@ class SignalGrid(ft.Container):
             await asyncio.sleep(0.62)
 
 
-class ArcadeMazePanel(ft.Container):
-    def __init__(self, *, compact: bool = False) -> None:
-        self._pac_ref = ft.Ref[ft.Container]()
-        self._mouth_ref = ft.Ref[ft.Container]()
-        self._ghost_refs = [ft.Ref[ft.Container]() for _ in range(3)]
+class PulsingDot(ft.Container):
+    def __init__(self, color: str = SECONDARY) -> None:
         self._running = False
-        self._compact = compact
-        self._scale = 0.68 if compact else 1.0
         super().__init__(
-            data={"kind": "hero_arcade_maze"},
-            height=214 if compact else 300,
-            clip_behavior=ft.ClipBehavior.HARD_EDGE,
-            border_radius=18,
-            border=ft.Border.all(1, alpha(PRIMARY, 0.36)),
-            bgcolor=alpha(BACKGROUND, 0.56),
-            content=ft.Stack(expand=True, controls=self._build_controls()),
-        )
-
-    def _build_controls(self) -> list[ft.Control]:
-        pac = 54 * self._scale
-        return [
-            *_maze_walls(self._scale),
-            *_pellets(self._scale),
-            self._ghost(self._ghost_refs[0], left=292, top=44, color=ROSE),
-            self._ghost(self._ghost_refs[1], left=360, top=152, color=PURPLE),
-            self._ghost(self._ghost_refs[2], left=238, top=204, color=SECONDARY),
-            ft.Container(
-                ref=self._pac_ref,
-                left=24 * self._scale,
-                top=42 * self._scale,
-                width=pac,
-                height=pac,
-                animate_position=ft.Animation(620, ft.AnimationCurve.EASE_IN_OUT),
-                content=ft.Stack(
-                    width=pac,
-                    height=pac,
-                    controls=[
-                        ft.Container(
-                            width=pac,
-                            height=pac,
-                            border_radius=999,
-                            bgcolor=WARNING,
-                            shadow=[ft.BoxShadow(blur_radius=26, color=alpha(WARNING, 0.35))],
-                        ),
-                        ft.Container(
-                            left=18 * self._scale,
-                            top=12 * self._scale,
-                            width=6 * self._scale,
-                            height=6 * self._scale,
-                            border_radius=999,
-                            bgcolor=BACKGROUND,
-                        ),
-                        ft.Container(
-                            ref=self._mouth_ref,
-                            right=-2,
-                            top=17 * self._scale,
-                            width=18 * self._scale,
-                            height=20 * self._scale,
-                            border_radius=999,
-                            bgcolor=BACKGROUND,
-                        ),
-                    ],
-                ),
-            ),
-        ]
-
-    def _ghost(self, ref: ft.Ref[ft.Container], *, left: int, top: int, color: str) -> ft.Control:
-        scale = self._scale
-        return ft.Container(
-            ref=ref,
-            left=left * scale,
-            top=top * scale,
-            width=42 * scale,
-            height=46 * scale,
-            animate_position=ft.Animation(520, ft.AnimationCurve.EASE_IN_OUT),
-            content=ft.Stack(
-                width=42 * scale,
-                height=46 * scale,
-                controls=[
-                    ft.Container(
-                        width=42 * scale,
-                        height=42 * scale,
-                        border_radius=18,
-                        bgcolor=color,
-                    ),
-                    ft.Container(
-                        left=7 * scale,
-                        top=13 * scale,
-                        width=8 * scale,
-                        height=8 * scale,
-                        border_radius=999,
-                        bgcolor=TEXT,
-                    ),
-                    ft.Container(
-                        left=25 * scale,
-                        top=13 * scale,
-                        width=8 * scale,
-                        height=8 * scale,
-                        border_radius=999,
-                        bgcolor=TEXT,
-                    ),
-                    ft.Container(
-                        left=10 * scale,
-                        top=16 * scale,
-                        width=4 * scale,
-                        height=4 * scale,
-                        border_radius=999,
-                        bgcolor=BORDER,
-                    ),
-                    ft.Container(
-                        left=28 * scale,
-                        top=16 * scale,
-                        width=4 * scale,
-                        height=4 * scale,
-                        border_radius=999,
-                        bgcolor=BORDER,
-                    ),
-                    ft.Container(
-                        left=0,
-                        top=32 * scale,
-                        width=14 * scale,
-                        height=14 * scale,
-                        bgcolor=color,
-                    ),
-                    ft.Container(
-                        left=14 * scale,
-                        top=32 * scale,
-                        width=14 * scale,
-                        height=14 * scale,
-                        bgcolor=color,
-                    ),
-                    ft.Container(
-                        left=28 * scale,
-                        top=32 * scale,
-                        width=14 * scale,
-                        height=14 * scale,
-                        bgcolor=color,
-                    ),
-                ],
-            ),
+            width=9,
+            height=9,
+            bgcolor=color,
+            border_radius=999,
+            animate_opacity=ft.Animation(620, ft.AnimationCurve.EASE_IN_OUT),
+            shadow=[ft.BoxShadow(blur_radius=10, color=alpha(color, 0.55))],
         )
 
     def did_mount(self) -> None:
         self._running = True
         if self.page:
-            self.page.run_task(self._animate)
+            self.page.run_task(self._pulse)
 
     def will_unmount(self) -> None:
         self._running = False
 
-    async def _animate(self) -> None:
-        route = [(24, 42), (190, 42), (190, 138), (420, 138), (420, 218), (78, 218)]
-        ghost_offsets = [(0, 0), (-30, 18), (22, -14), (-18, -8)]
-        ghost_bases = [(292, 44), (360, 152), (238, 204)]
-        index = 0
+    async def _pulse(self) -> None:
         while self._running:
-            if self._pac_ref.current:
-                left, top = route[index % len(route)]
-                self._pac_ref.current.left = left * self._scale
-                self._pac_ref.current.top = top * self._scale
-                self._pac_ref.current.update()
-            if self._mouth_ref.current:
-                self._mouth_ref.current.width = (6 if index % 2 else 18) * self._scale
-                self._mouth_ref.current.update()
-            for ghost_index, ref in enumerate(self._ghost_refs):
-                ghost = ref.current
-                if not ghost:
-                    continue
-                dx, dy = ghost_offsets[(index + ghost_index) % len(ghost_offsets)]
-                base_x, base_y = ghost_bases[ghost_index]
-                ghost.left = (base_x + dx) * self._scale
-                ghost.top = (base_y + dy) * self._scale
-                ghost.update()
-            index += 1
-            await asyncio.sleep(0.72)
+            self.opacity = 0.35
+            if self.parent is not None:
+                self.update()
+            await asyncio.sleep(0.7)
+            self.opacity = 1
+            if self.parent is not None:
+                self.update()
+            await asyncio.sleep(0.7)
 
 
-def _maze_walls(scale: float) -> list[ft.Control]:
-    wall_specs = [
-        (18, 18, 198, 10),
-        (262, 18, 220, 10),
-        (18, 84, 94, 10),
-        (154, 84, 214, 10),
-        (414, 84, 68, 10),
-        (18, 150, 176, 10),
-        (246, 150, 236, 10),
-        (18, 238, 462, 10),
-        (18, 18, 10, 76),
-        (472, 18, 10, 232),
-        (112, 84, 10, 76),
-        (236, 18, 10, 76),
-        (196, 150, 10, 96),
-        (350, 84, 10, 76),
-    ]
-    return [
-        ft.Container(
-            left=left * scale,
-            top=top * scale,
-            width=width * scale,
-            height=height * scale,
-            border_radius=6,
-            bgcolor=alpha(PRIMARY, 0.78),
-            shadow=[ft.BoxShadow(blur_radius=14, color=alpha(PRIMARY, 0.22))],
-        )
-        for left, top, width, height in wall_specs
-    ]
+def _status_chip(profile: dict[str, Any]) -> ft.Control:
+    location = profile.get("location", "")
+    company = profile.get("company", "")
+    label = " · ".join(part for part in (company, location) if part)
+    return ft.Container(
+        padding=ft.Padding.symmetric(horizontal=14, vertical=8),
+        border_radius=999,
+        bgcolor=alpha(SECONDARY, 0.08),
+        border=ft.Border.all(1, alpha(SECONDARY, 0.3)),
+        content=ft.Row(
+            spacing=10,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            controls=[
+                PulsingDot(SECONDARY),
+                ft.Text(
+                    f"shipping in production · {label}" if label else "shipping in production",
+                    color=SECONDARY,
+                    size=12,
+                    font_family="Mono",
+                ),
+            ],
+        ),
+    )
 
 
-def _pellets(scale: float) -> list[ft.Control]:
-    controls: list[ft.Control] = []
-    for y in (56, 120, 186, 220):
-        for x in range(48, 466, 42):
-            if (y == 120 and 174 <= x <= 258) or (y == 186 and 330 <= x <= 414):
-                continue
-            size = 10 if x in {48, 468} else 5
-            controls.append(
-                ft.Container(
-                    left=x * scale,
-                    top=y * scale,
-                    width=size * scale,
-                    height=size * scale,
-                    border_radius=999,
-                    bgcolor=WARNING,
-                    shadow=[ft.BoxShadow(blur_radius=12, color=alpha(WARNING, 0.24))],
-                )
+def _cta_row(page: ft.Page, profile: dict[str, Any]) -> ft.Control:
+    social_links = profile.get("social_links", {})
+    linkedin_url = social_links.get("linkedin", "")
+    github_url = profile.get("github_url") or social_links.get("github", "")
+
+    def outlined(label: str, icon: ft.IconData, url: str) -> ft.Control:
+        return attach_hover_lift(
+            ft.OutlinedButton(
+                content=ft.Row(
+                    spacing=8,
+                    controls=[
+                        ft.Icon(icon, size=16, color=PRIMARY),
+                        ft.Text(label, font_family="Mono", color=TEXT, size=13),
+                    ],
+                ),
+                style=ft.ButtonStyle(
+                    side=ft.BorderSide(1, alpha(PRIMARY, 0.4)),
+                    padding=ft.Padding.symmetric(horizontal=18, vertical=16),
+                    shape=ft.RoundedRectangleBorder(radius=14),
+                ),
+                url=normalize_external_url(url),
+                data=external_link_data(label, url),
             )
-    return controls
+        )
+
+    return ft.Row(
+        wrap=True,
+        spacing=12,
+        run_spacing=12,
+        controls=[
+            attach_hover_lift(
+                ft.FilledButton(
+                    content=ft.Row(
+                        spacing=8,
+                        controls=[
+                            ft.Icon(ft.Icons.DOWNLOAD, size=16, color="#04070F"),
+                            ft.Text(
+                                "Download Resume",
+                                font_family="Mono",
+                                size=13,
+                                weight=ft.FontWeight.W_700,
+                            ),
+                        ],
+                    ),
+                    style=ft.ButtonStyle(
+                        bgcolor=PRIMARY,
+                        color="#04070F",
+                        padding=ft.Padding.symmetric(horizontal=20, vertical=16),
+                        shape=ft.RoundedRectangleBorder(radius=14),
+                    ),
+                    url=normalize_external_url(profile.get("resume_link")),
+                    data=external_link_data("Download Resume", profile.get("resume_link")),
+                )
+            ),
+            outlined("LinkedIn", ft.Icons.WORK_OUTLINE, linkedin_url),
+            outlined("GitHub", ft.Icons.CODE, github_url),
+            attach_hover_lift(
+                ft.TextButton(
+                    content=ft.Row(
+                        spacing=6,
+                        controls=[
+                            ft.Text("contact", font_family="Mono", color=MUTED, size=13),
+                            ft.Icon(ft.Icons.ARROW_DOWNWARD, size=14, color=MUTED),
+                        ],
+                    ),
+                    style=ft.ButtonStyle(padding=ft.Padding.symmetric(horizontal=14, vertical=16)),
+                    data=section_link_data("Open Contact", "contact"),
+                    on_click=lambda _: scroll_to(page, "contact"),
+                )
+            ),
+        ],
+    )
+
+
+def _metrics_row(content: dict[str, Any]) -> ft.Control:
+    certifications = content.get("certifications", [])
+    featured_certs = [cert for cert in certifications if cert.get("featured")]
+    projects = content.get("featured_projects", [])
+    repo_count = content.get("github", {}).get("summary", {}).get("repo_count", 0)
+    focus_areas = content.get("engineering_focus", [])
+
+    metrics = [
+        MetricCounter(
+            len(certifications),
+            "credentials",
+            f"{len(featured_certs)} featured AWS certifications",
+            WARNING,
+        ),
+        MetricCounter(
+            len(projects),
+            "case studies",
+            "production-grade featured projects",
+            PRIMARY,
+        ),
+        MetricCounter(
+            repo_count,
+            "public repos",
+            "open work on GitHub",
+            SECONDARY,
+        ),
+        MetricCounter(
+            len(focus_areas),
+            "focus areas",
+            "backend · data · cloud · AI",
+            PURPLE,
+        ),
+    ]
+    return ft.ResponsiveRow(
+        columns=12,
+        spacing=16,
+        run_spacing=16,
+        data={"kind": "hero_metrics"},
+        controls=[ft.Container(col={"xs": 6, "lg": 3}, content=metric) for metric in metrics],
+    )
 
 
 def HeroPanel(page: ft.Page, content: dict[str, Any]) -> ft.Control:
     profile = content["profile"]
-
-    ctas = [
-        attach_hover_lift(
-            ft.FilledButton(
-                content=ft.Text("$ download_resume", font_family="Mono"),
-                style=ft.ButtonStyle(
-                    bgcolor=PRIMARY,
-                    color="#020617",
-                    padding=ft.Padding.symmetric(horizontal=18, vertical=16),
-                    shape=ft.RoundedRectangleBorder(radius=18),
-                ),
-                url=normalize_external_url(profile.get("resume_link")),
-                data=external_link_data("Download Resume", profile.get("resume_link")),
-            )
-        ),
-        attach_hover_lift(
-            ft.OutlinedButton(
-                content=ft.Text("$ open_contact", font_family="Mono"),
-                style=ft.ButtonStyle(
-                    color=TEXT,
-                    padding=ft.Padding.symmetric(horizontal=18, vertical=16),
-                    shape=ft.RoundedRectangleBorder(radius=18),
-                ),
-                data=section_link_data("Open Contact", "contact"),
-                on_click=lambda _: scroll_to(page, "contact"),
-            )
-        ),
-    ]
+    roles = [item.get("name", "") for item in content.get("engineering_focus", [])]
+    title_size = hero_title_size(page)
 
     left = ft.Column(
-        spacing=18,
+        spacing=20,
         controls=[
-            TerminalBlock(content.get("hero_commands", []), title="console://mauricio"),
-            ft.Row(
-                wrap=True,
-                spacing=12,
-                run_spacing=6,
+            _status_chip(profile),
+            ft.Column(
+                spacing=2,
                 controls=[
                     ft.Text(
-                        "Mauricio",
-                        size=hero_title_size(page),
-                        color=WARNING,
-                        font_family="DisplayBold",
-                        weight=ft.FontWeight.W_700,
+                        "$ whoami",
+                        color=MUTED,
+                        size=13,
+                        font_family="Mono",
                     ),
-                    ft.Text(
-                        "Obando",
-                        size=hero_title_size(page),
-                        color=TEXT,
-                        font_family="DisplayBold",
-                        weight=ft.FontWeight.W_700,
+                    ft.Row(
+                        wrap=True,
+                        spacing=14,
+                        run_spacing=0,
+                        controls=[
+                            ft.Text(
+                                "Mauricio",
+                                size=title_size,
+                                color=TEXT,
+                                font_family="DisplayBold",
+                                weight=ft.FontWeight.W_700,
+                            ),
+                            gradient_text("Obando", size=title_size),
+                        ],
                     ),
                 ],
             ),
-            ft.Text(
-                profile.get("title", ""),
-                size=22 if is_mobile(page) else 26,
-                color=PRIMARY,
-                font_family="Display",
-                weight=ft.FontWeight.W_600,
+            RoleTyper(roles, size=18 if is_mobile(page) else 22),
+            ft.Container(
+                width=620,
+                content=ft.Text(profile.get("subtitle", ""), color=MUTED, size=16),
             ),
-            ft.Text(profile.get("subtitle", ""), color=MUTED, size=17),
-            ft.Row(wrap=True, spacing=12, run_spacing=12, controls=ctas),
+            _cta_row(page, profile),
+            ft.Row(
+                wrap=True,
+                spacing=8,
+                run_spacing=8,
+                controls=[SkillPill(skill) for skill in profile.get("skills", [])[:8]],
+            ),
         ],
     )
 
     right = ft.Column(
         spacing=14,
         controls=[
-            ConsolePanel(
-                ft.Column(
-                    spacing=16,
-                    controls=[
-                        ft.Row(
-                            spacing=10,
-                            vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                            controls=[
-                                ft.Icon(ft.Icons.AUTO_AWESOME, color=PRIMARY, size=18),
-                                ft.Text(
-                                    "AI / Cloud command center",
-                                    color=PRIMARY,
-                                    size=18,
-                                    font_family="DisplayBold",
-                                    weight=ft.FontWeight.W_700,
-                                ),
-                            ],
-                        ),
-                        ft.Text(
-                            "Pac-Man routes the maze while the static portfolio stays browser-safe on GitHub Pages.",
-                            color=MUTED,
-                            size=14,
-                        ),
-                        ArcadeMazePanel(compact=is_mobile(page)),
-                        ft.Row(
-                            wrap=True,
-                            spacing=10,
-                            run_spacing=10,
-                            controls=[
-                                ft.Container(
-                                    padding=ft.Padding.symmetric(horizontal=10, vertical=6),
-                                    border_radius=999,
-                                    bgcolor=alpha(WARNING, 0.14),
-                                    content=ft.Text(
-                                        "PELLETS", color=WARNING, size=11, font_family="Mono"
-                                    ),
-                                ),
-                                ft.Container(
-                                    padding=ft.Padding.symmetric(horizontal=10, vertical=6),
-                                    border_radius=999,
-                                    bgcolor=alpha(PRIMARY, 0.12),
-                                    content=ft.Text(
-                                        "MAZE", color=PRIMARY, size=11, font_family="Mono"
-                                    ),
-                                ),
-                                ft.Container(
-                                    padding=ft.Padding.symmetric(horizontal=10, vertical=6),
-                                    border_radius=999,
-                                    bgcolor=alpha(PURPLE, 0.12),
-                                    content=ft.Text(
-                                        "GHOSTS", color=PURPLE, size=11, font_family="Mono"
-                                    ),
-                                ),
-                            ],
-                        ),
-                    ],
-                ),
-                padding=ft.Padding.all(24),
-                glow=True,
-            ),
-            ConsolePanel(
-                ft.Row(
-                    wrap=True,
-                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                    controls=[
-                        ft.Text(
-                            "arcade cabinet online", color=WARNING, size=12, font_family="Mono"
-                        ),
-                        ft.Text(
-                            "waka loop ready",
-                            color=SECONDARY,
-                            size=12,
-                            font_family="Mono",
-                        ),
-                    ],
-                ),
-                padding=ft.Padding.all(18),
-            ),
+            TerminalBlock(content.get("hero_commands", []), title="mauricio@cloud:~"),
             ConsolePanel(
                 ft.Column(
                     spacing=14,
                     controls=[
                         ft.Row(
-                            wrap=True,
                             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                             controls=[
-                                ft.Text("location", color=MUTED, size=12, font_family="Mono"),
                                 ft.Text(
-                                    profile.get("location", ""),
-                                    color=TEXT,
+                                    "live telemetry",
+                                    color=PRIMARY,
                                     size=12,
                                     font_family="Mono",
                                 ),
-                            ],
-                        ),
-                        ft.Row(
-                            wrap=True,
-                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                            controls=[
-                                ft.Text("status", color=MUTED, size=12, font_family="Mono"),
                                 ft.Row(
                                     spacing=8,
                                     controls=[
-                                        ft.Container(
-                                            width=8,
-                                            height=8,
-                                            bgcolor=SECONDARY,
-                                            border_radius=999,
-                                        ),
+                                        PulsingDot(SECONDARY),
                                         ft.Text(
-                                            f"available / {profile.get('company', '')}",
+                                            "all systems nominal",
                                             color=SECONDARY,
                                             size=12,
                                             font_family="Mono",
@@ -509,19 +471,31 @@ def HeroPanel(page: ft.Page, content: dict[str, Any]) -> ft.Control:
                                 ),
                             ],
                         ),
+                        SignalGrid(),
                     ],
                 ),
-                padding=ft.Padding.all(18),
+                padding=ft.Padding.all(20),
+                glow=True,
             ),
         ],
     )
 
-    return ft.ResponsiveRow(
-        columns=12,
-        spacing=24,
-        run_spacing=22,
-        controls=[
-            ft.Container(col={"xs": 12, "lg": 7}, content=left),
-            ft.Container(col={"xs": 12, "lg": 5}, content=right),
-        ],
+    return ft.Container(
+        data={"kind": "hero_console"},
+        content=ft.Column(
+            spacing=26,
+            controls=[
+                ft.ResponsiveRow(
+                    columns=12,
+                    spacing=24,
+                    run_spacing=22,
+                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                    controls=[
+                        ft.Container(col={"xs": 12, "lg": 7}, content=left),
+                        ft.Container(col={"xs": 12, "lg": 5}, content=right),
+                    ],
+                ),
+                _metrics_row(content),
+            ],
+        ),
     )

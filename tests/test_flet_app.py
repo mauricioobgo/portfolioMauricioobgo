@@ -3,9 +3,9 @@ from types import SimpleNamespace
 import flet as ft
 
 from portfolio.app import build_portfolio_view
+from portfolio.components.ambient import ScrollProgressOverlay
 from portfolio.components.assistant import build_assistant_response
 from portfolio.components.github_feed import GitHubSummaryCard
-from portfolio.components.mascots import PacmanBorderOverlay
 from portfolio.components.projects import project_matches
 from portfolio_app.services.content import build_portfolio_content
 
@@ -71,17 +71,35 @@ def test_view_exposes_bound_links_and_interactive_controls() -> None:
         if isinstance(getattr(control, "data", None), dict)
         and control.data.get("kind") == "assistant_prompt"
     ]
-    border_pacman = [
+    scroll_progress = [
         control.data
         for control in controls
         if isinstance(getattr(control, "data", None), dict)
-        and control.data.get("kind") == "border_pacman"
+        and control.data.get("kind") == "scroll_progress"
     ]
-    hero_arcade = [
+    hero_console = [
         control.data
         for control in controls
         if isinstance(getattr(control, "data", None), dict)
-        and control.data.get("kind") == "hero_arcade_maze"
+        and control.data.get("kind") == "hero_console"
+    ]
+    role_typers = [
+        control.data
+        for control in controls
+        if isinstance(getattr(control, "data", None), dict)
+        and control.data.get("kind") == "role_typer"
+    ]
+    hero_metrics = [
+        control.data
+        for control in controls
+        if isinstance(getattr(control, "data", None), dict)
+        and control.data.get("kind") == "hero_metric"
+    ]
+    certification_cards = [
+        control.data
+        for control in controls
+        if isinstance(getattr(control, "data", None), dict)
+        and control.data.get("kind") == "certification_card"
     ]
 
     required_external_labels = {"GitHub", "LinkedIn", "Download Resume", "Email"}
@@ -92,8 +110,11 @@ def test_view_exposes_bound_links_and_interactive_controls() -> None:
     assert any(item["target"] == "ai" for item in section_links)
     assert terminal_shells
     assert assistant_prompts
-    assert border_pacman
-    assert hero_arcade
+    assert scroll_progress
+    assert hero_console
+    assert role_typers
+    assert len(hero_metrics) == 4
+    assert len(certification_cards) >= 2
 
     ordered_keys = [
         getattr(control, "key", None) for control in controls if getattr(control, "key", None)
@@ -109,6 +130,8 @@ def test_view_exposes_bound_links_and_interactive_controls() -> None:
         if isinstance(item, dict)
     ]
     assert "arcade_rail" not in kinds
+    assert "border_pacman" not in kinds
+    assert "hero_arcade_maze" not in kinds
     assert "project_filter" not in kinds
 
 
@@ -121,14 +144,17 @@ def test_github_summary_card_tolerates_missing_profile_counts() -> None:
     assert isinstance(card, ft.Control)
 
 
-def test_pacman_border_overlay_hides_below_desktop_breakpoint() -> None:
-    overlay = PacmanBorderOverlay()
+def test_scroll_progress_overlay_tracks_scroll_fraction() -> None:
+    overlay = ScrollProgressOverlay()
 
-    overlay.sync(pixels=0, max_scroll=1, width=900, height=900)
-    assert overlay.visible is False
+    overlay.sync(pixels=0, max_scroll=1000, width=1440, height=900)
+    assert overlay.progress == 0
 
-    overlay.sync(pixels=0, max_scroll=1, width=1440, height=900)
-    assert overlay.visible is True
+    overlay.sync(pixels=500, max_scroll=1000, width=1440, height=900)
+    assert overlay.progress == 0.5
+
+    overlay.sync(pixels=5000, max_scroll=1000, width=1440, height=900)
+    assert overlay.progress == 1
 
 
 def test_project_filter_logic_matches_declared_filters() -> None:
