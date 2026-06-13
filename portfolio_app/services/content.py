@@ -169,7 +169,7 @@ def _int_value(value: Any, default: int = 0) -> int:
         return default
     try:
         return int(value)
-    except (TypeError, ValueError):
+    except Exception:
         return default
 
 
