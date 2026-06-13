@@ -10,5 +10,6 @@ __pycache__/
 .ruff_cache/
 build/
 dist/
+site/
 portfolio_app/generated/
 src/assets/portfolio_content.json
