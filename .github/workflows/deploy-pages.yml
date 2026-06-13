@@ -101,11 +101,21 @@ jobs:
       - name: Run tests
         run: uv run python -m pytest -q
 
-      - name: Build Flet static website
-        run: uv run flet build web src --module-name main --yes --base-url /portfolioMauricioobgo/ --route-url-strategy hash --no-wasm
+      - name: Build static portfolio site (deployed)
+        run: uv run python -m portfolio_app.scripts.build_static_site
 
-      - name: Patch bundled Pyodide runtime
-        run: uv run python -m portfolio_app.scripts.patch_web_bundle
+      # The Flet/Pyodide web build is kept for continued iteration but is NOT the
+      # deployed artifact: it downloads a Python runtime in the browser and is
+      # unreliable on mobile. It runs non-blocking so a Flet build issue never
+      # blocks the static site deploy.
+      - name: Build Flet web app (non-blocking, for iteration)
+        continue-on-error: true
+        run: |
+          uv run flet build web src --module-name main --yes \
+            --base-url /portfolioMauricioobgo/app/ --route-url-strategy hash --no-wasm --no-cdn
+          uv run python -m portfolio_app.scripts.patch_web_bundle
+          mkdir -p site/app
+          cp -r build/web/. site/app/
 
       - name: Upload resume drift artifact
         uses: actions/upload-artifact@v4
@@ -117,7 +127,7 @@ jobs:
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: build/web
+          path: site
           name: web-build-artifact
           retention-days: 20
 
