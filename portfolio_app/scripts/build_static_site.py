@@ -475,6 +475,7 @@ def render_html(content: dict[str, Any]) -> str:
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="{desc}">
 <meta property="og:type" content="website">
+<script>{SW_RESET}</script>
 <style>{CSS}</style>
 </head>
 <body>
@@ -483,6 +484,22 @@ def render_html(content: dict[str, Any]) -> str:
 </body>
 </html>"""
 
+
+# Earlier Flet/Flutter deploys registered a service worker at this path scope
+# that aggressively caches and would keep serving the old (broken) bundle. This
+# unregisters it, clears its caches, and reloads once so returning visitors get
+# the static site without manually clearing site data.
+SW_RESET = """
+(function(){
+  if(!('serviceWorker' in navigator))return;
+  navigator.serviceWorker.getRegistrations().then(function(regs){
+    var had=regs.length>0;
+    regs.forEach(function(r){r.unregister();});
+    if(window.caches&&caches.keys){caches.keys().then(function(ks){ks.forEach(function(k){caches.delete(k);});});}
+    if(had&&!sessionStorage.getItem('swCleared')){sessionStorage.setItem('swCleared','1');location.reload();}
+  }).catch(function(){});
+})();
+"""
 
 CSS = """
 :root{
