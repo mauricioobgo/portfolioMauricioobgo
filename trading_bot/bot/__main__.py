@@ -4,9 +4,9 @@ Usage (from the trading_bot/ directory):
 
     python -m bot backtest                # synthetic-data backtest (no network)
     python -m bot backtest --file c.json  # backtest candles from a JSON file
-    python -m bot run                     # demo account, dry-run (logs only)
-    python -m bot run --execute           # demo account, real demo orders
-    python -m bot run --mode real --execute --i-understand-the-risks
+    python -m bot run                     # paper account, dry-run (logs only)
+    python -m bot run --execute           # paper account, real paper orders
+    python -m bot run --mode live --execute --i-understand-the-risks
                                           # real money - requires typed confirmation
 """
 
@@ -18,11 +18,11 @@ import logging
 import sys
 from pathlib import Path
 
+from bot.alpaca import AlpacaClient
 from bot.backtest import format_report, run_backtest, synthetic_candles
 from bot.config import Config
 from bot.engine import TradingEngine
 from bot.models import Candle
-from bot.xtb import XTBClient
 
 
 def _load_candles_file(path: Path) -> dict[str, list[Candle]]:
@@ -54,9 +54,9 @@ def cmd_run(args: argparse.Namespace) -> int:
     config.dry_run = not args.execute
     config.validate()
 
-    if config.mode == "real":
+    if config.mode == "live":
         if not args.i_understand_the_risks:
-            print("Refusing to run in real mode without --i-understand-the-risks.")
+            print("Refusing to run in live mode without --i-understand-the-risks.")
             return 2
         answer = input(
             "You are about to trade with REAL MONEY. Automated strategies can lose "
@@ -66,9 +66,8 @@ def cmd_run(args: argparse.Namespace) -> int:
             print("Aborted.")
             return 2
 
-    client = XTBClient(mode=config.mode)
+    client = AlpacaClient(config.alpaca_key_id, config.alpaca_secret_key, mode=config.mode)
     client.connect()
-    client.login(config.xtb_user_id, config.xtb_password)
     engine = TradingEngine(config, client)
     try:
         if args.once:
@@ -77,8 +76,6 @@ def cmd_run(args: argparse.Namespace) -> int:
             engine.run_forever()
     except KeyboardInterrupt:
         print("stopped by user")
-    finally:
-        client.logout()
     return 0
 
 
@@ -94,8 +91,8 @@ def main(argv: list[str] | None = None) -> int:
     p_backtest.add_argument("--cash", type=float, default=10_000.0, help="starting cash")
     p_backtest.set_defaults(func=cmd_backtest)
 
-    p_run = sub.add_parser("run", help="run against XTB (demo by default, dry-run by default)")
-    p_run.add_argument("--mode", choices=["demo", "real"], default="demo")
+    p_run = sub.add_parser("run", help="run against Alpaca (paper by default, dry-run by default)")
+    p_run.add_argument("--mode", choices=["paper", "live"], default="paper")
     p_run.add_argument("--execute", action="store_true", help="actually send orders")
     p_run.add_argument("--once", action="store_true", help="single cycle instead of a loop")
     p_run.add_argument("--i-understand-the-risks", action="store_true")

@@ -1,20 +1,29 @@
-# Trading Bot (long-only stocks, XTB)
+# Trading Bot (long-only stocks, Alpaca)
 
 A small, dependency-free Python trading bot that opens **bull (long) positions on
-stocks** using a trend-following strategy, with an [XTB xAPI](https://developers.xstore.pro/documentation)
-connector. Built safety-first:
+stocks** using a trend-following strategy, connected to
+[Alpaca Markets](https://alpaca.markets) — chosen because it has a maintained
+public trading API with **first-class paper trading** (paper and live use the
+same endpoints on different hosts, so what you validate on paper is exactly what
+runs live).
+
+> **Why not XTB?** XTB discontinued its investment-automation API for retail
+> clients ([their help center](https://www.xtb.com/int/help-center/our-platforms-6-4/does-xtb-offer-investment-automation-tools-4)),
+> so there is no supported way to automate an XTB account. The broker layer here
+> is pluggable (`bot/broker.py`), so another connector can be added if that
+> changes.
 
 | Mode | Broker | Money at risk |
 |---|---|---|
 | `backtest` | none (offline) | none |
-| `run` (default) | XTB **demo**, dry-run | none — orders are only logged |
-| `run --execute` | XTB **demo** | none — demo account balance |
-| `run --mode real --execute --i-understand-the-risks` | XTB real | **REAL MONEY** — also requires typing a confirmation |
+| `run` (default) | Alpaca **paper**, dry-run | none — orders are only logged |
+| `run --execute` | Alpaca **paper** | none — simulated paper balance |
+| `run --mode live --execute --i-understand-the-risks` | Alpaca live | **REAL MONEY** — also requires typing a confirmation |
 
 > ⚠️ **This is not financial advice.** Automated strategies can and do lose
 > money. Past (and backtested) performance does not predict future results.
-> Run on a demo account for weeks before even considering real mode, start
-> tiny, and never trade money you cannot afford to lose.
+> Run on paper for weeks before even considering live mode, start tiny, and
+> never trade money you cannot afford to lose.
 
 ## Strategy
 
@@ -22,7 +31,8 @@ Long-only trend following on daily candles:
 
 - **Enter** when SMA20 > SMA50, price above SMA20, and RSI(14) < 70.
 - **Exit** when SMA20 falls back below SMA50, or the protective stop is hit.
-- **Stop-loss** placed 2×ATR(14) below entry, sent with the order.
+- **Stop-loss** placed 2×ATR(14) below entry, attached to the buy order
+  (Alpaca one-triggers-other order class).
 
 Risk management (enforced before every order):
 
@@ -37,7 +47,9 @@ All parameters live in `bot/config.py`.
 
 Requires Python 3.11+. No third-party packages.
 
-1. Create an XTB **demo** account (free) and note your user id + password.
+1. Create a free Alpaca account at https://alpaca.markets and generate
+   **paper trading** API keys from the dashboard (paper keys are separate from
+   live keys and only work against the paper host).
 2. Configure credentials:
 
    ```bash
@@ -52,13 +64,13 @@ Requires Python 3.11+. No third-party packages.
    python -m bot backtest --bars 1000
    ```
 
-4. Dry-run against your demo account (reads data, logs intended orders):
+4. Dry-run against your paper account (reads data, logs intended orders):
 
    ```bash
    python -m bot run --once
    ```
 
-5. Let it place demo orders:
+5. Let it place paper orders:
 
    ```bash
    python -m bot run --execute
@@ -70,13 +82,12 @@ Environment variables (or `.env`):
 
 | Variable | Meaning |
 |---|---|
-| `XTB_USER_ID` | your XTB account id |
-| `XTB_PASSWORD` | your XTB password |
-| `XTB_MODE` | `demo` (default) or `real` |
-| `BOT_WATCHLIST` | comma-separated symbols, e.g. `AAPL.US,MSFT.US` |
+| `APCA_API_KEY_ID` | Alpaca API key id |
+| `APCA_API_SECRET_KEY` | Alpaca API secret |
+| `BOT_MODE` | `paper` (default) or `live` |
+| `BOT_WATCHLIST` | comma-separated tickers, e.g. `AAPL,MSFT,NVDA` |
 
-Symbol names must match XTB's catalogue (check the xStation platform or the
-`getAllSymbols` API call — US stocks are usually `TICKER.US`).
+Market data uses Alpaca's free IEX feed; symbols are plain US tickers.
 
 ## Tests
 
@@ -85,19 +96,15 @@ cd trading_bot
 python -m pytest tests -q
 ```
 
+The Alpaca connector is unit-tested against a fake HTTP transport (no network),
+covering auth headers, candle parsing, order payloads, and error handling.
+
 ## Notes & caveats
 
-- The xAPI connector was written against the public xStation5 docs but could
-  not be integration-tested from the development sandbox. **Verify every flow
-  on demo first** and treat the official docs as the source of truth.
-- Depending on your XTB account type, stock instruments may be real equities or
-  CFDs, and `volume` may be shares or lots — confirm with `getSymbol`
-  (`lotMin`, `lotStep`, `contractSize`) before executing.
 - Markets have hours; a daily-candle strategy only needs to run once per day
   (a cron job calling `python -m bot run --once --execute` after the US close
   is a reasonable setup).
-- If you ever move brokers, only `bot/xtb.py` needs replacing — strategy, risk
-  and backtesting are broker-agnostic (Alpaca has a friendly REST API with
-  first-class paper trading if you want an alternative).
+- Alpaca availability varies by country for **live** accounts; paper trading is
+  available regardless. Check their onboarding for your jurisdiction.
 - This folder is self-contained and unrelated to the portfolio site. Consider
   moving it to its own **private** repository.

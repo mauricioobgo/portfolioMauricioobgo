@@ -1,7 +1,7 @@
 """Live trading engine: polls candles, evaluates signals, manages positions.
 
 Long-only by design. In dry-run mode (the default) every order is logged but
-never sent, which is the recommended first step even on a demo account.
+never sent, which is the recommended first step even on a paper account.
 """
 
 from __future__ import annotations
@@ -9,18 +9,18 @@ from __future__ import annotations
 import logging
 import time
 
+from bot.broker import BrokerClient
 from bot.config import Config
 from bot.models import Signal
 from bot.risk import RiskManager
 from bot.strategy import TrendFollowingStrategy
-from bot.xtb import XTBClient
 
 
 log = logging.getLogger("trading_bot")
 
 
 class TradingEngine:
-    def __init__(self, config: Config, client: XTBClient) -> None:
+    def __init__(self, config: Config, client: BrokerClient) -> None:
         config.validate()
         self._cfg = config
         self._client = client

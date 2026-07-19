@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 
-DEFAULT_WATCHLIST = ["AAPL.US", "MSFT.US", "GOOGL.US", "AMZN.US", "NVDA.US"]
+DEFAULT_WATCHLIST = ["AAPL", "MSFT", "GOOGL", "AMZN", "NVDA"]
 
 
 def load_dotenv(path: Path) -> None:
@@ -26,9 +26,9 @@ def load_dotenv(path: Path) -> None:
 @dataclass
 class Config:
     # Broker credentials (never hardcode; set via environment or .env).
-    xtb_user_id: str = ""
-    xtb_password: str = ""
-    mode: str = "demo"  # demo | real
+    alpaca_key_id: str = ""
+    alpaca_secret_key: str = ""
+    mode: str = "paper"  # paper | live
 
     # Universe and timeframe.
     watchlist: list[str] = field(default_factory=lambda: list(DEFAULT_WATCHLIST))
@@ -57,17 +57,17 @@ class Config:
         if env_file is not None:
             load_dotenv(env_file)
         cfg = cls()
-        cfg.xtb_user_id = os.environ.get("XTB_USER_ID", "")
-        cfg.xtb_password = os.environ.get("XTB_PASSWORD", "")
-        cfg.mode = os.environ.get("XTB_MODE", cfg.mode).lower()
+        cfg.alpaca_key_id = os.environ.get("APCA_API_KEY_ID", "")
+        cfg.alpaca_secret_key = os.environ.get("APCA_API_SECRET_KEY", "")
+        cfg.mode = os.environ.get("BOT_MODE", cfg.mode).lower()
         watchlist = os.environ.get("BOT_WATCHLIST", "")
         if watchlist:
             cfg.watchlist = [item.strip() for item in watchlist.split(",") if item.strip()]
         return cfg
 
     def validate(self) -> None:
-        if self.mode not in {"demo", "real"}:
-            raise ValueError(f"mode must be 'demo' or 'real', got {self.mode!r}")
+        if self.mode not in {"paper", "live"}:
+            raise ValueError(f"mode must be 'paper' or 'live', got {self.mode!r}")
         if not 0 < self.risk_per_trade <= 0.05:
             raise ValueError("risk_per_trade must be in (0, 0.05]")
         if self.sma_fast >= self.sma_slow:
