@@ -8,7 +8,6 @@ from portfolio.components.cards import ConsolePanel, SkillPill
 from portfolio.interaction import attach_hover_lift, external_link_data, normalize_external_url
 from portfolio.theme import MUTED, PRIMARY, SECONDARY, TEXT, WARNING, alpha
 
-
 FILTER_ORDER = ["All", "Backend", "AWS", "LLM", "Data Engineering", "FastAPI"]
 
 

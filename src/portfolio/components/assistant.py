@@ -377,7 +377,7 @@ class PortfolioTerminalShell(ft.Container):
             data={"kind": "terminal_shell", "mode": "browser_cli"}, content=self._build()
         )
 
-    def _log_height(self, page_width: float | int | None = None) -> int:
+    def _log_height(self, page_width: float | None = None) -> int:
         target = page_width if page_width is not None else self._page
         if is_mobile(target):
             return 320
@@ -543,7 +543,7 @@ class PortfolioTerminalShell(ft.Container):
             glow=True,
         )
 
-    def sync_layout(self, page_width: float | int | None) -> None:
+    def sync_layout(self, page_width: float | None) -> None:
         if self._log_ref.current:
             self._log_ref.current.height = self._log_height(page_width)
             self._log_ref.current.update()

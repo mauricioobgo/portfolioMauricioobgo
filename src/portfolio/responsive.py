@@ -2,13 +2,12 @@ from __future__ import annotations
 
 import flet as ft
 
-
 MOBILE = 720
 TABLET = 1040
 SECTION_WIDTH = 1240
 
 
-def viewport_width(page_or_width: ft.Page | float | int | None) -> float:
+def viewport_width(page_or_width: ft.Page | float | None) -> float:
     if isinstance(page_or_width, ft.Page):
         return float(page_or_width.width or 1366)
     if hasattr(page_or_width, "width"):
@@ -19,20 +18,20 @@ def viewport_width(page_or_width: ft.Page | float | int | None) -> float:
     return width if width > 0 else 1366.0
 
 
-def is_mobile(page_or_width: ft.Page | float | int | None) -> bool:
+def is_mobile(page_or_width: ft.Page | float | None) -> bool:
     return viewport_width(page_or_width) < MOBILE
 
 
-def is_tablet(page_or_width: ft.Page | float | int | None) -> bool:
+def is_tablet(page_or_width: ft.Page | float | None) -> bool:
     width = viewport_width(page_or_width)
     return MOBILE <= width < TABLET
 
 
-def is_desktop(page_or_width: ft.Page | float | int | None) -> bool:
+def is_desktop(page_or_width: ft.Page | float | None) -> bool:
     return viewport_width(page_or_width) >= TABLET
 
 
-def content_gutter(page_or_width: ft.Page | float | int | None) -> int:
+def content_gutter(page_or_width: ft.Page | float | None) -> int:
     width = viewport_width(page_or_width)
     if width < MOBILE:
         return 14
@@ -41,14 +40,14 @@ def content_gutter(page_or_width: ft.Page | float | int | None) -> int:
     return 24
 
 
-def content_width(page_or_width: ft.Page | float | int | None) -> int:
+def content_width(page_or_width: ft.Page | float | None) -> int:
     width = viewport_width(page_or_width)
     gutter = content_gutter(width)
     available = max(width - (gutter * 2), 320)
     return int(min(SECTION_WIDTH, available))
 
 
-def shell_top_padding(page_or_width: ft.Page | float | int | None, *, desktop_overlay: bool) -> int:
+def shell_top_padding(page_or_width: ft.Page | float | None, *, desktop_overlay: bool) -> int:
     width = viewport_width(page_or_width)
     if desktop_overlay:
         return 118

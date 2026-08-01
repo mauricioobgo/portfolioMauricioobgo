@@ -9,7 +9,6 @@ from urllib.parse import urljoin, urlsplit, urlunsplit
 
 import flet as ft
 
-
 ASSETS_DIR = Path(__file__).resolve().parents[1] / "assets"
 CONTENT_ASSET = "portfolio_content.json"
 

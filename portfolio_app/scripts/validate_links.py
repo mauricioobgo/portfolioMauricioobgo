@@ -5,14 +5,13 @@ from urllib.parse import urlparse
 
 import yaml
 
-
 CERTIFICATIONS_PATH = Path(__file__).resolve().parents[1] / "data" / "certifications.yaml"
 
 
 def load_certifications(path: Path = CERTIFICATIONS_PATH) -> list[dict]:
     data = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(data, list):
-        raise ValueError("certifications.yaml must contain a top-level list.")
+        raise TypeError("certifications.yaml must contain a top-level list.")
     return data
 
 

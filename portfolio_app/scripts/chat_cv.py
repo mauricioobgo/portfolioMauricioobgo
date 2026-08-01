@@ -10,7 +10,6 @@ from openai import OpenAI
 
 from portfolio_app.services.content import FRONTEND_CONTENT_PATH, GENERATED_DIR
 
-
 DEFAULT_MODEL = os.getenv("OPENAI_MODEL", "gpt-5.2")
 
 

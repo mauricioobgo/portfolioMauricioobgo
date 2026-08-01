@@ -7,7 +7,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
-
 DEFAULT_WEB_ROOT = Path("build/web")
 BUNDLE_RELATIVE_PATH = Path("assets/app/app.zip")
 PYTHON_WORKER_RELATIVE_PATH = Path("python-worker.js")
@@ -235,7 +234,7 @@ def patch_flutter_bootstrap(bootstrap_path: Path) -> bool:
         build_config = json.loads(json_text.removesuffix(";"))
         builds = build_config.get("builds")
         if not isinstance(builds, list):
-            raise RuntimeError("flutter_bootstrap.js does not expose a valid builds list.")
+            raise TypeError("flutter_bootstrap.js does not expose a valid builds list.")
 
         js_builds = [build for build in builds if build.get("compileTarget") == "dart2js"]
         if not js_builds:

@@ -96,10 +96,10 @@ jobs:
       # unchanged code (this happened 2026-07-27). Keep in sync with the
       # ruff-pre-commit rev in .pre-commit-config.yaml; upgrade deliberately.
       - name: Run lint
-        run: uvx --from 'ruff==0.15.11' ruff check .
+        run: uvx --from 'ruff==0.16.1' ruff check .
 
       - name: Run format check
-        run: uvx --from 'ruff==0.15.11' ruff format --check .
+        run: uvx --from 'ruff==0.16.1' ruff format --check .
 
       - name: Run tests
         run: uv run python -m pytest -q

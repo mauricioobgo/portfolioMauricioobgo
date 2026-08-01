@@ -128,7 +128,7 @@ class ConsoleTopbar(ft.Container):
                 container.content = self._button_content(label, key == section_key)
                 container.update()
 
-    def sync_width(self, page_width: float | int | None) -> None:
+    def sync_width(self, page_width: float | None) -> None:
         if self._shell_ref.current:
             self._shell_ref.current.width = content_width(page_width)
             self._shell_ref.current.update()
