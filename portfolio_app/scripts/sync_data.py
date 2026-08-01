@@ -3,16 +3,16 @@ from __future__ import annotations
 import argparse
 import json
 import os
-from datetime import datetime, timezone
+from collections.abc import Callable
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Callable
 
-from portfolio_app.services.github import fetch_repositories, fetch_user
 from portfolio_app.scripts.sync_resume import run_sync as sync_resume_run_sync
+from portfolio_app.services.github import fetch_repositories, fetch_user
 
 
 def _utc_now_iso() -> str:
-    return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+    return datetime.now(UTC).replace(microsecond=0).isoformat()
 
 
 def _get_output_dir() -> Path:

@@ -5,7 +5,6 @@ from urllib.parse import urlparse
 
 import flet as ft
 
-
 LinkData = dict[str, Any]
 
 

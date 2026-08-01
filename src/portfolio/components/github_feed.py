@@ -42,7 +42,9 @@ def _activity_color(level: int) -> str:
 def _int_value(value: Any, default: int = 0) -> int:
     try:
         return int(value)
-    except Exception:
+    except TypeError:
+        return default
+    except ValueError:
         return default
 
 

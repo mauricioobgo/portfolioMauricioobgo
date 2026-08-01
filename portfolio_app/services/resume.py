@@ -1,13 +1,12 @@
 from __future__ import annotations
 
 import re
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from io import BytesIO
 from typing import Any
 
 import httpx
 from pypdf import PdfReader
-
 
 DEFAULT_TIMEOUT = 60
 DRIVE_DOWNLOAD_TEMPLATE = "https://drive.google.com/uc?export=download&id={file_id}"
@@ -15,7 +14,7 @@ DRIVE_FILE_ID_PATTERN = re.compile(r"/d/([a-zA-Z0-9_-]+)")
 
 
 def utc_now_iso() -> str:
-    return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+    return datetime.now(UTC).replace(microsecond=0).isoformat()
 
 
 def extract_drive_file_id(url: str | None) -> str | None:

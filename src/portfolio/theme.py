@@ -4,7 +4,6 @@ import flet as ft
 
 from portfolio.responsive import content_gutter, content_width
 
-
 BACKGROUND = "#04070F"
 PANEL = "#0A1322"
 CARD = "#0D1830"
@@ -55,7 +54,7 @@ def app_shell(
     content: ft.Control,
     *,
     overlays: list[ft.Control] | None = None,
-    page_width: float | int | None = None,
+    page_width: float | None = None,
     layout_ref: ft.Ref[ft.Container] | None = None,
     content_ref: ft.Ref[ft.Container] | None = None,
     top_padding: int = 120,

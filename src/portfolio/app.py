@@ -264,7 +264,7 @@ async def main(page: ft.Page) -> None:
 
     try:
         content = await load_portfolio_content(page)
-    except Exception as error:
+    except Exception as error:  # noqa: BLE001 - surface any load failure in the UI
         page.clean()
         page.add(_error_view(str(error)))
         page.update()

@@ -15,7 +15,6 @@ import shutil
 from pathlib import Path
 from typing import Any
 
-
 ROOT = Path(__file__).resolve().parents[2]
 CONTENT_PATH = ROOT / "src" / "assets" / "portfolio_content.json"
 FONTS_SRC = ROOT / "src" / "assets" / "fonts"
