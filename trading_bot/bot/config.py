@@ -4,7 +4,6 @@ import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
-
 DEFAULT_WATCHLIST = ["AAPL", "MSFT", "GOOGL", "AMZN", "NVDA"]
 
 
@@ -53,7 +52,7 @@ class Config:
     poll_seconds: int = 300
 
     @classmethod
-    def from_env(cls, env_file: Path | None = None) -> "Config":
+    def from_env(cls, env_file: Path | None = None) -> Config:
         if env_file is not None:
             load_dotenv(env_file)
         cfg = cls()

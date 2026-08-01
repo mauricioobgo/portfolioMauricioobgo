@@ -19,11 +19,10 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from collections.abc import Callable
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from bot.models import Candle, Position
-
 
 TRADING_HOSTS = {
     "paper": "https://paper-api.alpaca.markets",
@@ -179,8 +178,8 @@ class AlpacaClient:
             detail = ""
             try:
                 detail = error.read().decode("utf-8", errors="replace")[:300]
-            except Exception:
-                pass
+            except OSError:
+                detail = "(error body unavailable)"
             raise AlpacaError(f"{method} {path} failed: HTTP {error.code} {detail}") from error
         except urllib.error.URLError as error:
             raise AlpacaError(f"{method} {path} failed: {error.reason}") from error
@@ -194,5 +193,5 @@ def _iso_to_ms(timestamp: str) -> int:
     normalized = timestamp.replace("Z", "+00:00")
     parsed = datetime.fromisoformat(normalized)
     if parsed.tzinfo is None:
-        parsed = parsed.replace(tzinfo=timezone.utc)
+        parsed = parsed.replace(tzinfo=UTC)
     return int(parsed.timestamp() * 1000)

@@ -7,8 +7,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from bot.alpaca import AlpacaClient, AlpacaError  # noqa: E402
-from bot.models import Position  # noqa: E402
+from bot.alpaca import AlpacaClient, AlpacaError
+from bot.models import Position
 
 
 class FakeTransport:

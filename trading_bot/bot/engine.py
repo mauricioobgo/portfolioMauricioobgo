@@ -15,7 +15,6 @@ from bot.models import Signal
 from bot.risk import RiskManager
 from bot.strategy import TrendFollowingStrategy
 
-
 log = logging.getLogger("trading_bot")
 
 
@@ -37,7 +36,7 @@ class TradingEngine:
         for symbol in self._cfg.watchlist:
             try:
                 self._process_symbol(symbol, equity, positions)
-            except Exception as error:
+            except Exception as error:  # noqa: BLE001 - one symbol/cycle must not kill the loop
                 log.error("%s: %s", symbol, error)
 
     def _process_symbol(self, symbol: str, equity: float, positions: dict) -> None:
@@ -86,6 +85,6 @@ class TradingEngine:
         while True:
             try:
                 self.run_once()
-            except Exception as error:
+            except Exception as error:  # noqa: BLE001 - one symbol/cycle must not kill the loop
                 log.error("cycle failed: %s", error)
             time.sleep(self._cfg.poll_seconds)

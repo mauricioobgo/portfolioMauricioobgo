@@ -5,13 +5,13 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from bot.backtest import run_backtest, synthetic_candles  # noqa: E402
-from bot.config import Config  # noqa: E402
-from bot.indicators import atr, rsi, sma  # noqa: E402
-from bot.models import Candle, Signal  # noqa: E402
-from bot.paper import PaperBroker  # noqa: E402
-from bot.risk import RiskManager  # noqa: E402
-from bot.strategy import TrendFollowingStrategy  # noqa: E402
+from bot.backtest import run_backtest, synthetic_candles
+from bot.config import Config
+from bot.indicators import atr, rsi, sma
+from bot.models import Candle, Signal
+from bot.paper import PaperBroker
+from bot.risk import RiskManager
+from bot.strategy import TrendFollowingStrategy
 
 
 def _flat_candles(n: int, price: float = 100.0) -> list[Candle]:
